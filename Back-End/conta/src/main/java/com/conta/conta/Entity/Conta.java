@@ -1,4 +1,4 @@
-package com.conta.conta.Entitys;
+package com.conta.conta.Entity;
 
 import jakarta.persistence.*;
 
@@ -36,7 +36,7 @@ public class Conta {
     @Column(nullable = false)
     private Boolean status;
 
-    
+
 
     public Conta(String proprietario, LocalDate data, String email, String telefone, String senha, float saldoTotal, String cpf, Boolean status) {
         this.proprietario = proprietario;
