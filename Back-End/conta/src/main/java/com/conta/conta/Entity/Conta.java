@@ -3,6 +3,7 @@ package com.conta.conta.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_contas")
@@ -16,7 +17,7 @@ public class Conta {
     private String proprietario;
 
     @Column(nullable = false)
-    private LocalDate data;
+    private LocalDateTime dataCadastro;
 
     @Column(nullable = false)
     private String email;
@@ -38,9 +39,9 @@ public class Conta {
 
 
 
-    public Conta(String proprietario, LocalDate data, String email, String telefone, String senha, float saldoTotal, String cpf, Boolean status) {
+    public Conta(String proprietario, LocalDateTime dataCadastro, String email, String telefone, String senha, float saldoTotal, String cpf, Boolean status) {
         this.proprietario = proprietario;
-        this.data = data;
+        this.dataCadastro = LocalDateTime.now();
         this.email = email;
         this.telefone = telefone;
         this.senha = senha;
@@ -61,12 +62,12 @@ public class Conta {
         this.proprietario = proprietario;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDateTime getData() {
+        return dataCadastro;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setData(LocalDateTime dataCadastro) {
+        this.dataCadastro = dataCadastro;
     }
 
     public String getEmail() {
@@ -122,7 +123,7 @@ public class Conta {
         return "Conta{" +
                 "id=" + id +
                 ", proprietario='" + proprietario + '\'' +
-                ", data=" + data +
+                ", data=" + dataCadastro +
                 ", email='" + email + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", senha='" + senha + '\'' +

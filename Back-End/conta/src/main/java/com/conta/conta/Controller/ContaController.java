@@ -20,7 +20,7 @@ public class ContaController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/{id}")
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<Conta> listaConta(){
         return contaService.listarConta();
