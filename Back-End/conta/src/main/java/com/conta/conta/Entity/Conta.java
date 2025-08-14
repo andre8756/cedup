@@ -37,8 +37,6 @@ public class Conta {
     @Column(nullable = false)
     private Boolean status;
 
-
-
     public Conta(String proprietario, LocalDateTime dataCadastro, String email, String telefone, String senha, float saldoTotal, String cpf, Boolean status) {
         this.proprietario = proprietario;
         this.dataCadastro = LocalDateTime.now();
@@ -48,6 +46,10 @@ public class Conta {
         this.saldoTotal = saldoTotal;
         this.cpf = cpf;
         this.status = status;
+    }
+
+    public Conta(){
+
     }
 
     public Long getId() {

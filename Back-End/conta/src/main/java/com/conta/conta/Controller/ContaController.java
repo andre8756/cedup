@@ -42,7 +42,7 @@ public class ContaController {
 
     // Método PUT para atualização
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void atualizarConta(@PathVariable("id") Long id, @RequestBody Conta conta){
         contaService.buscarPorId(id)
                 .map(contaBase -> {
