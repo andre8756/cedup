@@ -1,8 +1,8 @@
 package com.conta.conta.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,9 +14,10 @@ public class Conta {
     private Long id;
 
     @Column(nullable = false)
-    private String proprietario;
+    private String titular;
 
-    @Column(nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
+    @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
     @Column(nullable = false)
@@ -37,31 +38,35 @@ public class Conta {
     @Column(nullable = false)
     private Boolean status;
 
-    public Conta(String proprietario, LocalDateTime dataCadastro, String email, String telefone, String senha, float saldoTotal, String cpf, Boolean status) {
-        this.proprietario = proprietario;
-        this.dataCadastro = LocalDateTime.now();
+    public Conta(String titular, String email, String telefone, String senha, String cpf) {
+        this.titular = titular;
         this.email = email;
         this.telefone = telefone;
         this.senha = senha;
-        this.saldoTotal = saldoTotal;
+        this.saldoTotal = 0;
         this.cpf = cpf;
-        this.status = status;
     }
 
     public Conta(){
 
     }
 
+    @PrePersist
+    protected void onCreate(){
+        dataCadastro = LocalDateTime.now();
+        status = true;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public String getProprietario() {
-        return proprietario;
+    public String getTitular() {
+        return titular;
     }
 
-    public void setProprietario(String proprietario) {
-        this.proprietario = proprietario;
+    public void setTitular(String proprietario) {
+        this.titular = proprietario;
     }
 
     public LocalDateTime getData() {
@@ -124,7 +129,7 @@ public class Conta {
     public String toString() {
         return "Conta{" +
                 "id=" + id +
-                ", proprietario='" + proprietario + '\'' +
+                ", titular='" + titular + '\'' +
                 ", data=" + dataCadastro +
                 ", email='" + email + '\'' +
                 ", telefone='" + telefone + '\'' +
