@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Conta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -69,11 +69,11 @@ public class Conta {
         this.titular = proprietario;
     }
 
-    public LocalDateTime getData() {
+    public LocalDateTime getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setData(LocalDateTime dataCadastro) {
+    public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 
