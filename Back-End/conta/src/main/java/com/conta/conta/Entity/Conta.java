@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+//Conta principal do usuário
 @Entity
 @Table(name = "tb_contas")
 public class Conta {
@@ -16,27 +17,27 @@ public class Conta {
     @Column(nullable = false)
     private String titular;
 
-    @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime dataCadastro;
+    @Column(nullable = false)
+    private String cpf;
 
     @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
-    private String telefone;
+    private String senha;
 
     @Column(nullable = false)
-    private String senha;
+    private String telefone;
 
     @Column(nullable = false)
     private float saldoTotal;
 
     @Column(nullable = false)
-    private String cpf;
-
-    @Column(nullable = false)
     private Boolean status;
+
+    @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dataCadastro;
 
     public Conta(String titular, String email, String telefone, String senha, String cpf) {
         this.titular = titular;
