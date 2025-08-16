@@ -1,6 +1,7 @@
 package com.conta.conta.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class Banco {
     private String nomeBanco;
 
     @Column(nullable = false)
-    private double saldo;
+    private float saldo;
 
     @Column(nullable = false)
     private boolean status;
@@ -29,7 +30,12 @@ public class Banco {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
-    public Banco(String titular, String nomeBanco, double saldo) {
+    @ManyToOne
+    @JoinColumn(name = "conta_id", nullable = false) // Define o nome da coluna de chave estrangeira
+    @JsonIgnore // Evita loop infinito no Json
+    private Conta conta;
+
+    public Banco(String titular, String nomeBanco, float saldo) {
         this.titular = titular;
         this.nomeBanco = nomeBanco;
         this.saldo = saldo;
@@ -64,11 +70,11 @@ public class Banco {
         this.nomeBanco = nomeBanco;
     }
 
-    public double getSaldo() {
+    public float getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(double saldo) {
+    public void setSaldo(float saldo) {
         this.saldo = saldo;
     }
 
@@ -88,6 +94,14 @@ public class Banco {
         this.dataCadastro = dataCadastro;
     }
 
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
+    }
+
     @Override
     public String toString() {
         return "Banco{" +
@@ -97,6 +111,7 @@ public class Banco {
                 ", saldo=" + saldo +
                 ", status=" + status +
                 ", dataCadastro=" + dataCadastro +
+                ", conta=" + conta.getTitular() +
                 '}';
     }
 }

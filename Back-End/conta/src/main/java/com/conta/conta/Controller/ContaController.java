@@ -83,9 +83,14 @@ public class ContaController {
     }
 
     //Método Post para criação
-    @PostMapping("/banco") //Identifica que metodo a API deve executar ao fazer um POST
+    @PostMapping("{id}/banco") //Identifica que metodo a API deve executar ao fazer um POST
     @ResponseStatus(HttpStatus.CREATED) //Responde o resultado do post 201
-    public Banco salvar(@RequestBody Banco banco){
+    public Banco salvar(@PathVariable("id") Long contaId, @RequestBody Banco banco){
+
+        Conta conta = contaService.buscarPorId(contaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada")); // Aqui ele confere se a conta que o usuário apontou existe
+
+        banco.setConta(conta);
         return bancoService.salvar(banco);
     }
 

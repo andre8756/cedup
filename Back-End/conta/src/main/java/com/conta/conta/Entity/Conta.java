@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 //Conta principal do usuário
 @Entity
@@ -39,13 +41,17 @@ public class Conta {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
-    public Conta(String titular, String email, String telefone, String senha, String cpf) {
+    @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // Remove a tabela de junção
+    private List<Banco> bancos = new ArrayList<>();
+
+    public Conta(String titular, String email, String telefone, String senha, String cpf, List<Banco> bancos) {
         this.titular = titular;
         this.email = email;
         this.telefone = telefone;
         this.senha = senha;
         this.saldoTotal = 0;
         this.cpf = cpf;
+        this.bancos = bancos;
     }
 
     public Conta(){
@@ -124,6 +130,14 @@ public class Conta {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public List<Banco> getBancos(){
+        return bancos;
+    }
+
+    public void setBancos(List<Banco> bancos){
+        this.bancos = bancos;
     }
 
     @Override
