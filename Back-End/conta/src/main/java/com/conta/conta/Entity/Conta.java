@@ -131,13 +131,13 @@ public class Conta {
         return "Conta{" +
                 "id=" + id +
                 ", titular='" + titular + '\'' +
-                ", data=" + dataCadastro +
-                ", email='" + email + '\'' +
-                ", telefone='" + telefone + '\'' +
-                ", senha='" + senha + '\'' +
-                ", saldoTotal=" + saldoTotal +
                 ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", saldoTotal=" + saldoTotal +
                 ", status=" + status +
+                ", dataCadastro=" + dataCadastro +
                 '}';
     }
 }
