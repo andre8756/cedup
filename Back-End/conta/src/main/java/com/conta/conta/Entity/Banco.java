@@ -111,7 +111,6 @@ public class Banco {
                 ", saldo=" + saldo +
                 ", status=" + status +
                 ", dataCadastro=" + dataCadastro +
-                ", conta=" + conta.getTitular() +
                 '}';
     }
 }

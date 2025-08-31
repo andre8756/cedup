@@ -28,6 +28,10 @@ public class BancoService {
         return bancoRepository.findAll();
     }
 
+    public List<Banco> listarBancoPorContaId(Long contaid){
+        return bancoRepository.findByContaId(contaid);
+    }
+
     public Optional<Banco> buscarPorId(Long id){
         return bancoRepository.findById(id);
     }

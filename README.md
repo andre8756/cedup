@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=black)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
@@ -20,8 +20,6 @@
 - [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
 - [📊 Funcionalidades Principais](#-funcionalidades-principais)
 - [📌 Status do Projeto](#-status-do-projeto)
-- [📷 Layout (Opcional)](#-layout-opcional)
-- [📜 Licença](#-licença)
 
 ---
 
@@ -37,23 +35,23 @@ Desenvolver um sistema web que permita ao usuário:
 
 **Time de Professores / Banca:**  
 - Orientador: Prof. Ricardo  
-- Projeto de Software: Prof. Marcos Momo & Outro professor  
+- Projeto de Software: Prof. Marcos Momo
 - Práticas de Desenvolvimento de Sistemas IV: Prof. Antônio Carlos  
 - Modelagem de Sistemas UML: Prof. Wesley  
-- Treinamento Interpessoal: Prof. André  
+- Treinamento Interpessoal: Prof. André
 
 **Time de Desenvolvimento / Estudantes (Turma):**  
 - **André Heriberto Schmidt** – Fullstack  
 - **Nicolas Rotta** – Fullstack  
 - **José Lourenço Neto** – Back-end  
 - **Rogério** – Front-end  
-- **Arthur Novaes** – (Back / Front / Fullstack)  
+- **Arthur Novaes** – Database  
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas  
 - **Back-end:** Java + Spring Boot  
-- **Front-end:** Angular  
+- **Front-end:** React  
 - **Banco de Dados:** MySQL  
 - **Ferramentas de Teste:** Postman  
 - **Controle de Versão:** Git/GitHub  
@@ -64,35 +62,71 @@ Desenvolver um sistema web que permita ao usuário:
 
 ### ➕ Cadastro de Conta
 ```json
-POST http://localhost:8080/api
+POST http://localhost:8080/conta
 {
-  "titular": "Novo6 - dataCadastro",
-  "email": "nicolas@gmail.com",
-  "telefone": "47 456445",
-  "senha": "321",
-  "cpf": "456654",
-  "status": true
+  "titular": "André Heriberto Schmitt",
+  "email": "teste@gmail.com",
+  "telefone": "47 99999-9999",
+  "senha": "123",
+  "cpf": "123.456.789-10"
 }
 ```
 
 ### 📋 Listar Contas
 ```http
-GET http://localhost:8080/api
+GET http://localhost:8080/conta
 ```
 
 ### 🔎 Buscar Conta por ID
 ```http
-GET http://localhost:8080/api/{id}
+GET http://localhost:8080/conta/{id}
 ```
 
 ### ✏️ Atualizar Conta
 ```http
-PUT http://localhost:8080/api/{id}
+PUT http://localhost:8080/conta/{id}
 ```
 
 ### ❌ Deletar Conta
 ```http
-DELETE http://localhost:8080/api/{id}
+DELETE http://localhost:8080/conta/{id}
+```
+
+---
+
+### ➕ Cadastro de Banco
+```json
+POST http://localhost:8080/conta/{id}/banco
+{
+  "titular": "André",
+  "nomeBanco": "Inter",
+  "saldo": 600
+}
+```
+
+### 📋 Listar Bancos
+```http
+GET http://localhost:8080/conta/banco
+```
+
+### 📋 Listar Bancos por Conta_id
+```http
+GET http://localhost:8080/conta/{id}/banco
+```
+
+### 🔎 Buscar Banco por ID
+```http
+GET http://localhost:8080/conta/banco/{id}
+```
+
+### ✏️ Atualizar Banco
+```http
+PUT http://localhost:8080/conta/banco/{id}
+```
+
+### ❌ Deletar Banco
+```http
+DELETE http://localhost:8080/conta/banco/{id}
 ```
 
 ---
@@ -112,11 +146,11 @@ DELETE http://localhost:8080/api/{id}
 2. Acesse o diretório do projeto.  
 3. Configure o banco de dados no `application.properties`.  
 4. Rode o back-end com Spring Boot.  
-5. Inicie o front-end Angular com:  
+5. Inicie o front-end React com:  
    ```bash
-   ng serve
+   npm start
    ```
-6. Acesse em: `http://localhost:4200`  
+6. Acesse em: `http://localhost:3000`  
 
 ---
 
@@ -131,13 +165,4 @@ DELETE http://localhost:8080/api/{id}
 
 ## 📌 Status do Projeto  
 🚧 Em desenvolvimento 🚧  
-
----
-
-## 📷 Layout (Opcional)  
-> *(Se tiver imagens ou protótipos, você pode adicionar aqui usando `![alt text](caminho_da_imagem.png)`)*  
-
----
-
-## 📜 Licença  
-Este projeto é de uso acadêmico e não possui fins comerciais.  
+ 

@@ -69,10 +69,18 @@ public class ContaController {
 
     // Outras contas bancárias -------------------------------------------------------------------------
 
+    //Get para buscar todas as contas bancárias
     @GetMapping("/banco")
     @ResponseStatus(HttpStatus.OK)
     public List<Banco> listaBanco(){
         return bancoService.listarBanco();
+    }
+
+    //Get para buscar todas as contas bancárias de um determinado usuário
+    @GetMapping("{id}/banco")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Banco> listarBancoPorConta2(@PathVariable("id") Long contaId) {
+        return bancoService.listarBancoPorContaId(contaId);
     }
 
     //Buscar banco específico
