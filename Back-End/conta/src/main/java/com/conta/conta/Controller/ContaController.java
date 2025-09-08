@@ -1,15 +1,19 @@
 package com.conta.conta.Controller;
 
+import com.conta.conta.DTO.TransacaoRequestDto;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
+import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Service.BancoService;
 import com.conta.conta.Service.ContaService;
+import com.conta.conta.Service.TransacaoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,9 +27,16 @@ public class ContaController {
     private BancoService bancoService;
 
     @Autowired
+    private TransacaoService transacaoService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
+
     // Conta Principal -------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+
+
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<Conta> listaConta(){
@@ -67,7 +78,10 @@ public class ContaController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada!"));
     }
 
+
     // Outras contas bancárias -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+
 
     //Get para buscar todas as contas bancárias
     @GetMapping("/banco")
@@ -77,7 +91,7 @@ public class ContaController {
     }
 
     //Get para buscar todas as contas bancárias de um determinado usuário
-    @GetMapping("{id}/banco")
+    @GetMapping("/{id}/banco")
     @ResponseStatus(HttpStatus.OK)
     public List<Banco> listarBancoPorConta2(@PathVariable("id") Long contaId) {
         return bancoService.listarBancoPorContaId(contaId);
@@ -90,10 +104,10 @@ public class ContaController {
         return bancoService.buscarPorId(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrada"));
     }
 
-    //Método Post para criação
-    @PostMapping("{id}/banco") //Identifica que metodo a API deve executar ao fazer um POST
+    //Metodo Post para criação de banco
+    @PostMapping("/{contaId}/banco") //Identifica que metodo a API deve executar ao fazer um POST
     @ResponseStatus(HttpStatus.CREATED) //Responde o resultado do post 201
-    public Banco salvar(@PathVariable("id") Long contaId, @RequestBody Banco banco){
+    public Banco salvar(@PathVariable("contaId") Long contaId, @RequestBody Banco banco){
 
         Conta conta = contaService.buscarPorId(contaId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada")); // Aqui ele confere se a conta que o usuário apontou existe
@@ -102,7 +116,7 @@ public class ContaController {
         return bancoService.salvar(banco);
     }
 
-    // Método PUT para atualização
+    // Metodo PUT para atualização do banco pelo id
     @PutMapping("/banco/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void atualizarBanco(@PathVariable("id") Long id, @RequestBody Banco banco){
@@ -114,6 +128,7 @@ public class ContaController {
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco nao encontrado"));
     }
 
+    // Metodo DELETE para deletar um banco pelo id
     @DeleteMapping("/banco/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removerBanco(@PathVariable("id") Long id){
@@ -122,5 +137,89 @@ public class ContaController {
             return Void.TYPE;
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrada!"));
     }
+
+
+    // Transacao  -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+
+    //Metodo Post para criação da transacao
+    @PostMapping("/{contaId}/banco/{bancoOrigemId}/{bancoDestinoId}/transacao")
+    @ResponseStatus(HttpStatus.CREATED) //Responde o resultado do post 201
+    public Transacao salvarTransacao(@PathVariable("contaId") Long contaId, @PathVariable("bancoOrigemId") Long bancoOrigemId,
+                                     @PathVariable("bancoDestinoId") Long bancoDestinoId, @RequestBody Transacao transacao){
+        return transacaoService.processarTransacao(contaId, bancoOrigemId, bancoDestinoId, transacao);
+    }
+
+    // Metodo PUT para atualização da transacao pelo id
+    @PutMapping("/banco/transacao/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void atualizarTransacao(@PathVariable("id") Long id, @RequestBody Transacao transacao){
+        transacaoService.buscarPorId(id)
+                .map(transacaoBase -> {
+                    modelMapper.map(transacao, transacaoBase);
+                    transacaoService.processarTransacao(transacaoBase.getId(), transacaoBase.getBancoOrigem().getId(), transacaoBase.getBancoDestino().getId(), transacaoBase);
+                    return Void.TYPE;
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacao nao encontrada"));
+    }
+
+    // Metodo DELETE para deletar um banco pelo id
+    @DeleteMapping("/banco/transacao/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerTransacao(@PathVariable("id") Long id){
+        transacaoService.buscarPorId(id).map(transacao -> {
+            transacaoService.removerPorId(transacao.getId());
+            return Void.TYPE;
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacao não encontrada!"));
+    }
+
+
+    // Listar todas as transações da conta
+    @GetMapping("/{contaId}/transacao")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TransacaoRequestDto> listarTransacoes(@PathVariable("contaId") Long contaId) {
+        return transacaoService.listarPorContaId(contaId);
+    }
+
+    // Buscar transação por ID
+    @GetMapping("/{contaId}/transacao/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Transacao buscarTransacao(@PathVariable Long id) {
+        return transacaoService.buscarPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transação não encontrada"));
+    }
+
+    // Listar transações por banco de origem
+    @GetMapping("/origem/{bancoOrigemId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TransacaoRequestDto> listarPorBancoOrigem(@PathVariable Long bancoOrigemId) {
+        return transacaoService.listarPorBancoOrigem(bancoOrigemId);
+    }
+
+    // Listar transações por banco de destino
+    @GetMapping("/destino/{bancoDestinoId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TransacaoRequestDto> listarPorBancoDestino(@PathVariable Long bancoDestinoId) {
+        return transacaoService.listarPorBancoDestino(bancoDestinoId);
+    }
+
+    // Listar transações por intervalo de datas
+    @GetMapping("/banco/transacao/{dataInicio}/{dataFim}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TransacaoRequestDto> listarPorData(
+            @PathVariable("dataInicio") LocalDateTime dataInicio,
+            @PathVariable("dataFim") LocalDateTime dataFim) {
+        return transacaoService.listarPorData(dataInicio, dataFim);
+    }
+
+    // Listar transações da conta por intervalo de datas
+    @GetMapping("{contaId}/banco/transacao/{dataInicio}/{dataFim}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TransacaoRequestDto> listarPorContaIdEData(
+            @PathVariable("contaId") Long contaId,
+            @PathVariable("dataInicio") LocalDateTime dataInicio,
+            @PathVariable("dataFim") LocalDateTime dataFim) {
+        return transacaoService.listarPorContaIdEData(contaId, dataInicio, dataFim);
+    }
+
 
 }

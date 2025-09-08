@@ -1,3 +1,4 @@
+//Banco - multiplas contas bancarias do usuario
 package com.conta.conta.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

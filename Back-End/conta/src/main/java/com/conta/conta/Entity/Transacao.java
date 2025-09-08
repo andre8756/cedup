@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+// Lista de Transacoes do usuario
 @Entity
 @Table(name = "tb_transacoes")
 public class Transacao {
@@ -18,10 +19,6 @@ public class Transacao {
 
     @Column(nullable = false)
     private String descricao;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoTransacao tipoTransacao;
 
     @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
     @Column(nullable = false, updatable = false)
@@ -39,17 +36,9 @@ public class Transacao {
     @JoinColumn(name = "banco_destino_id", nullable = false)
     private Banco bancoDestino;
 
-    public enum TipoTransacao {
-        TRANSFERENCIA,
-        DEPOSITO,
-        PAGAMENTO,
-        RECEBIMENTO
-    }
-
-    public Transacao(float valor, String descricao, TipoTransacao tipoTransacao, Conta conta, Banco bancoOrigem, Banco bancoDestino){
+    public Transacao(float valor, String descricao, Conta conta, Banco bancoOrigem, Banco bancoDestino){
         this.valor = valor;
         this.descricao = descricao;
-        this.tipoTransacao = tipoTransacao;
         this.conta = conta;
         this.bancoOrigem = bancoOrigem;
         this.bancoDestino = bancoDestino;
@@ -83,20 +72,12 @@ public class Transacao {
         this.descricao = descricao;
     }
 
-    public TipoTransacao getTipoTransacao() {
-        return tipoTransacao;
-    }
-
-    public void setTipoTransacao(TipoTransacao tipoTransacao) {
-        this.tipoTransacao = tipoTransacao;
-    }
-
-    public LocalDateTime getDataTransferencia() {
+    public LocalDateTime getDataTransacao() {
         return dataTransacao;
     }
 
-    public void setDataTransferencia(LocalDateTime dataTransferencia) {
-        this.dataTransacao = dataTransferencia;
+    public void setDataTransacao(LocalDateTime dataTransacao) {
+        this.dataTransacao = dataTransacao;
     }
 
     public Conta getConta() {
@@ -129,7 +110,6 @@ public class Transacao {
                 "id=" + id +
                 ", valor=" + valor +
                 ", descricao='" + descricao + '\'' +
-                ", tipoTransacao=" + tipoTransacao +
                 ", dataTransacao=" + dataTransacao +
                 ", conta=" + conta.getTitular() +
                 ", bancoOrigem=" + bancoOrigem.getNomeBanco() +
