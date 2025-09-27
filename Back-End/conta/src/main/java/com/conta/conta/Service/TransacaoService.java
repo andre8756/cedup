@@ -5,6 +5,7 @@ import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Repository.TransacaoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +48,6 @@ public class TransacaoService {
         bancoOrigem.setSaldo(bancoOrigem.getSaldo() - transacao.getValor());
         bancoDestino.setSaldo(bancoDestino.getSaldo() + transacao.getValor());
 
-        // Atualizar saldo total da conta (opcional, dependendo da regra de negócio)
-        conta.setSaldoTotal(conta.getSaldoTotal() - transacao.getValor()); // Ou ajuste conforme necessário
-
         // Salvar alterações nos bancos
         bancoService.salvar(bancoOrigem);
         bancoService.salvar(bancoDestino);
@@ -57,6 +55,7 @@ public class TransacaoService {
 
         // Criar e salvar a transação
         Transacao transacaoFinal = new Transacao(transacao.getValor(), transacao.getDescricao(), conta, bancoOrigem, bancoDestino);
+        contaService.atualizarSaldoTotal(contaId); // atualiza o saldo da conta total
         return transacaoRepository.save(transacaoFinal);
     }
 
@@ -98,7 +97,12 @@ public class TransacaoService {
     }
 
     public void removerPorId(Long id){
+        Transacao transacao = transacaoRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Transação não encontrada"));
+        Long contaId = transacao.getConta().getId();
         transacaoRepository.deleteById(id);
+        //Atualizar o saldo total da cont após deletar a transacao
+        contaService.atualizarSaldoTotal(contaId);
     }
 //--------------------------------------------------------------------------------------------
 

@@ -3,6 +3,7 @@ package com.conta.conta.Service;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Repository.BancoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,13 @@ public class BancoService {
     ContaService contaService;
 
     public Banco salvar(Banco banco){
-        Conta conta = banco.getConta();
-        conta.setSaldoTotal(conta.getSaldoTotal() + banco.getSaldo());
-        return bancoRepository.save(banco);
+        Banco bancoSalvo = bancoRepository.save(banco);
+        //Atualiza o saldoTotal da conta
+        contaService.atualizarSaldoTotal(bancoSalvo.getConta().getId());
+        return bancoSalvo;
     }
 
-    public List<Banco> listarBanco(){
+    public List<Banco> listarBancos(){
         return bancoRepository.findAll();
     }
 
@@ -36,8 +38,13 @@ public class BancoService {
         return bancoRepository.findById(id);
     }
 
-    public void removerPorId(Long id){
-        bancoRepository.deleteById(id);
+    public void removerPorId(Long bancoId) {
+        Banco banco = bancoRepository.findById(bancoId)
+                .orElseThrow(() -> new EntityNotFoundException("Banco não encontrado"));
+        Long contaId = banco.getConta().getId();
+        bancoRepository.delete(banco);
+        // Atualizar o saldo total da conta após deletar
+        contaService.atualizarSaldoTotal(contaId);
     }
 
 }

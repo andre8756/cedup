@@ -87,7 +87,7 @@ public class ContaController {
     @GetMapping("/banco")
     @ResponseStatus(HttpStatus.OK)
     public List<Banco> listaBanco(){
-        return bancoService.listarBanco();
+        return bancoService.listarBancos();
     }
 
     //Get para buscar todas as contas bancárias de um determinado usuário
