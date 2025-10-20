@@ -30,10 +30,7 @@ public class TransacaoService {
 
     // Processar uma transação (transferência)
     @Transactional
-    public Transacao processarTransacao(Long contaId, Long bancoOrigemId, Long bancoDestinoId, Transacao transacao) {
-        // Buscar a conta, banco de origem e banco de destino
-        Conta conta = contaService.buscarPorId(contaId)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+    public TransacaoRequestDto processarTransacao(Long bancoOrigemId, Long bancoDestinoId, Transacao transacao) {
         Banco bancoOrigem = bancoService.buscarPorId(bancoOrigemId)
                 .orElseThrow(() -> new RuntimeException("Banco de origem não encontrado"));
         Banco bancoDestino = bancoService.buscarPorId(bancoDestinoId)
@@ -48,15 +45,27 @@ public class TransacaoService {
         bancoOrigem.setSaldo(bancoOrigem.getSaldo() - transacao.getValor());
         bancoDestino.setSaldo(bancoDestino.getSaldo() + transacao.getValor());
 
+        //Settar Contas
+        Conta contaOrigem = contaService.buscarPorId(bancoOrigem.getConta().getId())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+        Conta contaDestino = contaService.buscarPorId(bancoDestino.getConta().getId())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+
+
         // Salvar alterações nos bancos
         bancoService.salvar(bancoOrigem);
         bancoService.salvar(bancoDestino);
-        contaService.salvar(conta);
 
         // Criar e salvar a transação
-        Transacao transacaoFinal = new Transacao(transacao.getValor(), transacao.getDescricao(), conta, bancoOrigem, bancoDestino);
-        contaService.atualizarSaldoTotal(contaId); // atualiza o saldo da conta total
-        return transacaoRepository.save(transacaoFinal);
+        Transacao transacaoFinal = new Transacao(transacao.getValor(), transacao.getDescricao(), contaOrigem, bancoOrigem, contaDestino, bancoDestino);
+
+        //Atualizar o saldo total das contas após deletar a transacao
+        contaService.atualizarSaldoTotal(transacaoFinal.getBancoDestino().getConta().getId());
+        contaService.atualizarSaldoTotal(transacaoFinal.getBancoOrigem().getConta().getId());
+
+        Transacao transacaoSalva = transacaoRepository.save(transacaoFinal);
+
+        return convertToDTO(transacaoSalva);
     }
 
 
@@ -71,7 +80,17 @@ public class TransacaoService {
         return transacaoRepository.findById(id);
     }
 
-    // Listar transações por conta ID
+    // Listar transações por conta origem
+    public List<TransacaoRequestDto> listarPorContaOrigemId(Long contaId) {
+        return convertToListDTO(transacaoRepository.findByContaOrigemId(contaId));
+    }
+
+    // Listar transações por conta destino
+    public List<TransacaoRequestDto> listarPorContaDestinoId(Long contaId) {
+        return convertToListDTO(transacaoRepository.findByContaDestinoId(contaId));
+    }
+
+    // Listar transações por conta ID independente se for por destino ou origem
     public List<TransacaoRequestDto> listarPorContaId(Long contaId) {
         return convertToListDTO(transacaoRepository.findByContaId(contaId));
     }
@@ -99,10 +118,10 @@ public class TransacaoService {
     public void removerPorId(Long id){
         Transacao transacao = transacaoRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException("Transação não encontrada"));
-        Long contaId = transacao.getConta().getId();
         transacaoRepository.deleteById(id);
-        //Atualizar o saldo total da cont após deletar a transacao
-        contaService.atualizarSaldoTotal(contaId);
+        //Atualizar o saldo total das contas após deletar a transacao
+        contaService.atualizarSaldoTotal(transacao.getBancoDestino().getConta().getId());
+        contaService.atualizarSaldoTotal(transacao.getBancoOrigem().getConta().getId());
     }
 //--------------------------------------------------------------------------------------------
 
@@ -110,7 +129,7 @@ public class TransacaoService {
     private TransacaoRequestDto convertToDTO(Transacao transacao) {
         if (transacao == null) return null;
 
-        TransacaoRequestDto transacaoRequestDto = new TransacaoRequestDto(transacao.getId(), transacao.getConta().getId(), transacao.getBancoOrigem().getId(),
+        TransacaoRequestDto transacaoRequestDto = new TransacaoRequestDto(transacao.getId(), transacao.getContaOringem().getId(), transacao.getBancoOrigem().getId(), transacao.getContaDestino().getId(),
                 transacao.getBancoDestino().getId(), transacao.getValor(), transacao.getDescricao(),
                 transacao.getDataTransacao());
 
