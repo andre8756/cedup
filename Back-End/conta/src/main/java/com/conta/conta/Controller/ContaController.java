@@ -212,7 +212,7 @@ public class ContaController {
     @GetMapping("/destino/{contaDestinoId}/banco/transacao")
     @ResponseStatus(HttpStatus.OK)
     public List<TransacaoRequestDto> listarPorContaDestino(@PathVariable Long contaDestinoId) {
-        return transacaoService.listarPorContaOrigemId(contaDestinoId);
+        return transacaoService.listarPorContaDestinoId(contaDestinoId);
     }
 
     // Listar transações por banco de destino
