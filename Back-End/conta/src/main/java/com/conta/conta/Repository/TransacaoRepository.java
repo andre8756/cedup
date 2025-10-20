@@ -11,7 +11,13 @@ import java.util.List;
 public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 
     // Listar transações por conta ID
-    List<Transacao> findByContaId(Long contaId);
+    List<Transacao> findByContaOrigemId(Long contaId);
+    List<Transacao> findByContaDestinoId(Long contaId);
+
+    @Query("SELECT DISTINCT t FROM Transacao t WHERE (t.contaOrigem.id = :contaId OR t.contaDestino.id = :contaId)")
+    List<Transacao> findByContaId(
+            @Param("contaId") Long contaId
+    );
 
     // Listar transações por banco de origem
     List<Transacao> findByBancoOrigemId(Long bancoOrigemId);
@@ -26,8 +32,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
             @Param("dataFim") LocalDateTime dataFim
     );
 
-    // Listar transações por conta ID e intervalo de datas
-    @Query("SELECT t FROM Transacao t WHERE t.conta.id = :contaId AND t.dataTransacao BETWEEN :dataInicio AND :dataFim")
+    @Query("SELECT DISTINCT t FROM Transacao t WHERE (t.contaOrigem.id = :contaId OR t.contaDestino.id = :contaId) AND t.dataTransacao BETWEEN :dataInicio AND :dataFim")
     List<Transacao> findByContaIdAndDataTransacaoBetween(
             @Param("contaId") Long contaId,
             @Param("dataInicio") LocalDateTime dataInicio,
