@@ -25,22 +25,27 @@ public class Transacao {
     private LocalDateTime dataTransacao;
 
     @ManyToOne
-    @JoinColumn(name = "conta_id", nullable = false)
-    private Conta conta;
+    @JoinColumn(name = "conta_origem_id", nullable = false)
+    private Conta contaOrigem;
 
     @ManyToOne
     @JoinColumn(name = "banco_origem_id", nullable = false)
     private Banco bancoOrigem;
 
     @ManyToOne
-    @JoinColumn(name = "banco_destino_id", nullable = false)
+    @JoinColumn(name = "conta_destino_id")
+    private Conta contaDestino;
+
+    @ManyToOne
+    @JoinColumn(name = "banco_destino_id")
     private Banco bancoDestino;
 
-    public Transacao(float valor, String descricao, Conta conta, Banco bancoOrigem, Banco bancoDestino){
+    public Transacao(float valor, String descricao, Conta contaOrigem, Banco bancoOrigem, Conta contaDestino, Banco bancoDestino){
         this.valor = valor;
         this.descricao = descricao;
-        this.conta = conta;
+        this.contaOrigem = contaOrigem;
         this.bancoOrigem = bancoOrigem;
+        this.contaDestino = contaDestino;
         this.bancoDestino = bancoDestino;
     }
 
@@ -80,12 +85,20 @@ public class Transacao {
         this.dataTransacao = dataTransacao;
     }
 
-    public Conta getConta() {
-        return conta;
+    public Conta getContaOringem() {
+        return contaOrigem;
     }
 
-    public void setConta(Conta conta) {
-        this.conta = conta;
+    public void setContaOringem(Conta contaOringem) {
+        this.contaOrigem = contaOringem;
+    }
+
+    public Conta getContaDestino() {
+        return contaDestino;
+    }
+
+    public void setContaDestino(Conta contaDestino) {
+        this.contaDestino = contaDestino;
     }
 
     public Banco getBancoOrigem() {
@@ -111,8 +124,9 @@ public class Transacao {
                 ", valor=" + valor +
                 ", descricao='" + descricao + '\'' +
                 ", dataTransacao=" + dataTransacao +
-                ", conta=" + conta.getTitular() +
+                ", conta=" + contaOrigem.getTitular() +
                 ", bancoOrigem=" + bancoOrigem.getNomeBanco() +
+                ", contaDestino= "+ contaDestino.getTitular() +
                 ", bancoDestino=" + bancoDestino.getNomeBanco() +
                 '}';
     }
