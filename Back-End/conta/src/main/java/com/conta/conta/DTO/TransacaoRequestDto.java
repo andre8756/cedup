@@ -5,18 +5,29 @@ import java.time.LocalDateTime;
 public class TransacaoRequestDto {
 
     private Long id;
-    private Long contaId;
+    private Long contaOrigemId;
     private Long bancoOrigemId;
+    private Long contaDestinoId;
     private Long bancoDestinoId;
     private float valor;
     private String descricao;
     private LocalDateTime dataTransacao;
 
-    public TransacaoRequestDto(Long id, Long contaId, Long bancoOrigemId, Long bancoDestinoId, float valor, String descricao, LocalDateTime dataTransacao) {
+    public TransacaoRequestDto(Long id, Long contaOrigemId, Long bancoOrigemId, Long contaDestinoId, Long bancoDestinoId, float valor, String descricao, LocalDateTime dataTransacao) {
         this.id = id;
-        this.contaId = contaId;
+        this.contaOrigemId = contaOrigemId;
         this.bancoOrigemId = bancoOrigemId;
+        this.contaDestinoId = contaDestinoId;
         this.bancoDestinoId = bancoDestinoId;
+        this.valor = valor;
+        this.descricao = descricao;
+        this.dataTransacao = dataTransacao;
+    }
+
+    public TransacaoRequestDto(Long id, Long contaOrigemId, Long bancoOrigemId, float valor, String descricao, LocalDateTime dataTransacao) {
+        this.id = id;
+        this.contaOrigemId = contaOrigemId;
+        this.bancoOrigemId = bancoOrigemId;
         this.valor = valor;
         this.descricao = descricao;
         this.dataTransacao = dataTransacao;
@@ -38,11 +49,17 @@ public class TransacaoRequestDto {
     public void setValor(float valor) { this.valor = valor; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
-    public Long getContaId() {
-        return contaId;
+    public Long getContaOrigemId() {
+        return contaOrigemId;
     }
-    public void setContaId(Long contaId) {
-        this.contaId = contaId;
+    public void setContaOrigemId(Long contaId) {
+        this.contaOrigemId = contaId;
+    }
+    public Long getContaDestinoId() {
+        return contaDestinoId;
+    }
+    public void setContaDestinoId(Long contaId) {
+        this.contaDestinoId = contaId;
     }
     public LocalDateTime getDataTransacao() {
         return dataTransacao;
