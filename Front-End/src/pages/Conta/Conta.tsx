@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
-import ContasList from "../../components/ContasList/ContasList";
 import "./Conta.css"
 
 interface Banco {
@@ -11,7 +10,7 @@ interface Banco {
 interface Conta {
     id: number;
     titular: string;
-    saldoTotal: number;
+    saldo: number;
     bancos: Banco[];
 }
 
@@ -21,7 +20,7 @@ function Home() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:8080/conta")
+        fetch("http://localhost:8080/conta/1/banco")
             .then((response) => {
                 if (!response.ok) throw new Error("Erro ao buscar contas");
                 return response.json();
@@ -31,11 +30,11 @@ function Home() {
             .finally(() => setLoading(false));
     }, []);
 
-    const saldoTotal = contas.reduce((total, conta) => total + conta.saldoTotal, 0);
+    const saldo = contas.reduce((total, conta) => total + conta.saldo, 0);
 
-    const handleAddConta = async (novaConta: { titular: string; instituicao: string; saldo: number }) => {
+    const handleAddConta = async (novaConta: { titular: string; nomeBanco: string; saldo: number }) => {
         try {
-            const response = await fetch("http://localhost:8080/conta", {
+            const response = await fetch("http://localhost:8080/conta/1/banco", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(novaConta),
@@ -80,7 +79,7 @@ function Home() {
                             <div className="card-text">
                                 <small>Saldo Total</small>
                                 <strong>
-                                    {saldoTotal.toLocaleString("pt-BR", {
+                                    {saldo.toLocaleString("pt-BR", {
                                         style: "currency",
                                         currency: "BRL",
                                     })}
@@ -105,21 +104,22 @@ function Home() {
                             contas.map((conta) => (
                                 <article key={conta.id} className="account-card" aria-label={conta.titular}>
                                     <div className="account-header">
-                                        <div className="account-info">
-                                            <strong>{conta.titular}</strong>
-                                            {conta.bancos.map((banco) => (
-                                                <small key={banco.numero}>
-                                                    {banco.nome} - {banco.numero}
-                                                </small>
-                                            ))}
-                                        </div>
+                                    <div className="account-info">
+                                        <strong>{conta.titular}</strong>
+                                        {/* Corrija aqui: Adicione '?' para garantir que 'bancos' exista antes de chamar 'map' */}
+                                        {conta.bancos?.map((banco) => (
+                                            <small key={banco.numero}>
+                                                {banco.nome} - {banco.numero}
+                                            </small>
+                                        ))}
+                                    </div>
                                         <div className="menu-dots" aria-label="Menu">...</div>
                                     </div>
 
                                     <div>
                                         <div className="available-label">Saldo disponível</div>
                                         <div className="available-balance">
-                                            {conta.saldoTotal.toLocaleString("pt-BR", {
+                                            {conta.saldo.toLocaleString("pt-BR", {
                                                 style: "currency",
                                                 currency: "BRL",
                                             })}
