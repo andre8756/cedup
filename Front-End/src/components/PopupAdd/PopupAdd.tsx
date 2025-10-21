@@ -2,14 +2,14 @@ import React, { useState } from "react";
 
 interface PopupFormProps {
   onClose: () => void;
-  onSubmit: (novaConta: { titular: string; instituicao: string; saldo: number }) => void;   
+  onSubmit: (novaConta: { titular: string; nomeBanco: string; saldo: number }) => void;   
 }
 
 const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
     titular: "",
-    instituicao: "",
-    saldoTotal: "",
+    nomeBanco: "",
+    saldo: "",
     numero:""
   });
 
@@ -20,13 +20,13 @@ const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {
 const handleSubmit = async () => {
   const novaConta = {
     titular: formData.titular,
-    instituicao: formData.instituicao,
-    saldoTotal: parseFloat(formData.saldoTotal), // string -> number
+    nomeBanco: formData.nomeBanco,
+    saldo: parseFloat(formData.saldo), // string -> number
     numero: formData.numero
   };
 
   try {
-    const response = await fetch("http://localhost:8080/conta", {
+    const response = await fetch("http://localhost:8080/conta/1/banco", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(novaConta),
@@ -58,20 +58,20 @@ const handleSubmit = async () => {
           placeholder="Ex: Lucas Andrade"
         />
 
-        <label htmlFor="instituicao">Nome da Instituição Bancária:</label>
+        <label htmlFor="nomeBanco">Nome da Instituição Bancária:</label>
         <input
-          id="instituicao"
-          value={formData.instituicao}
+          id="nomeBanco"
+          value={formData.nomeBanco}
           onChange={handleChange}
           placeholder="Ex: Inter"
         />
 
         <label htmlFor="saldo">Informe o Saldo Bancário:</label>
         <input
-          id="saldoTotal"
+          id="saldo"
           type="number"
           step="0.01"
-          value={formData.saldoTotal}
+          value={formData.saldo}
           onChange={handleChange}
           placeholder="Ex: R$6312,48"
         />
