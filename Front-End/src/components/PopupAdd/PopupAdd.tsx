@@ -9,7 +9,7 @@ const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
     titular: "",
     instituicao: "",
-    saldo: "",
+    saldoTotal: "",
     numero:""
   });
 
@@ -17,25 +17,33 @@ const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        alert("Conta adicionada com sucesso!");
-        onClose();
-      } else {
-        alert("Erro ao adicionar conta.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Erro de conexão com o servidor.");
-    }
+const handleSubmit = async () => {
+  const novaConta = {
+    titular: formData.titular,
+    instituicao: formData.instituicao,
+    saldoTotal: parseFloat(formData.saldoTotal), // string -> number
+    numero: formData.numero
   };
+
+  try {
+    const response = await fetch("http://localhost:8080/conta", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(novaConta),
+    });
+
+    if (response.ok) {
+      alert("Conta adicionada com sucesso!");
+      onClose();
+    } else {
+      alert("Erro ao adicionar conta.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Erro de conexão com o servidor.");
+  }
+};
+
 
   return (
     <div className="popup">
@@ -60,10 +68,10 @@ const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {
 
         <label htmlFor="saldo">Informe o Saldo Bancário:</label>
         <input
-          id="saldo"
+          id="saldoTotal"
           type="number"
           step="0.01"
-          value={formData.saldo}
+          value={formData.saldoTotal}
           onChange={handleChange}
           placeholder="Ex: R$6312,48"
         />
