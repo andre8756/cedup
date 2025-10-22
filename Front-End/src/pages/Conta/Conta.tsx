@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css"
 
@@ -14,20 +14,23 @@ interface Conta {
     bancos: Banco[];
 }
 
-function Home() {
+function Conta() {
     const [showPopup, setShowPopup] = useState(false);
     const [contas, setContas] = useState<Conta[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:8080/conta/1/banco")
-            .then((response) => {
-                if (!response.ok) throw new Error("Erro ao buscar contas");
-                return response.json();
-            })
-            .then((data) => setContas(data))
-            .catch((error) => console.error("Erro ao buscar contas:", error))
-            .finally(() => setLoading(false));
+        // Dados de exemplo enquanto a API não está disponível
+        const dadosExemplo: Conta[] = [
+            {
+                id: 1,
+                titular: "Exemplo",
+                saldo: 1000,
+                bancos: [{ nome: "Banco Exemplo", numero: 1 }]
+            }
+        ];
+        setContas(dadosExemplo);
+        setLoading(false);
     }, []);
 
     const saldo = contas.reduce((total, conta) => total + conta.saldo, 0);
@@ -173,4 +176,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Conta;
