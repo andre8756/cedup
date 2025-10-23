@@ -73,7 +73,7 @@ public class TransacaoService {
         return listarComFiltros(filtro);
     }
 
-    // Metodos antigos ----------------------------------------------------------------------------------------------------
+    // Metodos antigos (alguns serao excluidos)----------------------------------------------------------------------------------------------------
 
     // Processar uma transação (transferência)
     @Transactional

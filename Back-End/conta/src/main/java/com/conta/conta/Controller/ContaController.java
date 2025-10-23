@@ -178,7 +178,7 @@ public class ContaController {
 
 
     // ENDPOINT ÚNICO PARA TODAS AS BUSCAS
-    @GetMapping("/filtros")
+    @GetMapping("banco/transacao/filtros")
     public List<TransacaoRequestDto> listarComFiltros(
             @RequestParam(required = false) Long contaId,
             @RequestParam(required = false) Long contaOrigemId,
@@ -208,23 +208,7 @@ public class ContaController {
         return transacaoService.listarComFiltros(filtro);
     }
 
-    // ENDPOINTS DE CONVENIÊNCIA (opcionais)
-    @GetMapping("/conta/{contaId}")
-    public List<TransacaoRequestDto> listarPorConta(@PathVariable Long contaId) {
-        return transacaoService.listarPorContaIdNew(contaId);
-    }
-
-    @GetMapping("/contas")
-    public List<TransacaoRequestDto> listarPorContas(@RequestParam List<Long> contasIds) {
-        return transacaoService.listarPorContasIds(contasIds);
-    }
-
-    @GetMapping("/bancos")
-    public List<TransacaoRequestDto> listarPorBancos(@RequestParam List<Long> bancosIds) {
-        return transacaoService.listarPorBancosIds(bancosIds);
-    }
-
-    // Metodos Antigoos ----------------------------------------------------------------------------------
+    // Metodos Antigoos (serao excluido)----------------------------------------------------------------------------------
 
     @GetMapping("banco/transacao")
     @ResponseStatus(HttpStatus.OK)
