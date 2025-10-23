@@ -1,8 +1,10 @@
 package com.conta.conta.Entity;
 
+import com.conta.conta.Enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -40,6 +42,9 @@ public class Conta implements UserDetails {
     @Column(nullable = false)
     private Boolean status;
 
+    @Column(nullable = false)
+    private UserRole role;
+
     @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
@@ -50,14 +55,18 @@ public class Conta implements UserDetails {
     // Construtores
     public Conta() {}
 
-    public Conta(String titular, String email, String telefone, String senha, String cpf, List<Banco> bancos) {
+    public Conta(Long id, String titular, String cpf, String email, String senha, String telefone, float saldoTotal, Boolean status, UserRole role, LocalDateTime dataCadastro, List<Banco> bancos) {
+        this.id = id;
         this.titular = titular;
-        this.email = email;
-        this.telefone = telefone;
-        this.senha = senha;
         this.cpf = cpf;
-        this.bancos = bancos;
+        this.email = email;
+        this.senha = senha;
+        this.telefone = telefone;
         this.saldoTotal = 0;
+        this.status = status;
+        this.role = role;
+        this.dataCadastro = dataCadastro;
+        this.bancos = bancos;
     }
 
     @PrePersist
@@ -145,38 +154,40 @@ public class Conta implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public String getPassword() {
-        return senha;
+        return getPassword();
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return getUsername();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return status != null && status;
+        return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return status != null && status;
+        return UserDetails.super.isEnabled();
     }
+
 
     @Override
     public String toString() {
