@@ -1,16 +1,21 @@
 package com.conta.conta.Entity;
 
+import com.conta.conta.Enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-//Conta principal do usuário
+// Conta principal do usuário
 @Entity
 @Table(name = "tb_contas")
-public class Conta {
+public class Conta implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +24,10 @@ public class Conta {
     @Column(nullable = false)
     private String titular;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String cpf;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -37,33 +42,41 @@ public class Conta {
     @Column(nullable = false)
     private Boolean status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+
     @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
-    @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // Remove a tabela de junção
+    @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banco> bancos = new ArrayList<>();
 
-    public Conta(String titular, String email, String telefone, String senha, String cpf, List<Banco> bancos) {
+    // Construtores
+    public Conta() {}
+
+    public Conta(Long id, String titular, String cpf, String email, String senha, String telefone, float saldoTotal, Boolean status, UserRole role, LocalDateTime dataCadastro, List<Banco> bancos) {
+        this.id = id;
         this.titular = titular;
-        this.email = email;
-        this.telefone = telefone;
-        this.senha = senha;
-        this.saldoTotal = 0;
         this.cpf = cpf;
+        this.email = email;
+        this.senha = senha;
+        this.telefone = telefone;
+        this.saldoTotal = 0;
+        this.status = status;
+        this.role = role;
+        this.dataCadastro = dataCadastro;
         this.bancos = bancos;
     }
 
-    public Conta(){
-
-    }
-
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         dataCadastro = LocalDateTime.now();
         status = true;
     }
 
+    // Getters e setters normais
     public Long getId() {
         return id;
     }
@@ -72,16 +85,8 @@ public class Conta {
         return titular;
     }
 
-    public void setTitular(String proprietario) {
-        this.titular = proprietario;
-    }
-
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
+    public void setTitular(String titular) {
+        this.titular = titular;
     }
 
     public String getEmail() {
@@ -132,13 +137,66 @@ public class Conta {
         this.status = status;
     }
 
-    public List<Banco> getBancos(){
+    public LocalDateTime getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public List<Banco> getBancos() {
         return bancos;
     }
 
-    public void setBancos(List<Banco> bancos){
+    public void setBancos(List<Banco> bancos) {
         this.bancos = bancos;
     }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    // ===============================
+    // Métodos exigidos por UserDetails
+    // ===============================
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return senha; 
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
 
     @Override
     public String toString() {
@@ -147,7 +205,6 @@ public class Conta {
                 ", titular='" + titular + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", saldoTotal=" + saldoTotal +
                 ", status=" + status +

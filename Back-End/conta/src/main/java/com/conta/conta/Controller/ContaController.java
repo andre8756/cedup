@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,9 +20,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/conta")
+@PreAuthorize("hasRole('USER')")
+
 public class ContaController {
 
     @Autowired
@@ -52,13 +54,6 @@ public class ContaController {
     @ResponseStatus(HttpStatus.OK)
     public Conta buscarConta(@PathVariable("id") Long id){
         return contaService.buscarPorId(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
-    }
-
-    //Método Post para criação
-    @PostMapping //Identifica que metodo a API deve executar ao fazer um POST
-    @ResponseStatus(HttpStatus.CREATED) //Responde o resultado do post 201
-    public Conta salvar(@RequestBody Conta conta){
-        return contaService.salvar(conta);
     }
 
     // Método PUT para atualização
