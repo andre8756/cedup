@@ -1,5 +1,6 @@
 package com.conta.conta.Controller;
 
+import com.conta.conta.DTO.AuthResponse;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Repository.ContaRepository;
 import com.conta.conta.Security.TokenService;

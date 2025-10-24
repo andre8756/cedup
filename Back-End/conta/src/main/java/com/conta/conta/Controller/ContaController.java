@@ -22,7 +22,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/conta")
-@CrossOrigin(origins = "http://localhost:5173")
 @PreAuthorize("hasRole('USER')")
 
 public class ContaController {

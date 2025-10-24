@@ -42,6 +42,7 @@ public class Conta implements UserDetails {
     @Column(nullable = false)
     private Boolean status;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
@@ -148,6 +149,14 @@ public class Conta implements UserDetails {
         this.bancos = bancos;
     }
 
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
     // ===============================
     // Métodos exigidos por UserDetails
     // ===============================
@@ -160,12 +169,12 @@ public class Conta implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getPassword();
+        return senha; 
     }
 
     @Override
     public String getUsername() {
-        return getUsername();
+        return email;
     }
 
     @Override

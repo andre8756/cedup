@@ -13,23 +13,22 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    private String secret = "asterisco";
+    private final String secret = "asterisco";
 
-    private  String generateToken(Conta conta){
+    public String generateToken(Conta conta) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-banco-tcc")
                     .withSubject(conta.getEmail())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
-                    return token;
-        }catch (Exception e){
-            throw new RuntimeException("Error ao gerar a token: "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar token: " + e.getMessage());
         }
     }
 
-    private String validadeToken(String token){
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -37,13 +36,13 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-            }catch (JWTVerificationException e){
+        } catch (JWTVerificationException e) {
             return "";
         }
     }
 
-    private Instant generateExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant((ZoneOffset.of("-03 : 00")));
+    private Instant generateExpirationDate() {
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
-
 }
+
