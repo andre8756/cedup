@@ -1,5 +1,6 @@
 package com.conta.conta.Controller;
 
+import com.conta.conta.DTO.TransacaoFiltro;
 import com.conta.conta.DTO.TransacaoRequestDto;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
@@ -9,6 +10,7 @@ import com.conta.conta.Service.ContaService;
 import com.conta.conta.Service.TransacaoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -170,6 +172,40 @@ public class ContaController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacao não encontrada!"));
     }
 
+
+    // ENDPOINT ÚNICO PARA TODAS AS BUSCAS
+    @GetMapping("banco/transacao/filtros")
+    public List<TransacaoRequestDto> listarComFiltros(
+            @RequestParam(required = false) Long contaId,
+            @RequestParam(required = false) Long contaOrigemId,
+            @RequestParam(required = false) Long contaDestinoId,
+            @RequestParam(required = false) Long bancoOrigemId,
+            @RequestParam(required = false) Long bancoDestinoId,
+            @RequestParam(required = false) List<Long> bancosIds,
+            @RequestParam(required = false) List<Long> contasIds,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataFim,
+            @RequestParam(required = false) Float valor,
+            @RequestParam(required = false) String descricao) {
+
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setContaId(contaId);
+        filtro.setContaOrigemId(contaOrigemId);
+        filtro.setContaDestinoId(contaDestinoId);
+        filtro.setBancoOrigemId(bancoOrigemId);
+        filtro.setBancoDestinoId(bancoDestinoId);
+        filtro.setBancosIds(bancosIds);
+        filtro.setContasIds(contasIds);
+        filtro.setDataInicio(dataInicio);
+        filtro.setDataFim(dataFim);
+        filtro.setValor(valor);
+        filtro.setDescricao(descricao);
+
+        return transacaoService.listarComFiltros(filtro);
+    }
+
+    // Metodos Antigoos (serao excluido)----------------------------------------------------------------------------------
+
     @GetMapping("banco/transacao")
     @ResponseStatus(HttpStatus.OK)
     public List<TransacaoRequestDto> listarTransacoes(){
@@ -237,6 +273,4 @@ public class ContaController {
             @PathVariable("dataFim") LocalDateTime dataFim) {
         return transacaoService.listarPorContaIdEData(contaId, dataInicio, dataFim);
     }
-
-
 }

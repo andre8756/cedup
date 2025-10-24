@@ -1,12 +1,15 @@
 package com.conta.conta.Service;
 
+import com.conta.conta.DTO.TransacaoFiltro;
 import com.conta.conta.DTO.TransacaoRequestDto;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Repository.TransacaoRepository;
+import com.conta.conta.Specification.TransacaoSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 public class TransacaoService {
@@ -27,6 +31,49 @@ public class TransacaoService {
     @Autowired
     private BancoService bancoService;
 
+
+    // MeTODO PRINCIPAL - substitui todos os métodos de busca
+    public List<TransacaoRequestDto> listarComFiltros(TransacaoFiltro filtro) {
+        Specification<Transacao> spec = TransacaoSpecifications.comFiltros(filtro);
+        return convertToListDTO(transacaoRepository.findAll(spec));
+    }
+
+    // MÉTODOS DE CONVENIÊNCIA (opcionais - para compatibilidade)
+    public List<TransacaoRequestDto> listarPorContaIdNew(Long contaId) {
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setContaId(contaId);
+        return listarComFiltros(filtro);
+    }
+
+    public List<TransacaoRequestDto> listarPorContasIds(List<Long> contasIds) {
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setContasIds(contasIds);
+        return listarComFiltros(filtro);
+    }
+
+    public List<TransacaoRequestDto> listarPorBancosIds(List<Long> bancosIds) {
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setBancosIds(bancosIds);
+        return listarComFiltros(filtro);
+    }
+
+    public List<TransacaoRequestDto> listarPorContaIdEDataNew(Long contaId, LocalDateTime dataInicio, LocalDateTime dataFim) {
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setContaId(contaId);
+        filtro.setDataInicio(dataInicio);
+        filtro.setDataFim(dataFim);
+        return listarComFiltros(filtro);
+    }
+
+    public List<TransacaoRequestDto> listarPorBancoIdEData(Long bancoId, LocalDateTime dataInicio, LocalDateTime dataFim) {
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setBancosIds(List.of(bancoId));
+        filtro.setDataInicio(dataInicio);
+        filtro.setDataFim(dataFim);
+        return listarComFiltros(filtro);
+    }
+
+    // Metodos antigos (alguns serao excluidos)----------------------------------------------------------------------------------------------------
 
     // Processar uma transação (transferência)
     @Transactional
@@ -67,8 +114,6 @@ public class TransacaoService {
 
         return convertToDTO(transacaoSalva);
     }
-
-
 
     // Listar todas as transações
     public List<TransacaoRequestDto> listarTransacoes() {
