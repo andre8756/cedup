@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { UserPlus, Lock, Mail, Phone, User, CreditCard } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 
 function Cadastro() {
   const [formData, setFormData] = useState({
@@ -10,8 +8,6 @@ function Cadastro() {
     telefone: '',
     senha: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -41,41 +37,9 @@ function Cadastro() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
-
-    try {
-      const { error } = await supabase
-        .from('users')
-        .insert([{
-          titular: formData.titular,
-          cpf: formData.cpf.replace(/\D/g, ''),
-          email: formData.email,
-          telefone: formData.telefone.replace(/\D/g, ''),
-          senha: formData.senha,
-        }]);
-
-      if (error) throw error;
-
-      setMessage({ type: 'success', text: 'Cadastro realizado com sucesso!' });
-      setFormData({
-        titular: '',
-        cpf: '',
-        email: '',
-        telefone: '',
-        senha: '',
-      });
-    } catch (error: any) {
-      if (error.code === '23505') {
-        setMessage({ type: 'error', text: 'CPF ou e-mail já cadastrado.' });
-      } else {
-        setMessage({ type: 'error', text: 'Erro ao realizar cadastro. Tente novamente.' });
-      }
-    } finally {
-      setLoading(false);
-    }
+    console.log('Dados do formulário:', formData);
   };
 
   return (
@@ -87,7 +51,7 @@ function Cadastro() {
             <div className="relative z-10">
               <div className="mb-8">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-2xl backdrop-blur-sm mb-6">
-                  <UserPlus className="w-10 h-10 text-white" />
+                  <div className="w-10 h-10 text-white">👤</div>
                 </div>
                 <h1 className="text-5xl font-bold text-white mb-4">Bem-vindo!</h1>
                 <p className="text-xl text-blue-100 leading-relaxed">
@@ -115,7 +79,7 @@ function Cadastro() {
             <div className="lg:hidden mb-8">
               <div className="flex items-center justify-center mb-6">
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-3 rounded-full">
-                  <UserPlus className="w-8 h-8 text-white" />
+                  <div className="w-8 h-8 text-white">👤</div>
                 </div>
               </div>
               <h1 className="text-3xl font-bold text-center text-gray-900">Cadastro</h1>
@@ -134,7 +98,7 @@ function Cadastro() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-400">👤</span>
                 </div>
                 <input
                   type="text"
@@ -155,7 +119,7 @@ function Cadastro() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CreditCard className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-400">📄</span>
                 </div>
                 <input
                   type="text"
@@ -177,7 +141,7 @@ function Cadastro() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-400">📧</span>
                 </div>
                 <input
                   type="email"
@@ -198,7 +162,7 @@ function Cadastro() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-400">📞</span>
                 </div>
                 <input
                   type="tel"
@@ -220,7 +184,7 @@ function Cadastro() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-400">🔒</span>
                 </div>
                 <input
                   type="password"
@@ -236,22 +200,11 @@ function Cadastro() {
               </div>
             </div>
 
-            {message.text && (
-              <div className={`p-4 rounded-lg ${
-                message.type === 'success'
-                  ? 'bg-green-50 text-green-800 border border-green-200'
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}>
-                <p className="text-sm font-medium">{message.text}</p>
-              </div>
-            )}
-
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3.5 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl text-base"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3.5 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-lg hover:shadow-xl text-base"
             >
-              {loading ? 'Cadastrando...' : 'Cadastrar'}
+              Cadastrar
             </button>
 
             <p className="text-center text-sm text-gray-600 pt-2">
