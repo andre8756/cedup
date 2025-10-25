@@ -10,37 +10,38 @@ Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=s
 
 ## 📋 Sumário
 
--   [📘 Visão Geral](#-visão-geral)
--   [🧩 Tecnologias Utilizadas](#-tecnologias-utilizadas)
--   [⚙️ Configuração do Projeto](#️-configuração-do-projeto)
--   [🚀 Como Executar o Backend](#-como-executar-o-backend)
--   [📡 Endpoints Principais](#-endpoints-principais)
-    -   [Conta](#conta)
-    -   [Banco](#banco)
-    -   [Transações](#transações)
--   [🧪 Testando com Postman](#-testando-com-postman)
--   [📌 Observações Importantes](#-observações-importantes)
+- [📘 Visão Geral](#-visão-geral)
+- [🧩 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [⚙️ Configuração do Projeto](#️-configuração-do-projeto)
+- [🔐 Autenticação e Segurança](#-autenticação-e-segurança)
+- [🚀 Como Executar o Backend](#-como-executar-o-backend)
+- [📡 Endpoints Principais](#-endpoints-principais)
+  - [api/Auth (login ou register)](#auth-login-e-registro)
+  - [Conta](#conta)
+  - [Banco](#banco)
+  - [Transações](#transações)
+- [🧪 Testando com Postman](#-testando-com-postman)
+- [📌 Observações Importantes](#-observações-importantes)
 
 ------------------------------------------------------------------------
 
 ## 📘 Visão Geral
 
-Este é o **módulo backend** do projeto **Sistema de Gestão Financeira
-Pessoal**, desenvolvido em **Java + Spring Boot**, responsável por
-gerenciar usuários, contas bancárias e transações financeiras.\
-A API expõe endpoints REST que permitem operações de **CRUD completo** e
-**transferências entre bancos**.
+Este é o **módulo backend** do projeto **Sistema de Gestão Financeira Pessoal**, desenvolvido em **Java + Spring Boot**, responsável por gerenciar usuários, contas bancárias e transações financeiras.  
+A API expõe endpoints REST que permitem operações de **CRUD completo**, **transferências entre bancos**, além de contar com **autenticação e autorização via Spring Security e JWT**, garantindo **segurança no acesso às rotas e dados dos usuários**.
+
 
 ------------------------------------------------------------------------
 
 ## 🧩 Tecnologias Utilizadas
 
--   **Java 17+**\
--   **Spring Boot 3.x**\
--   **MySQL**\
--   **ModelMapper**\
--   **Postman**\
--   **Maven**
+- **Java 17+**  
+- **Spring Boot 3.x**  
+- **Spring Security + JWT (Autenticação)**  
+- **MySQL**  
+- **ModelMapper**  
+- **Postman**  
+- **Maven**
 
 ------------------------------------------------------------------------
 
@@ -102,25 +103,69 @@ mvn spring-boot:run
 
 ------------------------------------------------------------------------
 
-### 🧍 Conta
 
-#### ➕ Criar Conta
 
+
+## 🔐 Autenticação e Segurança
+
+- Endpoints de **auth**: `/api/auth/register` e `/api/auth/login`  
+- **JWT** usado para autenticação de todas as rotas protegidas  
+- Para acessar endpoints protegidos, envie o token JWT no header:  
+
+    ```
+    Authorization: Bearer SEU_TOKEN_JWT
+    ```
+
+### 🔑 Auth (Login e Registro)
+
+#### ➕ Registrar Usuário
 ``` http
-POST /conta
+POST /api/auth/register
+```
+**Body:**
+
+``` json
+{
+  "titular": "Nicolas Rotta",
+  "cpf": "123.456.789-00",
+  "email": "nicolas@email.com",
+  "telefone": "(47) 99999-9999",
+  "senha":"Banana",
+  "role": "USER"
+}
+```
+
+#### 🔑 Fazer Login
+```http
+POST /api/auth/login
 ```
 
 **Body:**
 
 ``` json
 {
-  "titular": "André Heriberto Schmitt",
-  "email": "andre@gmail.com",
-  "telefone": "47 99999-9999",
-  "senha": "123456",
-  "cpf": "123.456.789-10"
+  "email": "nicolas@email.com",
+  "senha": "Banana"
 }
 ```
+
+**Retorno do JWT:**
+
+``` json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+------------------------------------------------------------------------
+
+
+
+
+
+
+
+### 🧍 Conta
+
 
 #### 📋 Listar Contas
 
