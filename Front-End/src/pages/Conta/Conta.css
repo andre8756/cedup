@@ -1,448 +1,344 @@
-body {
+/* Reset básico */
+* {
   margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #141f41;
-  color: #202020;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 
-a {
-  color: #2c7be5;
-  text-decoration: none;
+body {
+  background-color: #f0f0f5;
+  color: #333;
 }
 
-/* Contêiner principal */
-.app {
-  background-color: #002b5d; 
-  min-height: 100vh;
-  padding: 20px 30px;
-  border-radius: 8px;
-}
-
-/* Header */
-header {
+/* Header principal */
+.header-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  background-color: #50a6ff;
+  color: #fff;
+  padding: 20px 30px;
+  border-bottom: 1px solid #dce4f0;
+  border-radius: 0 0 8px 8px;
 }
 
 .logo h1 {
+  font-size: 24px;
   font-weight: 700;
-  font-size: 28px;
-  margin-left: 680px;
-  margin-right: 13px;
-  color: #e3e6e9;
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 .logo p {
-  margin: 0;
-  font-weight: 500;
-  color: #ffffff88;
   font-size: 14px;
-  margin-left: 669px;
-  margin-right: 13px;
+  margin-top: 4px;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-/* Botões gerais */
-button {
-  font-weight: 600;
+.header-buttons button {
+  background-color: rgba(255,255,255,0.2);
   border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-left: 10px;
   cursor: pointer;
-  border-radius: 8px; 
-  padding: 12px 20px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Botão Configurações */
-button.config {
-  background-color: #ffffff;
-  color: #000000;
-  transition: background-color 0.3s ease;
-}
-
-button.config:hover {
-  background-color: #2062d6;
-  color: white;
-}
-
-/* Botão Adicionar */
-button.add {
-  background-color: #4CAF50;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-button.add:hover {
-  background-color: #45a049;
-}
-
-svg {
-  width: 20px; 
-  height: 20px;
-  fill: currentColor;
-}
-
-/* Títulos de seção */
-.section-title {
-  font-weight: 700;
-  font-size: 18px; 
-  margin: 12px 0 12px 4px;
-  color: #ffffff;
-}
-
-/* Cartões de Overview */
-.overview-cards {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.card {
-  border-radius: 12px; 
-  padding: 25px;
-  flex: 1 1 250px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  position: relative;
-  min-width: 260px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-  transform: scale(1.03);
-}
-
-.card-text {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.card-text small {
-  font-size: 14px;
   font-weight: 500;
-  color: #f0efef;
+  transition: 0.2s;
 }
 
-.card-text strong {
-  font-size: 24px; 
-  font-weight: 700;
+.header-buttons button:hover {
+  background-color: rgba(255,255,255,0.35);
 }
 
-.card.total {
-  background-color: rgba(35, 57, 155, 0.6);
-  border: 1px solid #3e4ee0;
-  color: #4aa53d;
+/* Área principal */
+.app {
+  max-width: 1200px;
+  margin: 30px auto;
+  display: grid;
+  gap: 20px;
 }
 
-.card.income {
-  background-color: rgba(75, 167, 52, 0.6);
-  border: 1px solid #3ee041;
-  color: #4aa53d;
-}
-
-.card.expense {
-  background-color: rgba(255, 68, 58, 0.4);
-  border: 1px solid #e9433081;
-  color: #cb1414;
-}
-
-/* Resultado do mês */
-.result-month {
-  border-radius: 12px;
-  background: #1e2b9ea2;
-  padding: 18px 0;
-  font-weight: 750;
+.vision {
   font-size: 20px;
-  color: #ffffff;
-  width: 100%;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.overview-container {
+  padding: 20px;
+  background-color: #f7f7f7;
+}
+
+.overview-card {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+/* Boas-Vindas */
+.welcome-section {
+  width: 25%;
+}
+
+.greeting-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.user-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* Financeiro */
+.financial-summary {
+  display: flex;
+  gap: 30px;
+  padding-left: 20px;
+  width: 40%;
+  align-items: flex-start;
+}
+
+.financial-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.item-label {
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.item-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.income-value { color: #38a169; }
+.expense-value { color: #e53e3e; }
+
+.vertical-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #ddd;
+  margin: 0 10px;
+}
+
+/* Conexões */
+.connections-section {
+  text-align: right;
+  width: 35%;
+}
+
+.connections-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.connection-icons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.connection-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 10px rgba(34, 34, 34, 0.1); 
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.result-month svg {
-  width: 32px; 
-  height: 32px;
-  color: #aadbca;
+.icon-orange { background-color: #f58428; }
+.icon-black { background-color: black; font-size: 18px; }
+.icon-add { background-color: white; border: 1px solid #ccc; color: #333; font-size: 24px; }
+
+/* Links de ação */
+.view-more-link {
+  position: absolute;
+  bottom: 20px;
+  left: 170px;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
 }
 
-/* Contas */
+.manage-accounts-link {
+  position: absolute;
+  bottom: 20px;
+  right: 30px;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Accounts */
 .accounts {
-  margin-bottom: 40px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
 .accounts-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
-}
-
-.accounts-header button {
-  background: transparent;
-  border: 1px solid #2c7be5;
-  border-radius: 8px;
-  color: #2c7be5;
-  font-weight: 600;
-  font-size: 16px; 
-  padding: 8px 15px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.accounts-header button:hover {
-  background: #1d309e;
-  color: #d7dcf1;
+  margin-bottom: 15px;
 }
 
 .account-cards {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.account-cards p{
-  color: white;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .account-card {
-  background: #1e2b9ea2;
-  border-radius: 12px;
-  padding: 22px 25px;
-  flex: 1 1 280px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-  position: relative;
-}
-
-.account-header {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
-}
-
-.account-info {
-  flex-grow: 1;
+  background-color: #f9f9fc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e5;
 }
 
 .account-info strong {
-  font-size: 18px; 
   display: block;
-  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
 .account-info small {
-  font-size: 14px;
-  color: #ffffff;
+  display: block;
+  color: #555;
+  font-size: 13px;
+}
+
+.menu-dots {
+  font-size: 20px;
+  cursor: pointer;
 }
 
 .available-label {
-  font-weight: 700;
-  font-size: 16px; 
-  color: #ffffff;
+  font-size: 12px;
+  color: #888;
 }
 
 .available-balance {
-  color: floralwhite;
-  font-weight: 900;
-  font-size: 22px; 
-  margin-top: 6px;
-}
-
-.tag {
-  font-size: 14px;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 30px;
-  display: inline-block;
-  margin-top: 10px;
-}
-
-.tag.current {
-  background-color: #d9e9ff;
-  color: #3a75cc;
-}
-
-.tag.savings {
-  background-color: #d9f3d9;
-  color: #499a4a;
-}
-
-.tag.investment {
-  background-color: #fae4c4;
-  color: #d48a35;
-}
-
-.account-number {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
-  text-align: right;
-  margin-top: auto;
+  margin-top: 4px;
 }
 
-/* Transações */
+/* Transactions */
 .transactions {
-  background: #174191;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 10px rgba(34, 34, 34, 0.1);
-}
-
-.transactions h2 {
-  font-size: 18px; 
-  font-weight: 700;
-  margin-bottom: 25px;
-  color: #ffffff;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
 .transaction-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ffffff;
-  padding: 18px 0;
-  font-size: 16px; 
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
 }
 
-.transaction-item:last-child {
-  border-bottom: none;
-}
-
-.transaction-info {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.transaction-title {
-  font-weight: 700;
-  min-width: 120px;
-  color: white;
-}
+.transaction-info strong { display: block; }
 
 .transaction-tags small {
-  background: #f3f5f9;
-  border-radius: 16px;
-  padding: 4px 10px;
   margin-right: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  background-color: #e1e4ea;
-  color: #000000;
-}
-
-.transaction-tags small.receita {
-  background-color: #d1f2d1;
-  color: #2bad2b;
-}
-
-.transaction-tags small.despesa {
-  background-color: #ffddd6;
-  color: #ffffff;
-}
-
-.transaction-tags small.salario {
-  color: floralwhite;
+  font-size: 12px;
+  color: #555;
 }
 
 .transaction-amount {
-  font-weight: 700;
-  color: #12d352;
-  min-width: 120px;
-  text-align: right;
+  font-weight: 600;
+  color: #333;
 }
 
 .transaction-date {
-  font-size: 14px;
-  color: #ffffff;
-  min-width: 80px;
-  text-align: right;
+  font-size: 12px;
+  color: #888;
 }
 
-/* Título de visão */
-.vision {
-  border-radius: 12px;
-  padding: 18px 0;
-  font-weight: 750;
-  font-size: 20px;
-  color: #ffffff;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-
-h2.vision {
-  font-size: 27px;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* Botão histórico */
-button.btn-historico {
-  position: absolute;   
-  top: 110px;       
-  right: 20px;       
-  padding: 10px 20px;
-  background-color: #23219b;
-  color: white;
-  border: none;
-  border-radius: 5px;
+/* Botões */
+.btn-historico {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: medium;
+  font-size: 13px;
+  transition: 0.2s;
 }
 
-/* Fundo escurecido */
+.btn-historico:hover { background-color: rgb(2, 97, 175); }
+
+.btn-salvar, .btn-cancelar {
+  margin-top: 20px;
+  width: 132%;
+  padding: 12px;
+  background: #fff;
+  color: #000;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-salvar:hover { background: #3294eb; color: #dce4f0; }
+.btn-cancelar:hover { background-color: #eb3232; color: #fff; }
+
+/* Popup */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10;
 }
 
-/* Tela popup */
 .popup {
   display: flex;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #ffffff;
+  background: #fff;
   width: 380px;
   border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
   padding: 30px;
   animation: aparecer 0.3s ease;
   color: #222;
-  z-index: 1000; /* garante que fique acima de tudo */
+  z-index: 1000;
 }
 
-/* Título popup */
 .popup h2 {
   text-align: center;
   color: #23219b;
@@ -450,7 +346,6 @@ button.btn-historico {
   font-weight: 600;
 }
 
-/* Labels popup */
 .popup label {
   display: block;
   margin-top: 10px;
@@ -458,10 +353,9 @@ button.btn-historico {
   color: #444;
 }
 
-/* Inputs e selects popup */
 .popup input,
 .popup select {
-  width: 150%;
+  width: 130%;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
@@ -473,32 +367,15 @@ button.btn-historico {
 
 .popup input:focus,
 .popup select:focus {
-  border-color: #23219b;
-  box-shadow: 0 0 5px rgba(35, 33, 155, 0.3);
+  border-color: #3294eb;
+  box-shadow: 0 0 5px rgba(35,33,155,0.3);
 }
 
-/* Botão salvar popup */
-.btn-salvar {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  background: #23219b;
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn-salvar:hover {
-  background: #2e2cc5;
-}
-
-.loading{
+/* Loading */
+.loading {
   text-align: center;
   font-size: 1.5rem;
-  color: #ffffff;
+  color: #fff;
   margin-top: 50px;
   font-weight: bold;
 }
