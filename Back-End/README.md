@@ -156,15 +156,23 @@ POST /api/auth/login
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+***IMPORTANTE❗***  
+Todos os endpoints protegidos precisarão do **token JWT** incluso no **Header** da requisição.
+
+No Postman:
+
+1. Vá na aba **Authorization**  
+2. Configure o **Auth Type** como **Bearer Token**  
+3. Cole o token recebido no login no campo **Token**
+
+> Sem este header, as requisições retornarão `403 UNAUTHORIZED`.
+
 ------------------------------------------------------------------------
 
 
+### 🧍 Conta(requer Token)
 
-
-
-
-
-### 🧍 Conta
 
 
 #### 📋 Listar Contas
@@ -172,6 +180,7 @@ POST /api/auth/login
 ``` http
 GET /conta
 ```
+
 
 #### 🔎 Buscar Conta por ID
 
@@ -193,7 +202,7 @@ DELETE /conta/{id}
 
 ------------------------------------------------------------------------
 
-### 🏦 Banco
+### 🏦 Banco(Requer Token)
 
 #### ➕ Criar Banco
 
@@ -243,7 +252,7 @@ DELETE /conta/banco/{id}
 
 ------------------------------------------------------------------------
 
-### 💸 Transações
+### 💸 Transações(Requer token)
 
 #### ➕ Criar Transação
 
@@ -282,28 +291,35 @@ GET /conta/banco/transacao/filtros?contaId=1&dataInicio=2024-01-01T00:00:00&data
 
 ## 🧪 Testando com Postman
 
-1.  Crie uma **Collection** e configure
-    `base_url = http://localhost:8080`\
-2.  Execute os endpoints CRUD\
-3.  Use o formato JSON nos corpos de requisição
+1. Crie uma **Collection** e configure `base_url = http://localhost:8080`  
+2. Registre uma conta com `/api/auth/register`  
+3. Faça login com `/api/auth/login` e copie o **token JWT** retornado  
+4. Para os endpoints protegidos, vá na aba **Authorization**, configure **Auth Type** como **Bearer Token** e cole o token no campo **Token**  
+5. Execute os endpoints CRUD normalmente  
+6. Use o formato **JSON** nos corpos de requisição
 
 ------------------------------------------------------------------------
 
 ## 📌 Observações Importantes
 
--   CORS habilitado para `http://localhost:5173`\
--   Respostas no formato **JSON**\
--   Códigos HTTP:
-    -   `200 OK` → Sucesso\
-    -   `201 CREATED` → Criado com sucesso\
-    -   `204 NO CONTENT` → Excluído\
-    -   `404 NOT FOUND` → Não encontrado
+- CORS habilitado para `http://localhost:5173`  
+- Respostas no formato **JSON**  
+- Sessões são **stateless** (sem cookies, apenas JWT)  
+- Códigos HTTP importantes:
+    - `200 OK` → Sucesso  
+    - `201 CREATED` → Criado com sucesso  
+    - `204 NO CONTENT` → Excluído  
+    - `400 BAD REQUEST` → Erro de autenticação ou dados inválidos  
+    - `401 UNAUTHORIZED` → Token ausente ou inválido  
+    - `403 FORBIDDEN` → Token inválido ou sem permissão  
+    - `404 NOT FOUND` → Não encontrado
 
 ------------------------------------------------------------------------
 
 ### ✅ Exemplo de Fluxo Completo
 
-1.  Criar uma **Conta**
-2.  Criar um **Banco vinculado à Conta**
-3.  Fazer uma **Transação entre dois Bancos**
-4.  Listar transações filtradas
+1. Criar uma **Conta**  
+2. Fazer **Login** e obter o **token JWT**  
+3. Criar um **Banco vinculado à Conta**  
+4. Fazer uma **Transação entre Bancos**  
+5. Listar transações filtradas
