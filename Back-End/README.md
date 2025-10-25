@@ -17,9 +17,9 @@ Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=s
 - [🚀 Como Executar o Backend](#-como-executar-o-backend)
 - [📡 Endpoints Principais](#-endpoints-principais)
   - [api/Auth (login ou register)](#auth-login-e-registro)
-  - [Conta](#conta)
-  - [Banco](#banco)
-  - [Transações](#transações)
+  - [Conta 🔒](#conta)
+  - [Banco 🔒](#banco)
+  - [Transações 🔒](#transações)
 - [🧪 Testando com Postman](#-testando-com-postman)
 - [📌 Observações Importantes](#-observações-importantes)
 
@@ -166,12 +166,12 @@ No Postman:
 2. Configure o **Auth Type** como **Bearer Token**  
 3. Cole o token recebido no login no campo **Token**
 
-> Sem este header, as requisições retornarão `403 UNAUTHORIZED`.
+> Sem este header, as requisições retornarão `403 Forbidden`.
 
 ------------------------------------------------------------------------
 
 
-### 🧍 Conta(requer Token)
+### 🧍 Conta(requer Token 🔒)
 
 
 
@@ -202,7 +202,7 @@ DELETE /conta/{id}
 
 ------------------------------------------------------------------------
 
-### 🏦 Banco(Requer Token)
+### 🏦 Banco(Requer Token 🔒)
 
 #### ➕ Criar Banco
 
@@ -252,7 +252,7 @@ DELETE /conta/banco/{id}
 
 ------------------------------------------------------------------------
 
-### 💸 Transações(Requer token)
+### 💸 Transações(Requer token 🔒)
 
 #### ➕ Criar Transação
 
