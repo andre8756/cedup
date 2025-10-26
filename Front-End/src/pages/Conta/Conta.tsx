@@ -102,10 +102,7 @@ const Conta: React.FC = () => {
 
       <div className="app">
         {/* Visão Geral */}
-        <section>
-          <h2 className="vision">Visão Geral</h2>
-          <button className="btn-historico">Histórico</button>
-
+        <section> 
           <div className="overview-container">
             <div className="overview-card">
               {/* Boas-vindas */}
@@ -147,7 +144,13 @@ const Conta: React.FC = () => {
         {/* Contas */}
         <section className="accounts" aria-label="Suas Contas">
           <div className="accounts-header">
-            <h2 className="section-title">Suas Contas</h2>
+            <div className="left-side">
+              <div className="Saldo-geral">
+                <p>Saldo geral</p>
+                <small>{saldoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>
+              </div>
+              <p className="section-title">Minhas Contas</p>
+            </div>
             <button onClick={() => setShowPopup(true)}>Nova Conta</button>
           </div>
 
@@ -167,20 +170,15 @@ const Conta: React.FC = () => {
                     <div className="menu-dots" aria-label="Menu">...</div>
                   </div>
                   <div>
-                    <div className="available-label">Saldo disponível</div>
-                    <div className="available-balance">
-                      {conta.saldo.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                    <div className="available-label">Saldo geral
+                      <div className="saldo">
+                        {conta.saldo.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} 
+                      </div>
                     </div>
                   </div>
                 </article>
               ))
             )}
-          </div>
-
-          {/* Saldo total */}
-          <div className="saldo-total">
-            <strong>Saldo Total:</strong>
-            <small>{saldoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>
           </div>
         </section>
       </div>
