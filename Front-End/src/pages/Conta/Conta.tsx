@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
 
@@ -14,31 +14,60 @@ interface Conta {
   bancos: Banco[];
 }
 
-function Conta() {
-  const [showPopup, setShowPopup] = useState(false);
+const Conta: React.FC = () => {
   const [contas, setContas] = useState<Conta[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
 
+  // Pega token JWT do cookie
+  const getTokenFromCookie = () => {
+    const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
+    return match ? match[2] : null;
+  };
+
+  // Busca contas do usuário
   useEffect(() => {
-    const dadosExemplo: Conta[] = [
-      {
-        id: 1,
-        titular: "Exemplo",
-        saldo: 1000,
-        bancos: [{ nome: "Banco Exemplo", numero: 1 }],
-      },
-    ];
-    setContas(dadosExemplo);
-    setLoading(false);
+    const fetchContas = async () => {
+      const token = getTokenFromCookie();
+      if (!token) {
+        console.error("Usuário não autenticado");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/conta", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) throw new Error("Erro ao buscar contas");
+
+        const data: Conta[] = await response.json();
+        setContas(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContas();
   }, []);
 
-  const saldo = contas.reduce((total, conta) => total + conta.saldo, 0);
-
+  // Adiciona nova conta
   const handleAddConta = async (novaConta: { titular: string; nomeBanco: string; saldo: number }) => {
+    const token = getTokenFromCookie();
+    if (!token) return;
+
     try {
-      const response = await fetch("http://localhost:8080/conta/1/banco", {
+      const response = await fetch("http://localhost:8080/conta/banco", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify(novaConta),
       });
 
@@ -55,6 +84,9 @@ function Conta() {
 
   if (loading) return <p className="loading">Carregando contas...</p>;
 
+  // Calcula saldo total
+  const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
+
   return (
     <>
       <header className="header-main">
@@ -64,24 +96,25 @@ function Conta() {
         </div>
         <div className="header-buttons">
           <button className="config">Configurações</button>
-          <button className="add" onClick={() => setShowPopup(true)}>
-            Adicionar
-          </button>
+          <button className="add" onClick={() => setShowPopup(true)}>Adicionar</button>
         </div>
       </header>
 
       <div className="app">
+        {/* Visão Geral */}
         <section>
           <h2 className="vision">Visão Geral</h2>
           <button className="btn-historico">Histórico</button>
 
           <div className="overview-container">
             <div className="overview-card">
+              {/* Boas-vindas */}
               <div className="welcome-section">
                 <p className="greeting-text">Bem vindo,</p>
-                <h1 className="user-name">{contas[0]?.titular || "Jorge"}</h1>
+                <h1 className="user-name">{contas[0]?.titular || 'Usuário'}</h1>
               </div>
 
+              {/* Receita e Despesa */}
               <div className="financial-summary">
                 <div className="financial-item income">
                   <p className="item-label">Receita mensal</p>
@@ -90,30 +123,31 @@ function Conta() {
                 <div className="vertical-divider"></div>
                 <div className="financial-item expense">
                   <p className="item-label">Despesa mensal</p>
-                  <p className="item-value expense-value">- 400,00 R$</p>
+                  <p className="item-value expense-value">- R$ 400,00</p>
                 </div>
               </div>
 
+              {/* Conexões */}
               <div className="connections-section">
                 <p className="item-label connections-label">Conexões Ativas</p>
                 <div className="connection-icons">
-                  <div className="connection-icon icon-orange">
-                    <span className="icon-placeholder"></span>
-                  </div>
+                  <div className="connection-icon icon-orange"><span className="icon-placeholder"></span></div>
                   <div className="connection-icon icon-black">C6</div>
                   <div className="connection-icon icon-add">+</div>
                 </div>
               </div>
 
+              {/* Links */}
               <a href="#" className="view-more-link">Ver mais</a>
               <a href="#" className="manage-accounts-link">Gerenciar contas</a>
             </div>
           </div>
         </section>
 
+        {/* Contas */}
         <section className="accounts" aria-label="Suas Contas">
           <div className="accounts-header">
-            <h2 className="section-title" style={{ margin: 0 }}>Suas Contas</h2>
+            <h2 className="section-title">Suas Contas</h2>
             <button onClick={() => setShowPopup(true)}>Nova Conta</button>
           </div>
 
@@ -127,9 +161,7 @@ function Conta() {
                     <div className="account-info">
                       <strong>{conta.titular}</strong>
                       {conta.bancos?.map((banco) => (
-                        <small key={banco.numero}>
-                          {banco.nome} - {banco.numero}
-                        </small>
+                        <small key={banco.numero}>{banco.nome} - {banco.numero}</small>
                       ))}
                     </div>
                     <div className="menu-dots" aria-label="Menu">...</div>
@@ -145,45 +177,18 @@ function Conta() {
             )}
           </div>
 
-          <article className="account-card" aria-label="Investimentos, XP Investimentos">
-            <div className="account-header">
-              <div className="account-info">
-                <strong>Investimentos</strong>
-                <small>XP Investimentos</small>
-              </div>
-              <div className="menu-dots" aria-label="Menu">...</div>
-            </div>
-            <div>
-              <div className="available-label">Saldo disponível</div>
-              <div className="available-balance">R$ 17.230,73</div>
-            </div>
-            <span className="tag investment">Investimento</span>
-            <div className="account-number">.... 68-7</div>
-          </article>
-        </section>
-
-        <section className="transactions" aria-label="Transações Recentes">
-          <h2>Transações Recentes</h2>
-          <div className="transaction-item" role="listitem">
-            <div className="transaction-info">
-              <strong className="transaction-title">Salário</strong>
-              <div className="transaction-tags">
-                <small className="receita">Receita</small>
-                <small>Salário</small>
-                <small>Banco do Brasil</small>
-              </div>
-            </div>
-            <div>
-              <div className="transaction-amount">+R$ 381,00</div>
-              <div className="transaction-date">7/02/2024</div>
-            </div>
+          {/* Saldo total */}
+          <div className="saldo-total">
+            <strong>Saldo Total:</strong>
+            <small>{saldoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>
           </div>
         </section>
       </div>
 
+      {/* POPUP */}
       {showPopup && <PopupForm onClose={() => setShowPopup(false)} onSubmit={handleAddConta} />}
     </>
   );
-}
+};
 
 export default Conta;
