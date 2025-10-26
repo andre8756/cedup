@@ -65,17 +65,17 @@ body {
 
 .overview-container {
   padding: 20px;
+  border-radius: 10px;
   background-color: #f7f7f7;
 }
 
 .overview-card {
   background-color: white;
-  padding: 20px 30px;
+  padding: 3pc;
   border-radius: 8px;
+  position: absolute;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   position: relative;
   font-family: Arial, sans-serif;
 }
@@ -284,14 +284,19 @@ body {
 .btn-historico {
   background: none;
   border: 1px solid #ccc;
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 6px;
-  cursor: pointer;
+  cursor: pointer;  
+  margin: 20px;
+  margin-left: 93.5%;
   font-size: 13px;
   transition: 0.2s;
 }
 
-.btn-historico:hover { background-color: rgb(2, 97, 175); }
+.btn-historico:hover { 
+  background-color: #007bff; 
+  color: #ffff;
+}
 
 .btn-salvar, .btn-cancelar {
   margin-top: 20px;
@@ -378,4 +383,25 @@ body {
   color: #fff;
   margin-top: 50px;
   font-weight: bold;
+}
+
+
+/*  Visualisação e Gerenciamento */
+
+.view-more-link{
+  color: #000;
+  margin-left: 20px;
+
+}
+
+.view-more-link:hover{
+  color: #007bff;
+}
+
+.manage-accounts-link{
+  color: #000;
+}
+
+.manage-accounts-link:hover{
+  color: #007bff;
 }
