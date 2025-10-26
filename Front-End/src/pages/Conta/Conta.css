@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color: #f0f0f5;
+  background-color: #dadada;
   color: #333;
 }
 
@@ -191,44 +191,222 @@ body {
 /* Accounts */
 .accounts {
   background-color: #fff;
-  padding: 20px;
+  max-width: 600px;
+  padding: 100px ;
   border-radius: 10px;
   border: 1px solid #ddd;
 }
 
+
+.accounts button{
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.Saldo-geral p {
+  color: #9ca3af;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.saldo-geral h3 {
+  color: #000;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 5px 0 0 0;
+}
+
+.saldo-geral::after {
+  content: "";
+  display: block;
+  margin-top: 10px;
+  border-bottom: 1px solid #ddd; /* linha divisória */
+}
+
+.saldo-geral {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: Arial, sans-serif;
+  position: relative;
+  border-left: 4px solid #2c7be5; /* barrinha azul */
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: block;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+}
+
+.accounts {
+  background-color: #fff;
+  max-width: 50%;
+  padding: 30px 1%;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin: -4px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Cabeçalho da seção */
 .accounts-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
 }
 
+.left-side {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Bloco de saldo geral */
+.Saldo-geral {
+  border-left: 4px solid #2c7be5;
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+.Saldo-geral p {
+  color: #9ca3af;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.Saldo-geral h3 {
+  color: #000;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Botão de adicionar conta */
+.accounts-header button {
+  border: 1px solid #2c7be5;
+  background-color: #fff;
+  color: #2c7be5;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.accounts-header button:hover {
+  background-color: #2c7be5;
+  color: #fff;
+}
+
+/* Título das contas */
+.section-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+}
+
+/* Cards de contas */
 .account-cards {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: 320px; /* define altura máxima */
+  overflow-y: auto; /* adiciona scroll se tiver muitas contas */
+  padding-right: 5px;
 }
 
 .account-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f9f9fc;
+  background-color: #fff;
+  border-radius: 10px;
   padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.account-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .account-info strong {
-  display: block;
   font-weight: 600;
-  margin-bottom: 4px;
+  color: #111;
 }
 
-.account-info small {
+.account-card small {
   display: block;
-  color: #555;
-  font-size: 13px;
+  font-size: 0.8rem;
+  color: #0055ff;
+}
+
+/* Scroll estilizado */
+.account-cards::-webkit-scrollbar {
+  width: 6px;
+}
+
+.account-cards::-webkit-scrollbar-thumb {
+  background-color: #c5c5c5;
+  border-radius: 10px;
+}
+
+.account-cards::-webkit-scrollbar-thumb:hover {
+  background-color: #999;
+}
+
+
+
+.icon-orange { background-color: #ff7a00; }
+.icon-black { background-color: #000; }
+.icon-blue  { background-color: #007bff; }
+
+.available-balance {
+  font-weight: 700;
+  color: #111;
+}
+
+.saldo-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.saldo-total strong {
+  color: #111;
+}
+
+.saldo-total small {
+  font-weight: 600;
+  color: #111;
+  font: bold;
 }
 
 .menu-dots {
@@ -236,9 +414,9 @@ body {
   cursor: pointer;
 }
 
-.available-label {
-  font-size: 12px;
-  color: #888;
+.Saldo-geral small{
+  font-weight: 700;
+  font-size: 1.3rem;
 }
 
 .available-balance {
