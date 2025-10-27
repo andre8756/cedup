@@ -3,6 +3,7 @@ package com.conta.conta.Controller;
 import com.conta.conta.DTO.AuthResponse;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Repository.ContaRepository;
+import com.conta.conta.Security.TokenBlacklistService;
 import com.conta.conta.Security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,9 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody Conta conta) {
         if (contaRepository.findByEmail(conta.getEmail()).isPresent()) {
@@ -43,9 +47,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Conta loginRequest) {
         try {
             var authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha());
-
             var auth = authenticationManager.authenticate(authToken);
-
 
             Conta contaAutenticada = (Conta) auth.getPrincipal();
 
@@ -56,6 +58,18 @@ public class AuthController {
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Credenciais inválidas!");
+        }
+    }
+
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlacklistService.add(token); // adiciona o token à blacklist
+            return ResponseEntity.ok("Logout realizado com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().body("Token não encontrado ou inválido!");
         }
     }
 }
