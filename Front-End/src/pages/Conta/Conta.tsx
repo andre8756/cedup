@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
+import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
 
 interface Banco {
   nome: string;
@@ -19,7 +20,7 @@ const Conta: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
-  // Pega token JWT do cookie
+  // Pega token do cookie
   const getTokenFromCookie = () => {
     const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
     return match ? match[2] : null;
@@ -50,6 +51,7 @@ const Conta: React.FC = () => {
         console.error(error);
       } finally {
         setLoading(false);
+        
       }
     };
 
@@ -86,6 +88,7 @@ const Conta: React.FC = () => {
 
   // Calcula saldo total
   const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
+
 
   return (
     <>
@@ -124,7 +127,7 @@ const Conta: React.FC = () => {
                 </div>
               </div>
 
-              {/* Conexões */}
+              {/* Conexões */} {/* EXEMPLO */}
               <div className="connections-section">
                 <p className="item-label connections-label">Conexões Ativas</p>
                 <div className="connection-icons">
@@ -135,8 +138,8 @@ const Conta: React.FC = () => {
               </div>
 
               {/* Links */}
-              <a href="#" className="view-more-link">Ver mais</a>
-              <a href="#" className="manage-accounts-link">Gerenciar contas</a>
+              <button className="view-more-link">Ver mais </button>
+              <button className="manage-accounts-link">Gerenciar Contas</button>
             </div>
           </div>
         </section>
@@ -180,8 +183,10 @@ const Conta: React.FC = () => {
               ))
             )}
           </div>
+
         </section>
       </div>
+      <HistoricoTransacoes/>
 
       {/* POPUP */}
       {showPopup && <PopupForm onClose={() => setShowPopup(false)} onSubmit={handleAddConta} />}
