@@ -1,15 +1,12 @@
-.historico-transacoes{ 
+.historico-transacoes {
   background-color: #fff;
-  max-width: 50%; 
-  padding: 30px 1%;
-  border-radius: 10px; 
-  border: 1px solid #ddd; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  margin-left: 650px; 
-  margin-top: -200px; 
-  display: flex; 
-  flex-direction: column; 
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+
 }
+
 
 /* saldo */
 .saldo-geral {
