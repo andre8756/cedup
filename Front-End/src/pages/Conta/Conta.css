@@ -211,22 +211,7 @@ body {
   background-color: #a1d7f7;
   color: #007bff;
 }
-/* Accounts */
-.accounts {
-  background-color: #fff;
-  max-width: 600px;
-  padding: 100px ;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-}
 
-
-.accounts button{
-  border: 1px solid #ccc;
-  padding: 8px 16px;
-  border-radius: 6px;
-  background-color: #fff;
-}
 
 .Saldo-geral p {
   color: #9ca3af;
@@ -276,7 +261,8 @@ body {
   border-radius: 10px;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  margin: -4px;
+  margin: -2px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 15px;
