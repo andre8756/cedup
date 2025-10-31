@@ -20,7 +20,7 @@ const Conta: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
-  // Pega token do cookie
+  // Pega token JWT do cookie
   const getTokenFromCookie = () => {
     const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
     return match ? match[2] : null;
@@ -84,10 +84,13 @@ const Conta: React.FC = () => {
     }
   };
 
+
+
   if (loading) return <p className="loading">Carregando contas...</p>;
 
   // Calcula saldo total
   const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
+
 
 
   return (
@@ -103,90 +106,104 @@ const Conta: React.FC = () => {
         </div>
       </header>
 
-      <div className="app">
-        {/* Visão Geral */}
-        <section> 
-          <div className="overview-container">
-            <div className="overview-card">
-              {/* Boas-vindas */}
-              <div className="welcome-section">
-                <p className="greeting-text">Bem vindo,</p>
-                <h1 className="user-name">{contas[0]?.titular || 'Usuário'}</h1>
-              </div>
+<div className="app">
+  {/* Container de toda a área principal */}
+  <div className="main-content">
+    
+    {/* Visão Geral */}
+    <section className="overview-section">
+      <div className="overview-container">
+        <div className="overview-card">
+          <div className="welcome-section">
+            <p className="greeting-text">Bem vindo,</p>
+            <h1 className="user-name">{contas[0]?.titular || 'Usuário'}</h1>
+          </div>
 
-              {/* Receita e Despesa */}
-              <div className="financial-summary">
-                <div className="financial-item income">
-                  <p className="item-label">Receita mensal</p>
-                  <p className="item-value income-value">R$ 1.100,00</p>
-                </div>
-                <div className="vertical-divider"></div>
-                <div className="financial-item expense">
-                  <p className="item-label">Despesa mensal</p>
-                  <p className="item-value expense-value">- R$ 400,00</p>
-                </div>
-              </div>
-
-              {/* Conexões */} {/* EXEMPLO */}
-              <div className="connections-section">
-                <p className="item-label connections-label">Conexões Ativas</p>
-                <div className="connection-icons">
-                  <div className="connection-icon icon-orange"><span className="icon-placeholder"></span></div>
-                  <div className="connection-icon icon-black">C6</div>
-                  <div className="connection-icon icon-add">+</div>
-                </div>
-              </div>
-
-              {/* Links */}
-              <button className="view-more-link">Ver mais </button>
-              <button className="manage-accounts-link">Gerenciar Contas</button>
+          <div className="financial-summary">
+            <div className="financial-item income">
+              <p className="item-label">Receita mensal</p>
+              <p className="item-value income-value">R$ 1.100,00</p>
+            </div>
+            <div className="vertical-divider"></div>
+            <div className="financial-item expense">
+              <p className="item-label">Despesa mensal</p>
+              <p className="item-value expense-value">- R$ 400,00</p>
             </div>
           </div>
-        </section>
 
-        {/* Contas */}
-        <section className="accounts" aria-label="Suas Contas">
-          <div className="accounts-header">
-            <div className="left-side">
-              <div className="Saldo-geral">
-                <p>Saldo geral</p>
-                <small>{saldoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</small>
-              </div>
-              <p className="section-title">Minhas Contas</p>
+          <div className="connections-section">
+            <p className="item-label connections-label">Conexões Ativas</p>
+            <div className="connection-icons">
+              <div className="connection-icon icon-orange"></div>
+              <div className="connection-icon icon-black">C6</div>
+              <div className="connection-icon icon-add">+</div>
             </div>
-            <button onClick={() => setShowPopup(true)}>Nova Conta</button>
           </div>
 
-          <div className="account-cards">
-            {contas.length === 0 ? (
-              <p>Nenhuma conta cadastrada.</p>
-            ) : (
-              contas.map((conta) => (
-                <article key={conta.id} className="account-card" aria-label={conta.titular}>
-                  <div className="account-header">
-                    <div className="account-info">
-                      <strong>{conta.titular}</strong>
-                      {conta.bancos?.map((banco) => (
-                        <small key={banco.numero}>{banco.nome} - {banco.numero}</small>
-                      ))}
-                    </div>
-                    <div className="menu-dots" aria-label="Menu">...</div>
-                  </div>
-                  <div>
-                    <div className="available-label">Saldo geral
-                      <div className="saldo">
-                        {conta.saldo.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} 
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              ))
-            )}
-          </div>
-
-        </section>
+          <button className="view-more-link">Ver mais</button>
+          <button className="manage-accounts-link">Gerenciar Contas</button>
+        </div>
       </div>
-      <HistoricoTransacoes/>
+    </section>
+
+    <div className="finance-sections">
+      <section className="accounts" aria-label="Suas Contas">
+        <div className="accounts-header">
+          <div className="left-side">
+            <div className="Saldo-geral">
+              <p>Saldo geral</p>
+              <small>
+                {saldoTotal.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </small>
+            </div>
+            <p className="section-title">Minhas Contas</p>
+          </div>
+          <button onClick={() => setShowPopup(true)}>Nova Conta</button>
+        </div>
+
+        <div className="account-cards">
+          {contas.length === 0 ? (
+            <p>Nenhuma conta cadastrada.</p>
+          ) : (
+            contas.map((conta) => (
+              <article key={conta.id} className="account-card" aria-label={conta.titular}>
+                <div className="account-header">
+                  <div className="account-info">
+                    <strong>{conta.titular}</strong>
+                    {conta.bancos?.map((banco) => (
+                      <small key={banco.numero}>
+                        {banco.nome} - {banco.numero}
+                      </small>
+                    ))}
+                  </div>
+                  <div className="menu-dots" aria-label="Menu">
+                    ...
+                  </div>
+                </div>
+                <div className="available-label">
+                  Saldo geral
+                  <div className="saldo">
+                    {conta.saldo.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Histórico aqui dentro */}
+      <HistoricoTransacoes />
+    </div>
+
+  </div>
+</div>
 
       {/* POPUP */}
       {showPopup && <PopupForm onClose={() => setShowPopup(false)} onSubmit={handleAddConta} />}
