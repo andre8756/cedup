@@ -12,6 +12,8 @@ interface Transacao {
 
 export default function HistoricoTransacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
+  const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
+  const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
 
   useEffect(() => {
     const fetchTransacoes = async () => {
@@ -30,10 +32,15 @@ export default function HistoricoTransacoes() {
 
   return (
     <section className="historico-transacoes">
-      <h2>Histórico de Transações</h2>
       <ul>
         {transacoes.length === 0 ? (
-          <p>Nenhuma transação encontrada.</p>
+          <>
+            <div className="available-label">Extrado de {mesFormatado}
+
+            </div>
+            <small>R$0,00</small>
+            <p>Nenhuma transação encontrada.</p>
+          </>
         ) : (
           transacoes.map((t) => (
             <li key={t.id} className="transacao-item">
