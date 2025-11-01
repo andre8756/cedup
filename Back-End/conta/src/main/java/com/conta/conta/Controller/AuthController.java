@@ -1,13 +1,14 @@
 package com.conta.conta.Controller;
 
 import com.conta.conta.DTO.AuthResponse;
+import com.conta.conta.DTO.AuthenticationDTO;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Repository.ContaRepository;
+import com.conta.conta.Service.CustomUserDetailsService;
 import com.conta.conta.Security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,10 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private ContaRepository contaRepository;
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private ContaRepository contaRepository; // <--- ESSE
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,32 +34,38 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody Conta conta) {
-        if (contaRepository.findByEmail(conta.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email já cadastrado!");
+        if (userExists(conta)) {
+            return ResponseEntity.badRequest().body("Usuário já cadastrado!");
         }
 
         conta.setSenha(passwordEncoder.encode(conta.getSenha()));
+        conta.setRole(com.conta.conta.Enums.UserRole.USER);
         contaRepository.save(conta);
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
+    private boolean userExists(Conta conta) {
+        return contaRepository.findByEmail(conta.getEmail()).isPresent()
+                || contaRepository.findByCpf(conta.getCpf()).isPresent()
+                || contaRepository.findByTelefone(conta.getTelefone()).isPresent();
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Conta loginRequest) {
+    public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
         try {
-            var authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha());
+            var userDetails = userDetailsService.loadUserByUsername(loginRequest.identifier());
 
-            var auth = authenticationManager.authenticate(authToken);
+            if (!passwordEncoder.matches(loginRequest.senha(), userDetails.getPassword())) {
+                return ResponseEntity.badRequest().body("Credenciais inválidas!");
+            }
 
-
-            Conta contaAutenticada = (Conta) auth.getPrincipal();
-
-            // gera token JWT para o usuário autenticado
+            Conta contaAutenticada = (Conta) userDetails;
             String token = tokenService.generateToken(contaAutenticada);
 
-            // retorna token na resposta JSON
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Credenciais inválidas!");
         }
     }
 }
+
