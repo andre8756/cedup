@@ -1,7 +1,7 @@
 
 import './App.css'
 import { useEffect } from 'react'
-import Cadastro from './pages/Cadastro/Cadastro'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
   useEffect(() => {
@@ -12,8 +12,8 @@ function App() {
   return (
     <div className="app">
       {/* Visible debug banner to confirm App is rendering */}
-      <div className="w-full text-center py-2 bg-yellow-100 text-yellow-800">APP RENDERED</div>
-      <Cadastro />
+      <div style={{width:'100%',textAlign:'center',padding:'0.5rem',background:'#fef3c7',color:'#92400e'}}>APP RENDERED</div>
+      <AppRoutes />
     </div>
   )
 }

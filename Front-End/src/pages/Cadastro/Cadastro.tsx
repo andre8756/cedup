@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { UserPlus, Lock, Mail, Phone, User, CreditCard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './Cadastro.css';
 
 function Cadastro() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     titular: '',
     cpf: '',
@@ -57,7 +59,7 @@ function Cadastro() {
             <div className="sidebar-content">
               <div>
                 <div className="icon-container">
-                  <UserPlus />
+                  <UserPlus size={28} />
                 </div>
                 <h1 className="sidebar-title">Bem-vindo!</h1>
                 <p className="sidebar-text">
@@ -84,8 +86,8 @@ function Cadastro() {
           <div className="form-container">
             <div className="mobile-header">
               <div className="mobile-icon-container">
-                <div className="mobile-icon-bg">
-                  <UserPlus />
+                  <div className="mobile-icon-bg">
+                  <UserPlus size={20} />
                 </div>
               </div>
               <h1 className="mobile-title">Cadastro</h1>
@@ -104,7 +106,7 @@ function Cadastro() {
                 </label>
                 <div className="input-container">
                   <div className="input-icon">
-                    <User />
+                    <User size={18} />
                   </div>
                   <input
                     type="text"
@@ -125,7 +127,7 @@ function Cadastro() {
                 </label>
                 <div className="input-container">
                   <div className="input-icon">
-                    <CreditCard />
+                    <CreditCard size={18} />
                   </div>
                   <input
                     type="text"
@@ -147,7 +149,7 @@ function Cadastro() {
                 </label>
                 <div className="input-container">
                   <div className="input-icon">
-                    <Mail />
+                    <Mail size={18} />
                   </div>
                   <input
                     type="email"
@@ -168,7 +170,7 @@ function Cadastro() {
                 </label>
                 <div className="input-container">
                   <div className="input-icon">
-                    <Phone />
+                    <Phone size={18} />
                   </div>
                   <input
                     type="tel"
@@ -190,7 +192,7 @@ function Cadastro() {
                 </label>
                 <div className="input-container">
                   <div className="input-icon">
-                    <Lock />
+                    <Lock size={18} />
                   </div>
                   <input
                     type="password"
@@ -212,9 +214,9 @@ function Cadastro() {
 
               <p className="login-text">
                 Já possui uma conta?{' '}
-                <a href="#" className="login-link">
+                <button type="button" onClick={() => navigate('/login')} className="login-link">
                   Fazer login
-                </a>
+                </button>
               </p>
             </form>
           </div>

@@ -2,6 +2,7 @@ try {
   const pkg = require('tailwindcss/package.json');
   console.log('tailwindcss version:', pkg.version);
 } catch (e) {
-  console.error('tailwindcss not found:', e.message);
-  process.exit(1);
+  // Tailwind removed: this script is now a no-op.
+  console.log('Tailwind has been removed from this project.');
+  console.log('Tailwind check skipped.');
 }
