@@ -1,6 +1,7 @@
 package com.conta.conta.Controller;
 
 import com.conta.conta.DTO.AuthResponse;
+import com.conta.conta.DTO.AuthenticationDTO;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Repository.ContaRepository;
 import com.conta.conta.Security.TokenBlacklistService;
@@ -33,40 +34,50 @@ public class AuthController {
     private TokenBlacklistService tokenBlacklistService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody Conta conta) {
-        if (contaRepository.findByEmail(conta.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email já cadastrado!");
+    public ResponseEntity<?> register(@RequestBody Conta conta) {
+        if (userExists(conta)) {
+            return ResponseEntity.badRequest().body("Usuário já cadastrado!");
         }
 
         conta.setSenha(passwordEncoder.encode(conta.getSenha()));
+        conta.setRole(com.conta.conta.Enums.UserRole.USER);
         contaRepository.save(conta);
+
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
+    private boolean userExists(Conta conta) {
+        return contaRepository.findByEmail(conta.getEmail()).isPresent()
+                || contaRepository.findByCpf(conta.getCpf()).isPresent()
+                || contaRepository.findByTelefone(conta.getTelefone()).isPresent();
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Conta loginRequest) {
+    public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
         try {
-            var authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha());
+            // Cria token de autenticação com Spring Security
+            var authToken = new UsernamePasswordAuthenticationToken(
+                    loginRequest.getIdentifier(), loginRequest.getSenha()
+            );
             var auth = authenticationManager.authenticate(authToken);
 
+            // Pega usuário autenticado
             Conta contaAutenticada = (Conta) auth.getPrincipal();
 
-            // gera token JWT para o usuário autenticado
+            // Gera token JWT
             String token = tokenService.generateToken(contaAutenticada);
 
-            // retorna token na resposta JSON
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Credenciais inválidas!");
         }
     }
 
-    
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            tokenBlacklistService.add(token); // adiciona o token à blacklist
+            tokenBlacklistService.add(token); // adiciona token à blacklist
             return ResponseEntity.ok("Logout realizado com sucesso!");
         } else {
             return ResponseEntity.badRequest().body("Token não encontrado ou inválido!");
