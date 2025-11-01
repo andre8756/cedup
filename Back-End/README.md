@@ -286,6 +286,11 @@ DELETE /conta/banco/transacao/{id}
 ``` http
 GET /conta/banco/transacao/filtros?contaId=1&dataInicio=2024-01-01T00:00:00&dataFim=2024-12-31T23:59:59
 ```
+#### 📋 Listar Transações com Filtros e gerar pdf
+
+``` http
+GET /conta/banco/transacao/filtros/pdf?contaId=1&dataInicio=2024-01-01T00:00:00&dataFim=2024-12-31T23:59:59
+```
 
 ------------------------------------------------------------------------
 
