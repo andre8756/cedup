@@ -1,18 +1,21 @@
 /* Cadastro.css */
 
 .cadastro-container {
-  min-height: 100vh;
+  height: 100vh; 
+  width: 100vw;  
   background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0; 
   box-sizing: border-box;
 }
 
 .cadastro-content {
-  width: 100%;
+  flex: 1; 
   max-width: 1024px;
+  display: flex;
+  align-items: stretch; 
   margin: 0 auto;
   padding: 0 1rem;
   box-sizing: border-box;
@@ -24,16 +27,18 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 1024px) {
   .cadastro-card {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 1fr 1fr; 
+    height: 80vh; 
   }
 }
 
-/* Sidebar */
 .cadastro-sidebar {
   display: none;
   background: linear-gradient(to bottom right, #2563eb, #1d4ed8, #1e40af);
@@ -47,6 +52,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    height: 100%; 
   }
 }
 
@@ -120,15 +126,12 @@
 
 /* Form */
 .form-container {
-  padding: 1rem;
+  padding: 2rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
   box-sizing: border-box;
-}
-
-@media (min-width: 1024px) {
-  .form-container {
-    padding: 2rem;
-  }
 }
 
 .mobile-header {
