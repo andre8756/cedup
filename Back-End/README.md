@@ -217,7 +217,7 @@ POST /conta/{contaId}/banco
   "titular": "André",
   "nomeBanco": "Inter",
   "saldo": 1200.50,
-  "chavePix": 123abc
+  "chavePix": "123-abc"
 }
 ```
 
