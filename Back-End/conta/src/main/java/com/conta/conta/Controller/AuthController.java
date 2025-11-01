@@ -9,9 +9,10 @@ import com.conta.conta.Security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,6 +34,7 @@ public class AuthController {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
+    // Registro de usuário
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Conta conta) {
         if (userExists(conta)) {
@@ -46,26 +48,45 @@ public class AuthController {
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
+    // Verifica se usuário já existe
     private boolean userExists(Conta conta) {
         return contaRepository.findByEmail(conta.getEmail()).isPresent()
                 || contaRepository.findByCpf(conta.getCpf()).isPresent()
                 || contaRepository.findByTelefone(conta.getTelefone()).isPresent();
     }
 
+    // Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
         try {
-            // Cria token de autenticação com Spring Security
-            var authToken = new UsernamePasswordAuthenticationToken(
-                    loginRequest.getIdentifier(), loginRequest.getSenha()
-            );
-            var auth = authenticationManager.authenticate(authToken);
+            Optional<Conta> contaOptional = Optional.empty();
 
-            // Pega usuário autenticado
-            Conta contaAutenticada = (Conta) auth.getPrincipal();
+            // Identifica se é email, cpf ou telefone
+            String identifier = loginRequest.identifier();
+            if (identifier.contains("@")) {
+                contaOptional = contaRepository.findByEmail(identifier);
+            } else if (identifier.replaceAll("\\D", "").length() == 11) {
+                // Pode ser CPF ou telefone
+                String digits = identifier.replaceAll("\\D", "");
+                if (identifier.contains(".")) {
+                    contaOptional = contaRepository.findByCpf(digits);
+                } else {
+                    contaOptional = contaRepository.findByTelefone(digits);
+                }
+            }
 
-            // Gera token JWT
-            String token = tokenService.generateToken(contaAutenticada);
+            if (contaOptional.isEmpty()) {
+                return ResponseEntity.badRequest().body("Credenciais inválidas!");
+            }
+
+            Conta conta = contaOptional.get();
+
+            if (!passwordEncoder.matches(loginRequest.senha(), conta.getSenha())) {
+                return ResponseEntity.badRequest().body("Credenciais inválidas!");
+            }
+
+            // Cria token JWT
+            String token = tokenService.generateToken(conta);
 
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
@@ -73,6 +94,7 @@ public class AuthController {
         }
     }
 
+    // Logout
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

@@ -77,7 +77,7 @@ function Cadastro() {
 
       if (loginResult?.token) {
         Cookies.set('token', loginResult.token, { expires: 7 }); // token por 7 dias
-        navigate('/dashboard'); // vai direto para o dashboard
+        navigate('/conta'); // vai direto para o dashboard
       } else {
         alert('Cadastro realizado, mas falha ao logar automaticamente.');
         navigate('/login');

@@ -54,7 +54,7 @@ function Login() {
         // Guarda o token em cookie
         Cookies.set('token', result.token, { expires: 7, secure: true, sameSite: 'strict' });
         setMessage({ type: 'success', text: 'Login realizado! Redirecionando...' });
-        setTimeout(() => navigate('/dashboard'), 1500);
+        setTimeout(() => navigate('/conta'), 1500);
       }
     } catch {
       setMessage({ type: 'error', text: 'Erro ao fazer login. Tente novamente.' });
