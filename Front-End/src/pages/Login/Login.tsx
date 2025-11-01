@@ -1,8 +1,12 @@
+// Login.tsx
 import { useState } from 'react';
 import { User, Lock, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { queryUser } from '../../lib/auth';
 import './Login.css';
+
+type IdentifierType = 'cpf' | 'telefone' | 'email' | null;
 
 function Login() {
   const navigate = useNavigate();
@@ -11,10 +15,11 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // remove formatação só ao enviar
+  // Remove formatação apenas ao enviar
   const clean = (value: string) => value.replace(/\D/g, '');
 
-  const getIdentifierType = (value: string) => {
+  // Determina tipo de identificador
+  const getIdentifierType = (value: string): IdentifierType => {
     if (value.includes('@')) return 'email';
     const digits = clean(value);
     if (digits.length === 11 && value.includes('.')) return 'cpf';
@@ -35,8 +40,10 @@ function Login() {
         return;
       }
 
+      // Envia CPF/telefone limpos
+      const valueToSend = identifierType === 'email' ? identifier : clean(identifier);
       const result = await queryUser({
-        identifier,
+        identifier: valueToSend,
         identifierType,
         senha,
       });
@@ -44,7 +51,8 @@ function Login() {
       if (!result?.token) {
         setMessage({ type: 'error', text: 'Credenciais inválidas.' });
       } else {
-        localStorage.setItem('token', result.token);
+        // Guarda o token em cookie
+        Cookies.set('token', result.token, { expires: 7, secure: true, sameSite: 'strict' });
         setMessage({ type: 'success', text: 'Login realizado! Redirecionando...' });
         setTimeout(() => navigate('/dashboard'), 1500);
       }

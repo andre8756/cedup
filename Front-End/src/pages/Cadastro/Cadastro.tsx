@@ -1,6 +1,9 @@
+// Cadastro.tsx
 import { useState } from 'react';
 import { UserPlus, User, CreditCard, Mail, Phone, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { queryUser } from '../../lib/auth'; // função de login
 import './Cadastro.css';
 
 interface FormData {
@@ -21,32 +24,42 @@ function Cadastro() {
     senha: '',
   });
 
-  const formatoCPF = (value: string) => {
+  const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
-    if (numbers.length <= 11) return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    if (numbers.length <= 11) return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') || numbers;
     return value;
   };
 
-  const formatoTelefone = (value: string) => {
+  const formatTelefone = (value: string) => {
     const numbers = value.replace(/\D/g, '');
-    if (numbers.length <= 11) return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    if (numbers.length <= 11) return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') || numbers;
     return value;
   };
+
+  const cleanNumber = (value: string) => value.replace(/\D/g, '');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'cpf') setFormData(prev => ({ ...prev, [name]: formatoCPF(value) }));
-    else if (name === 'telefone') setFormData(prev => ({ ...prev, [name]: formatoTelefone(value) }));
+    if (name === 'cpf') setFormData(prev => ({ ...prev, [name]: formatCPF(value) }));
+    else if (name === 'telefone') setFormData(prev => ({ ...prev, [name]: formatTelefone(value) }));
     else setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const body = {
+      ...formData,
+      cpf: cleanNumber(formData.cpf),
+      telefone: cleanNumber(formData.telefone),
+    };
+
     try {
+      // Registrar usuário
       const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -55,8 +68,20 @@ function Cadastro() {
         return;
       }
 
-      alert('Usuário registrado com sucesso!');
-      navigate('/login');
+      // Login automático usando email (ou CPF/telefone)
+      const loginResult = await queryUser({
+        identifier: formData.email,
+        identifierType: 'email',
+        senha: formData.senha,
+      });
+
+      if (loginResult?.token) {
+        Cookies.set('token', loginResult.token, { expires: 7 }); // token por 7 dias
+        navigate('/dashboard'); // vai direto para o dashboard
+      } else {
+        alert('Cadastro realizado, mas falha ao logar automaticamente.');
+        navigate('/login');
+      }
     } catch (error) {
       console.error(error);
       alert('Erro ao registrar usuário.');
@@ -67,43 +92,21 @@ function Cadastro() {
     <div className="cadastro-container">
       <div className="cadastro-content">
         <div className="cadastro-card">
-          {/* Sidebar */}
           <div className="cadastro-sidebar">
             <div className="sidebar-pattern"></div>
             <div className="sidebar-content">
               <div className="icon-container"><UserPlus size={28} /></div>
               <h1 className="sidebar-title">Bem-vindo!</h1>
-              <p className="sidebar-text">
-                Crie sua conta e tenha acesso a todos os recursos da plataforma.
-              </p>
-              <div className="features-list">
-                <div className="feature-item"><div className="feature-dot"></div><p className="feature-text">Cadastro rápido e seguro</p></div>
-                <div className="feature-item"><div className="feature-dot"></div><p className="feature-text">Proteção de dados garantida</p></div>
-                <div className="feature-item"><div className="feature-dot"></div><p className="feature-text">Suporte disponível 24/7</p></div>
-              </div>
+              <p className="sidebar-text">Crie sua conta e tenha acesso a todos os recursos da plataforma.</p>
             </div>
           </div>
 
-          {/* Form */}
           <div className="form-container">
-            <div className="mobile-header">
-              <div className="mobile-icon-container">
-                <div className="mobile-icon-bg"><UserPlus size={20} /></div>
-              </div>
-              <h1 className="mobile-title">Cadastro</h1>
-              <p className="mobile-subtitle">Preencha seus dados para começar</p>
-            </div>
-
-            <div className="desktop-header">
-              <h2 className="desktop-title">Criar Conta</h2>
-              <p className="desktop-subtitle">Preencha os campos abaixo para se cadastrar</p>
-            </div>
-
             <form onSubmit={handleSubmit} className="form">
               <div className="form-group">
                 <label htmlFor="titular">Nome Completo</label>
                 <div className="input-container">
-                  <div className="input-icon"><User size={18} /></div>
+                  <User size={18} className="input-icon" />
                   <input type="text" name="titular" id="titular" value={formData.titular} onChange={handleChange} required className="form-input"/>
                 </div>
               </div>
@@ -111,7 +114,7 @@ function Cadastro() {
               <div className="form-group">
                 <label htmlFor="cpf">CPF</label>
                 <div className="input-container">
-                  <div className="input-icon"><CreditCard size={18} /></div>
+                  <CreditCard size={18} className="input-icon" />
                   <input type="text" name="cpf" id="cpf" value={formData.cpf} onChange={handleChange} required maxLength={14} className="form-input"/>
                 </div>
               </div>
@@ -119,7 +122,7 @@ function Cadastro() {
               <div className="form-group">
                 <label htmlFor="email">E-mail</label>
                 <div className="input-container">
-                  <div className="input-icon"><Mail size={18} /></div>
+                  <Mail size={18} className="input-icon" />
                   <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="form-input"/>
                 </div>
               </div>
@@ -127,7 +130,7 @@ function Cadastro() {
               <div className="form-group">
                 <label htmlFor="telefone">Telefone</label>
                 <div className="input-container">
-                  <div className="input-icon"><Phone size={18} /></div>
+                  <Phone size={18} className="input-icon" />
                   <input type="tel" name="telefone" id="telefone" value={formData.telefone} onChange={handleChange} required maxLength={15} className="form-input"/>
                 </div>
               </div>
@@ -135,7 +138,7 @@ function Cadastro() {
               <div className="form-group">
                 <label htmlFor="senha">Senha</label>
                 <div className="input-container">
-                  <div className="input-icon"><Lock size={18} /></div>
+                  <Lock size={18} className="input-icon" />
                   <input type="password" name="senha" id="senha" value={formData.senha} onChange={handleChange} required minLength={6} className="form-input"/>
                 </div>
               </div>

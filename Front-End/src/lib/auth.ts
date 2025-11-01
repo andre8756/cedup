@@ -1,4 +1,7 @@
-type IdentifierType = 'cpf' | 'telefone' | 'email' | null;
+// Auth.ts
+export type IdentifierType = 'cpf' | 'telefone' | 'email';
+
+export const cleanNumber = (value: string) => value.replace(/\D/g, '');
 
 export async function queryUser({
   identifier,
@@ -9,12 +12,16 @@ export async function queryUser({
   identifierType: IdentifierType;
   senha: string;
 }) {
-  const clean = (v: string) => v.replace(/\D/g, '');
-  let body: Record<string, string> = { senha };
+  // Limpa CPF ou telefone apenas se necessário
+  const value =
+    identifierType === 'cpf' || identifierType === 'telefone'
+      ? cleanNumber(identifier)
+      : identifier;
 
-  if (identifierType === 'cpf') body.cpf = clean(identifier);
-  else if (identifierType === 'telefone') body.telefone = clean(identifier);
-  else if (identifierType === 'email') body.email = identifier;
+  const body = {
+    identifier: value,
+    senha,
+  };
 
   try {
     const response = await fetch('http://localhost:8080/api/auth/login', {
