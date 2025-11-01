@@ -1,179 +1,214 @@
-import {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
-import "./Conta.css"
+import "./Conta.css";
+import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
 
 interface Banco {
-    nome: string;
-    numero: number;
+  nome: string;
+  numero: number;
 }
 
 interface Conta {
-    id: number;
-    titular: string;
-    saldo: number;
-    bancos: Banco[];
+  id: number;
+  titular: string;
+  saldo: number;
+  bancos: Banco[];
 }
 
-function Conta() {
-    const [showPopup, setShowPopup] = useState(false);
-    const [contas, setContas] = useState<Conta[]>([]);
-    const [loading, setLoading] = useState(true);
+const Conta: React.FC = () => {
+  const [contas, setContas] = useState<Conta[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
 
-    useEffect(() => {
-        // Dados de exemplo enquanto a API não está disponível
-        const dadosExemplo: Conta[] = [
-            {
-                id: 1,
-                titular: "Exemplo",
-                saldo: 1000,
-                bancos: [{ nome: "Banco Exemplo", numero: 1 }]
-            }
-        ];
-        setContas(dadosExemplo);
+  // Pega token JWT do cookie
+  const getTokenFromCookie = () => {
+    const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
+    return match ? match[2] : null;
+  };
+
+  // Busca contas do usuário
+  useEffect(() => {
+    const fetchContas = async () => {
+      const token = getTokenFromCookie();
+      if (!token) {
+        console.error("Usuário não autenticado");
         setLoading(false);
-    }, []);
+        return;
+      }
 
-    const saldo = contas.reduce((total, conta) => total + conta.saldo, 0);
+      try {
+        const response = await fetch("http://localhost:8080/conta", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
 
-    const handleAddConta = async (novaConta: { titular: string; nomeBanco: string; saldo: number }) => {
-        try {
-            const response = await fetch("http://localhost:8080/conta/1/banco", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(novaConta),
-            });
+        if (!response.ok) throw new Error("Erro ao buscar contas");
 
-            if (!response.ok) throw new Error("Erro ao adicionar conta");
-
-            const contaSalva: Conta = await response.json();
-            setContas((prev) => [...prev, contaSalva]);
-            setShowPopup(false);
-        } catch (error) {
-            console.error(error);
-            alert("Erro ao adicionar conta!");
-        }
+        const data: Conta[] = await response.json();
+        setContas(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+        
+      }
     };
 
-    if (loading) return <p className="loading">Carregando contas...</p>;
+    fetchContas();
+  }, []);
 
-    return (
-        <>
-            <div className="app">
-                <header>
-                    <div className="logo">
-                        <h1>My Finances</h1>
-                        <p>Gestão Financeira Inteligente</p>
-                    </div>
+  // Adiciona nova conta
+  const handleAddConta = async (novaConta: { titular: string; nomeBanco: string; saldo: number }) => {
+    const token = getTokenFromCookie();
+    if (!token) return;
 
-                    <div className="header-buttons">
-                        <button className="config">Configurações</button>
-                        <button className="add" onClick={() => setShowPopup(true)}>
-                            Adicionar
-                        </button>
-                    </div>
-                </header>
+    try {
+      const response = await fetch("http://localhost:8080/conta/banco", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(novaConta),
+      });
 
-                <section>
-                    <h2 className="vision">Visão Geral</h2>
-                    <button className="btn-historico">Histórico</button>
+      if (!response.ok) throw new Error("Erro ao adicionar conta");
 
-                    <div className="overview-cards">
-                        <div className="card total">
-                            <div className="card-text">
-                                <small>Saldo Total</small>
-                                <strong>
-                                    {saldo.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                    })}
-                                </strong>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+      const contaSalva: Conta = await response.json();
+      setContas((prev) => [...prev, contaSalva]);
+      setShowPopup(false);
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao adicionar conta!");
+    }
+  };
 
-                <section className="accounts" aria-label="Suas Contas">
-                    <div className="accounts-header">
-                        <h2 className="section-title" style={{ margin: 0 }}>
-                            Suas Contas
-                        </h2>
-                        <button onClick={() => setShowPopup(true)}>Nova Conta</button>
-                    </div>
 
-                    <div className="account-cards">
-                        {contas.length === 0 ? (
-                            <p>Nenhuma conta cadastrada.</p>
-                        ) : (
-                            contas.map((conta) => (
-                                <article key={conta.id} className="account-card" aria-label={conta.titular}>
-                                    <div className="account-header">
-                                    <div className="account-info">
-                                        <strong>{conta.titular}</strong>
-                                        {/* Corrija aqui: Adicione '?' para garantir que 'bancos' exista antes de chamar 'map' */}
-                                        {conta.bancos?.map((banco) => (
-                                            <small key={banco.numero}>
-                                                {banco.nome} - {banco.numero}
-                                            </small>
-                                        ))}
-                                    </div>
-                                        <div className="menu-dots" aria-label="Menu">...</div>
-                                    </div>
 
-                                    <div>
-                                        <div className="available-label">Saldo disponível</div>
-                                        <div className="available-balance">
-                                            {conta.saldo.toLocaleString("pt-BR", {
-                                                style: "currency",
-                                                currency: "BRL",
-                                            })}
-                                        </div>
-                                    </div>
-                                </article>
-                            ))
-                        )}
-                    </div>
+  if (loading) return <p className="loading">Carregando contas...</p>;
 
-                    {/* Investimentos fixo (exemplo) */}
-                    <article className="account-card" aria-label="Investimentos, XP Investimentos">
-                        <div className="account-header">
-                            <div className="account-info">
-                                <strong>Investimentos</strong>
-                                <small>XP Investimentos</small>
-                            </div>
-                            <div className="menu-dots" aria-label="Menu">...</div>
-                        </div>
-                        <div>
-                            <div className="available-label">Saldo disponível</div>
-                            <div className="available-balance">R$ 17.230,73</div>
-                        </div>
-                        <span className="tag investment">Investimento</span>
-                        <div className="account-number">.... 68-7</div>
-                    </article>
-                </section>
+  // Calcula saldo total
+  const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
 
-                <section className="transactions" aria-label="Transações Recentes">
-                    <h2>Transações Recentes</h2>
-                    <div className="transaction-item" role="listitem">
-                        <div className="transaction-info">
-                            <strong className="transaction-title">Salário</strong>
-                            <div className="transaction-tags">
-                                <small className="receita">Receita</small>
-                                <small>Salário</small>
-                                <small>Banco do Brasil</small>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="transaction-amount">+R$ 381,00</div>
-                            <div className="transaction-date">7/02/2024</div>
-                        </div>
-                    </div>
-                </section>
+
+
+  return (
+    <>
+      <header className="header-main">
+        <div className="logo">
+          <h1>My Finances</h1>
+          <p>Gestão Financeira Inteligente</p>
+        </div>
+        <div className="header-buttons">
+          <button className="config">Configurações</button>
+          <button className="add" onClick={() => setShowPopup(true)}>Adicionar</button>
+        </div>
+      </header>
+
+<div className="app">
+  {/* Container de toda a área principal */}
+  <div className="main-content">
+    
+    {/* Visão Geral */}
+    <section className="overview-section">
+      <div className="overview-container">
+        <div className="overview-card">
+          <div className="welcome-section">
+            <p className="greeting-text">Bem vindo,</p>
+            <h1 className="user-name">{contas[0]?.titular || 'Usuário'}</h1>
+          </div>
+
+          <div className="financial-summary">
+            <div className="financial-item income">
+              <p className="item-label">Receita mensal</p>
+              <p className="item-value income-value">R$ 1.100,00</p>
             </div>
+            <div className="vertical-divider"></div>
+            <div className="financial-item expense">
+              <p className="item-label">Despesa mensal</p>
+              <p className="item-value expense-value">- R$ 400,00</p>
+            </div>
+          </div>
 
-            {/* POPUP */}
-            {showPopup && <PopupForm onClose={() => setShowPopup(false)} onSubmit={handleAddConta} />}
-        </>
-    );
-}
+          <div className="connections-section">
+            <p className="item-label connections-label">Conexões Ativas</p>
+            <div className="connection-icons">
+              <div className="connection-icon icon-orange"></div>
+              <div className="connection-icon icon-black">C6</div>
+              <div className="connection-icon icon-add">+</div>
+            </div>
+          </div>
+
+          <button className="view-more-link">Ver mais</button>
+          <button className="manage-accounts-link">Gerenciar Contas</button>
+        </div>
+      </div>
+    </section>
+
+    <div className="finance-sections">
+      <section className="accounts" aria-label="Suas Contas">
+        <div className="accounts-header">
+          <div className="left-side">
+            <div className="Saldo-geral">
+              <p>Saldo geral</p>
+              <small>
+                {saldoTotal.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </small>
+            </div>
+            <p className="section-title">Minhas Contas</p>
+          </div>
+          <button onClick={() => setShowPopup(true)}>Nova Conta</button>
+        </div>
+
+        <div className="account-cards">
+          {contas.length === 0 ? (
+            <p>Nenhuma conta cadastrada.</p>
+          ) : (
+            contas.map((conta) => (
+              <article key={conta.id} className="account-card" aria-label={conta.titular}>
+                <div className="account-header">
+                  <div className="account-info">
+                    <strong>{conta.titular}</strong>
+                    {conta.bancos?.map((banco) => (
+                      <small key={banco.numero}>
+                        {banco.nome} - {banco.numero}
+                      </small>
+                    ))}
+                  </div>
+                  <div className="menu-dots" aria-label="Menu">
+                    ...
+                  </div>
+                </div>
+                <div className="available-label">
+                  Saldo geral
+                  <div className="saldo">
+                    {conta.saldo.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Histórico aqui dentro */}
+      <HistoricoTransacoes />
+    </div>
+
+  </div>
+</div>
+
+      {/* POPUP */}
+      {showPopup && <PopupForm onClose={() => setShowPopup(false)} onSubmit={handleAddConta} />}
+    </>
+  );
+};
 
 export default Conta;

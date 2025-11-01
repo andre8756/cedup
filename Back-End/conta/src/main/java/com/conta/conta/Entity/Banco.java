@@ -25,6 +25,9 @@ public class Banco {
     private float saldo;
 
     @Column(nullable = false)
+    private String chavePix;
+
+    @Column(nullable = false)
     private boolean status;
 
     @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
@@ -36,10 +39,11 @@ public class Banco {
     @JsonIgnore // Evita loop infinito no Json
     private Conta conta;
 
-    public Banco(String titular, String nomeBanco, float saldo) {
+    public Banco(String titular, String nomeBanco, float saldo, String chavePix) {
         this.titular = titular;
         this.nomeBanco = nomeBanco;
         this.saldo = saldo;
+        this.chavePix = chavePix;
     }
 
     public Banco(){
@@ -77,6 +81,13 @@ public class Banco {
 
     public void setSaldo(float saldo) {
         this.saldo = saldo;
+    }
+
+    public String getChavePix() {
+        return chavePix;
+    }
+    public void setChavePix(String chavePix) {
+        this.chavePix = chavePix;
     }
 
     public boolean isStatus() {

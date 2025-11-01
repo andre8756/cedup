@@ -1,0 +1,60 @@
+.historico-transacoes {
+  background-color: #fff;
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-left: 615px;
+  margin-top: -194px;
+
+}
+
+/* saldo */
+.totalTransacao small{
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #333;
+  border-left: 4px solid #2c7be5;
+  padding-left: 100px;
+  margin-bottom: 10px;
+
+}
+
+.header-transacoes p{
+  color: #9ca3af;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  margin-left: 10px;
+  position: relative;
+  left: 20px;
+}
+
+/* histórico */
+.historico-transacoes {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  width: 350px;
+}
+
+.historico-transacoes h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.historico-transacoes p {
+  color: #555;
+  font-size: 14px;
+}
+
+.valor-positivo{
+  color: rgb(26, 155, 26);
+}
+
+.valor-negativo{
+  color: rgb(190, 7, 7);
+}

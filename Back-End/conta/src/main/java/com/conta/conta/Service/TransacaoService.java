@@ -77,10 +77,10 @@ public class TransacaoService {
 
     // Processar uma transação (transferência)
     @Transactional
-    public TransacaoRequestDto processarTransacao(Long bancoOrigemId, Long bancoDestinoId, Transacao transacao) {
-        Banco bancoOrigem = bancoService.buscarPorId(bancoOrigemId)
+    public TransacaoRequestDto processarTransacao(String bancoOrigemChavePix, String bancoDestinoChavePix, Transacao transacao) {
+        Banco bancoOrigem = bancoService.buscarPorChavePix(bancoOrigemChavePix)
                 .orElseThrow(() -> new RuntimeException("Banco de origem não encontrado"));
-        Banco bancoDestino = bancoService.buscarPorId(bancoDestinoId)
+        Banco bancoDestino = bancoService.buscarPorChavePix(bancoDestinoChavePix)
                 .orElseThrow(() -> new RuntimeException("Banco de destino não encontrado"));
 
         // Verificar saldo do banco de origem
@@ -174,8 +174,8 @@ public class TransacaoService {
     private TransacaoRequestDto convertToDTO(Transacao transacao) {
         if (transacao == null) return null;
 
-        TransacaoRequestDto transacaoRequestDto = new TransacaoRequestDto(transacao.getId(), transacao.getContaOringem().getId(), transacao.getBancoOrigem().getId(), transacao.getContaDestino().getId(),
-                transacao.getBancoDestino().getId(), transacao.getValor(), transacao.getDescricao(),
+        TransacaoRequestDto transacaoRequestDto = new TransacaoRequestDto(transacao.getId(), transacao.getContaOringem().getId(), transacao.getBancoOrigem().getChavePix(), transacao.getBancoOrigem().getNomeBanco(), transacao.getBancoOrigem().getTitular(), transacao.getContaDestino().getId(),
+                transacao.getBancoDestino().getChavePix(), transacao.getBancoDestino().getNomeBanco(), transacao.getBancoDestino().getTitular(), transacao.getValor(), transacao.getDescricao(),
                 transacao.getDataTransacao());
 
         return transacaoRequestDto;

@@ -38,6 +38,10 @@ public class BancoService {
         return bancoRepository.findById(id);
     }
 
+    public Optional<Banco> buscarPorChavePix(String chavePix){
+        return bancoRepository.findByChavePix(chavePix);
+    }
+
     public void removerPorId(Long bancoId) {
         Banco banco = bancoRepository.findById(bancoId)
                 .orElseThrow(() -> new EntityNotFoundException("Banco não encontrado"));

@@ -6,28 +6,47 @@ public class TransacaoRequestDto {
 
     private Long id;
     private Long contaOrigemId;
-    private Long bancoOrigemId;
+    private String bancoOrigemChavePix;
+    private String bancoOrigemNome;
+    private String bancoOrigemTitular;
     private Long contaDestinoId;
-    private Long bancoDestinoId;
+    private String bancoDestinoChavePix;
+    private String bancoDestinoNome;
+    private String bancoDestinoTitular;
     private float valor;
     private String descricao;
     private LocalDateTime dataTransacao;
 
-    public TransacaoRequestDto(Long id, Long contaOrigemId, Long bancoOrigemId, Long contaDestinoId, Long bancoDestinoId, float valor, String descricao, LocalDateTime dataTransacao) {
+    public TransacaoRequestDto(Long id, Long contaOrigemId, String bancoOrigemChavePix, String bancoOrigemNome, String bancoOrigemTitular, Long contaDestinoId, String bancoDestinoChavePix, String bancoDestinoNome, String bancoDestinoTitular, float valor, String descricao, LocalDateTime dataTransacao) {
         this.id = id;
         this.contaOrigemId = contaOrigemId;
-        this.bancoOrigemId = bancoOrigemId;
+        this.bancoOrigemChavePix = bancoOrigemChavePix;
+        this.bancoOrigemNome = bancoOrigemNome;
+        this.bancoOrigemTitular = bancoOrigemTitular;
         this.contaDestinoId = contaDestinoId;
-        this.bancoDestinoId = bancoDestinoId;
+        this.bancoDestinoChavePix = bancoDestinoChavePix;
+        this.bancoDestinoNome = bancoDestinoNome;
+        this.bancoDestinoTitular = bancoDestinoTitular;
         this.valor = valor;
         this.descricao = descricao;
         this.dataTransacao = dataTransacao;
     }
 
-    public TransacaoRequestDto(Long id, Long contaOrigemId, Long bancoOrigemId, float valor, String descricao, LocalDateTime dataTransacao) {
+    public TransacaoRequestDto(Long id, Long contaOrigemId, String bancoOrigemChavePix, Long contaDestinoId, String bancoDestinoChavePix, float valor, String descricao, LocalDateTime dataTransacao) {
         this.id = id;
         this.contaOrigemId = contaOrigemId;
-        this.bancoOrigemId = bancoOrigemId;
+        this.bancoOrigemChavePix = bancoOrigemChavePix;
+        this.contaDestinoId = contaDestinoId;
+        this.bancoDestinoChavePix = bancoDestinoChavePix;
+        this.valor = valor;
+        this.descricao = descricao;
+        this.dataTransacao = dataTransacao;
+    }
+
+    public TransacaoRequestDto(Long id, Long contaOrigemId, String bancoOrigemChavePix, float valor, String descricao, LocalDateTime dataTransacao) {
+        this.id = id;
+        this.contaOrigemId = contaOrigemId;
+        this.bancoOrigemChavePix = bancoOrigemChavePix;
         this.valor = valor;
         this.descricao = descricao;
         this.dataTransacao = dataTransacao;
@@ -41,10 +60,42 @@ public class TransacaoRequestDto {
     public void setId(Long id) {
         this.id = id;
     }
-    public Long getBancoOrigemId() { return bancoOrigemId; }
-    public void setBancoOrigemId(Long bancoOrigemId) { this.bancoOrigemId = bancoOrigemId; }
-    public Long getBancoDestinoId() { return bancoDestinoId; }
-    public void setBancoDestinoId(Long bancoDestinoId) { this.bancoDestinoId = bancoDestinoId; }
+    public String getBancoDestinoChavePix() {
+        return bancoDestinoChavePix;
+    }
+    public void setBancoDestinoChavePix(String bancoDestinoChavePix) {
+        this.bancoDestinoChavePix = bancoDestinoChavePix;
+    }
+    public String getBancoOrigemNome() {
+        return bancoOrigemNome;
+    }
+    public void setBancoOrigemNome(String bancoOrigemNome) {
+        this.bancoOrigemNome = bancoOrigemNome;
+    }
+    public String getBancoOrigemTitular() {
+        return bancoOrigemTitular;
+    }
+    public void setBancoOrigemTitular(String bancoOrigemTitular) {
+        this.bancoOrigemTitular = bancoOrigemTitular;
+    }
+    public String getBancoOrigemChavePix() {
+        return bancoOrigemChavePix;
+    }
+    public void setBancoOrigemChavePix(String bancoOrigemChavePix) {
+        this.bancoOrigemChavePix = bancoOrigemChavePix;
+    }
+    public String getBancoDestinoNome() {
+        return bancoDestinoNome;
+    }
+    public void setBancoDestinoNome(String bancoDestinoNome) {
+        this.bancoDestinoNome = bancoDestinoNome;
+    }
+    public String getBancoDestinoTitular() {
+        return bancoDestinoTitular;
+    }
+    public void setBancoDestinoTitular(String bancoDestinoTitular) {
+        this.bancoDestinoTitular = bancoDestinoTitular;
+    }
     public float getValor() { return valor; }
     public void setValor(float valor) { this.valor = valor; }
     public String getDescricao() { return descricao; }
