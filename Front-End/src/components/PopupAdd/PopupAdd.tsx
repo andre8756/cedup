@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 interface PopupFormProps {
   onClose: () => void;
-  onSubmit: (novaConta: { titular: string; nomeBanco: string; saldo: number }) => void;   
 }
 
 const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {

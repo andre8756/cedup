@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
 import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
@@ -16,77 +16,27 @@ interface Conta {
 }
 
 const Conta: React.FC = () => {
-  const [contas, setContas] = useState<Conta[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showPopup, setShowPopup] = useState(false);
-
-  // Pega token JWT do cookie
-  const getTokenFromCookie = () => {
-    const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
-    return match ? match[2] : null;
-  };
-
-  // Busca contas do usuário
-  useEffect(() => {
-    const fetchContas = async () => {
-      const token = getTokenFromCookie();
-      if (!token) {
-        console.error("Usuário não autenticado");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch("http://localhost:8080/conta", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) throw new Error("Erro ao buscar contas");
-
-        const data: Conta[] = await response.json();
-        setContas(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-        
-      }
-    };
-
-    fetchContas();
-  }, []);
-
-  // Adiciona nova conta
-  const handleAddConta = async (novaConta: { titular: string; nomeBanco: string; saldo: number }) => {
-    const token = getTokenFromCookie();
-    if (!token) return;
-
-    try {
-      const response = await fetch("http://localhost:8080/conta/banco", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(novaConta),
-      });
-
-      if (!response.ok) throw new Error("Erro ao adicionar conta");
-
-      const contaSalva: Conta = await response.json();
-      setContas((prev) => [...prev, contaSalva]);
-      setShowPopup(false);
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao adicionar conta!");
+  // Dados placeholder
+  const [contas] = useState<Conta[]>([
+    {
+      id: 1,
+      titular: "João Silva",
+      saldo: 6312.48,
+      bancos: [
+        { nome: "Banco Inter", numero: 12345 }
+      ]
+    },
+    {
+      id: 2,
+      titular: "Maria Santos",
+      saldo: 2500.00,
+      bancos: [
+        { nome: "C6 Bank", numero: 67890 }
+      ]
     }
-  };
-
-
-
-  if (loading) return <p className="loading">Carregando contas...</p>;
+  ]);
+  
+  const [showPopup, setShowPopup] = useState(false);
 
   // Calcula saldo total
   const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
@@ -116,7 +66,7 @@ const Conta: React.FC = () => {
         <div className="overview-card">
           <div className="welcome-section">
             <p className="greeting-text">Bem vindo,</p>
-            <h1 className="user-name">{contas[0]?.titular || 'Usuário'}</h1>
+            <h1 className="user-name">João Silva</h1>
           </div>
 
           <div className="financial-summary">
@@ -206,7 +156,7 @@ const Conta: React.FC = () => {
 </div>
 
       {/* POPUP */}
-      {showPopup && <PopupForm onClose={() => setShowPopup(false)} onSubmit={handleAddConta} />}
+      {showPopup && <PopupForm onClose={() => setShowPopup(false)} />}
     </>
   );
 };
