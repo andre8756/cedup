@@ -216,7 +216,8 @@ POST /conta/{contaId}/banco
 {
   "titular": "André",
   "nomeBanco": "Inter",
-  "saldo": 1200.50
+  "saldo": 1200.50,
+  "chavePix": 123-abc
 }
 ```
 
@@ -238,6 +239,12 @@ GET /conta/{id}/banco
 GET /conta/banco/{id}
 ```
 
+#### 🔎 Buscar Banco por chavePix
+
+``` http
+GET /conta/banco/{chavePix}
+```
+
 #### ✏️ Atualizar Banco
 
 ``` http
@@ -257,7 +264,7 @@ DELETE /conta/banco/{id}
 #### ➕ Criar Transação
 
 ``` http
-POST /conta/banco/{bancoOrigemId}/{bancoDestinoId}/transacao
+POST /conta/banco/{bancoOrigemChavePix}/{bancoDestinoChavePix}/transacao
 ```
 
 **Body:**
