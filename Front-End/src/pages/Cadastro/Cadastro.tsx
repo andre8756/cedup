@@ -55,7 +55,6 @@ function Cadastro() {
     };
 
     try {
-      // Registrar usuário
       const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,7 +67,6 @@ function Cadastro() {
         return;
       }
 
-      // Login automático usando email (ou CPF/telefone)
       const loginResult = await queryUser({
         identifier: formData.email,
         identifierType: 'email',
@@ -76,8 +74,8 @@ function Cadastro() {
       });
 
       if (loginResult?.token) {
-        Cookies.set('token', loginResult.token, { expires: 7 }); // token por 7 dias
-        navigate('/conta'); // vai direto para o dashboard
+        Cookies.set('token', loginResult.token, { expires: 7 });
+        navigate('/conta');
       } else {
         alert('Cadastro realizado, mas falha ao logar automaticamente.');
         navigate('/login');
@@ -92,6 +90,15 @@ function Cadastro() {
     <div className="cadastro-container">
       <div className="cadastro-content">
         <div className="cadastro-card">
+
+          {/* Header mobile */}
+          <div className="mobile-header">
+            <div className="icon-container"><UserPlus size={28} /></div>
+            <h1>Cadastro</h1>
+            <p>Crie sua conta e aproveite nossa plataforma</p>
+          </div>
+
+          {/* Sidebar desktop */}
           <div className="cadastro-sidebar">
             <div className="sidebar-pattern"></div>
             <div className="sidebar-content">
@@ -101,8 +108,10 @@ function Cadastro() {
             </div>
           </div>
 
+          {/* Form */}
           <div className="form-container">
             <form onSubmit={handleSubmit} className="form">
+
               <div className="form-group">
                 <label htmlFor="titular">Nome Completo</label>
                 <div className="input-container">
@@ -148,6 +157,7 @@ function Cadastro() {
               <p className="login-text">
                 Já possui conta? <button type="button" onClick={() => navigate('/login')} className="login-link">Fazer login</button>
               </p>
+
             </form>
           </div>
         </div>

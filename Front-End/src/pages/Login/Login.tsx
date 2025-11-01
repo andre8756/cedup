@@ -15,10 +15,8 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Remove formatação apenas ao enviar
   const clean = (value: string) => value.replace(/\D/g, '');
 
-  // Determina tipo de identificador
   const getIdentifierType = (value: string): IdentifierType => {
     if (value.includes('@')) return 'email';
     const digits = clean(value);
@@ -40,7 +38,6 @@ function Login() {
         return;
       }
 
-      // Envia CPF/telefone limpos
       const valueToSend = identifierType === 'email' ? identifier : clean(identifier);
       const result = await queryUser({
         identifier: valueToSend,
@@ -51,7 +48,6 @@ function Login() {
       if (!result?.token) {
         setMessage({ type: 'error', text: 'Credenciais inválidas.' });
       } else {
-        // Guarda o token em cookie
         Cookies.set('token', result.token, { expires: 7, secure: true, sameSite: 'strict' });
         setMessage({ type: 'success', text: 'Login realizado! Redirecionando...' });
         setTimeout(() => navigate('/conta'), 1500);
@@ -66,10 +62,17 @@ function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
+
+        {/* Header mobile */}
+        <div className="mobile-header">
+          <div className="icon-container"><LogIn size={28} /></div>
+          <h1>Login</h1>
+          <p>Insira suas credenciais para continuar</p>
+        </div>
+
+        {/* Sidebar desktop */}
         <div className="login-side">
-          <div className="brand">
-            <LogIn size={36} />
-          </div>
+          <div className="brand"><LogIn size={36} /></div>
           <h1>Bem-vindo de volta!</h1>
           <p>Faça login para acessar todos os recursos da plataforma.</p>
           <div className="feature-list">
@@ -79,13 +82,10 @@ function Login() {
           </div>
         </div>
 
+        {/* Form */}
         <div className="login-main">
-          <div className="login-header">
-            <h1>Login</h1>
-            <p>Insira suas credenciais para continuar</p>
-          </div>
-
           <form className="form" onSubmit={handleSubmit}>
+
             <div className="field">
               <label>CPF, E-mail ou Telefone</label>
               <div className="input-container">
@@ -130,8 +130,10 @@ function Login() {
                 Cadastre-se
               </button>
             </p>
+
           </form>
         </div>
+
       </div>
     </div>
   );
