@@ -107,6 +107,13 @@ public class ContaController {
         return bancoService.buscarPorId(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrada"));
     }
 
+    //Buscar banco específico
+    @GetMapping("/banco/{chavePix}")
+    @ResponseStatus(HttpStatus.OK)
+    public Banco buscarBancoPorChavePix(@PathVariable("chavePix") String chavePix){
+        return bancoService.buscarPorChavePix(chavePix).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrada"));
+    }
+
     //Metodo Post para criação de banco
     @PostMapping("/{contaId}/banco") //Identifica que metodo a API deve executar ao fazer um POST
     @ResponseStatus(HttpStatus.CREATED) //Responde o resultado do post 201
@@ -146,11 +153,11 @@ public class ContaController {
     // -------------------------------------------------------------------------
 
     //Metodo Post para criação da transacao
-    @PostMapping("banco/{bancoOrigemId}/{bancoDestinoId}/transacao")
+    @PostMapping("banco/{bancoOrigemChavePix}/{bancoDestinoChavePix}/transacao")
     @ResponseStatus(HttpStatus.CREATED) //Responde o resultado do post 201
-    public TransacaoRequestDto salvarTransacao(@PathVariable("bancoOrigemId") Long bancoOrigemId,
-                                     @PathVariable("bancoDestinoId") Long bancoDestinoId, @RequestBody Transacao transacao){
-        return transacaoService.processarTransacao(bancoOrigemId, bancoDestinoId, transacao);
+    public TransacaoRequestDto salvarTransacao(@PathVariable("bancoOrigemChavePix") String bancoOrigemChavePix,
+                                     @PathVariable("bancoDestinoChavePix") String bancoDestinoChavePix, @RequestBody Transacao transacao){
+        return transacaoService.processarTransacao(bancoOrigemChavePix, bancoDestinoChavePix, transacao);
     }
 
     // Metodo PUT para atualização da transacao pelo id
@@ -160,7 +167,7 @@ public class ContaController {
         transacaoService.buscarPorId(id)
                 .map(transacaoBase -> {
                     modelMapper.map(transacao, transacaoBase);
-                    transacaoService.processarTransacao(transacaoBase.getBancoOrigem().getId(), transacaoBase.getBancoDestino().getId(), transacaoBase);
+                    transacaoService.processarTransacao(transacaoBase.getBancoOrigem().getChavePix(), transacaoBase.getBancoDestino().getChavePix(), transacaoBase);
                     return Void.TYPE;
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacao nao encontrada"));
     }
