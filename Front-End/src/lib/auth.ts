@@ -1,6 +1,3 @@
-// Small local auth stub to replace Supabase usage.
-// This provides a minimal compatible interface for the Login page.
-
 type IdentifierType = 'cpf' | 'telefone' | 'email' | null;
 
 export async function queryUser({
@@ -12,38 +9,26 @@ export async function queryUser({
   identifierType: IdentifierType;
   senha: string;
 }) {
-  // Example hardcoded users. You can replace this with calls to your API.
-  const users = [
-    {
-      id: 1,
-      titular: 'Usuário Teste',
-      cpf: '00000000000',
-      telefone: '00000000000',
-      email: 'teste@teste.com',
-      senha: '1234',
-    },
-  ];
-
-  // Normalize inputs
   const clean = (v: string) => v.replace(/\D/g, '');
+  let body: Record<string, string> = { senha };
 
-  let user = null;
+  if (identifierType === 'cpf') body.cpf = clean(identifier);
+  else if (identifierType === 'telefone') body.telefone = clean(identifier);
+  else if (identifierType === 'email') body.email = identifier;
 
-  if (identifierType === 'cpf') {
-    const cpf = clean(identifier);
-    user = users.find((u) => u.cpf === cpf && u.senha === senha) ?? null;
-  } else if (identifierType === 'telefone') {
-    const telefone = clean(identifier);
-    user = users.find((u) => u.telefone === telefone && u.senha === senha) ?? null;
-  } else if (identifierType === 'email') {
-    user = users.find((u) => u.email === identifier && u.senha === senha) ?? null;
-  } else {
-    // Fallback: try email or cpf/telefone
-    user = users.find((u) => (u.email === identifier || u.cpf === clean(identifier) || u.telefone === clean(identifier)) && u.senha === senha) ?? null;
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    return data.token ? { token: data.token } : null;
+  } catch (error) {
+    console.error('Erro ao consultar usuário:', error);
+    return null;
   }
-
-  // Simulate async
-  return new Promise<{ id: number; titular: string } | null>((resolve) => {
-    setTimeout(() => resolve(user ? { id: user.id, titular: user.titular } : null), 300);
-  });
 }

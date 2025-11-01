@@ -1,8 +1,8 @@
-import './Login.css';
 import { useState } from 'react';
-import { LogIn, Lock, Phone, Mail, User } from 'lucide-react';
-import { queryUser } from '../../lib/auth';
+import { User, Lock, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { queryUser } from '../../lib/auth';
+import './Login.css';
 
 function Login() {
   const navigate = useNavigate();
@@ -11,41 +11,15 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  const formatInput = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-
-    if (numbers.length === 11 && !value.includes('.')) {
-      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
-
-    if (numbers.length === 11 && value.includes('(')) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-    }
-
-    return value;
-  };
+  // remove formatação só ao enviar
+  const clean = (value: string) => value.replace(/\D/g, '');
 
   const getIdentifierType = (value: string) => {
-    const clean = value.replace(/\D/g, '');
-
-    if (clean.length === 11 && !value.includes('@')) {
-      if (value.includes('.') && value.includes('-')) {
-        return 'cpf';
-      } else if (value.includes('(')) {
-        return 'telefone';
-      }
-    }
-
-    if (value.includes('@')) {
-      return 'email';
-    }
-
+    if (value.includes('@')) return 'email';
+    const digits = clean(value);
+    if (digits.length === 11 && value.includes('.')) return 'cpf';
+    if (digits.length === 11) return 'telefone';
     return null;
-  };
-
-  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setIdentifier(formatInput(value));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,25 +29,26 @@ function Login() {
 
     try {
       const identifierType = getIdentifierType(identifier);
-
-      if (!identifierType && !identifier.includes('@')) {
-        setMessage({ type: 'error', text: 'Digite um CPF, telefone ou e-mail válido.' });
+      if (!identifierType) {
+        setMessage({ type: 'error', text: 'Formato de identificador inválido.' });
         setLoading(false);
         return;
       }
 
-      // Use local auth helper instead of Supabase
-      const result = await queryUser({ identifier, identifierType, senha });
+      const result = await queryUser({
+        identifier,
+        identifierType,
+        senha,
+      });
 
-      if (!result) {
-        setMessage({ type: 'error', text: 'Credenciais inválidas. Verifique seus dados.' });
+      if (!result?.token) {
+        setMessage({ type: 'error', text: 'Credenciais inválidas.' });
       } else {
-        setMessage({ type: 'success', text: `Bem-vindo, ${result.titular}! Redirecionando...` });
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500);
+        localStorage.setItem('token', result.token);
+        setMessage({ type: 'success', text: 'Login realizado! Redirecionando...' });
+        setTimeout(() => navigate('/dashboard'), 1500);
       }
-    } catch (error) {
+    } catch {
       setMessage({ type: 'error', text: 'Erro ao fazer login. Tente novamente.' });
     } finally {
       setLoading(false);
@@ -82,111 +57,72 @@ function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-wrapper">
-        <div className="login-card">
-          <div className="login-side">
-            <div className="relative z-10">
-              <div className="mb-8">
-                <div className="brand">
-                  <LogIn className="icon" />
-                </div>
-                <h1>Bem de volta!</h1>
-                <p>
-                  Acesse sua conta com CPF, e-mail ou telefone e continue de onde parou.
-                </p>
-              </div>
+      <div className="login-card">
+        <div className="login-side">
+          <div className="brand">
+            <LogIn size={36} />
+          </div>
+          <h1>Bem-vindo de volta!</h1>
+          <p>Faça login para acessar todos os recursos da plataforma.</p>
+          <div className="feature-list">
+            <div className="feature"><div className="dot" /> Segurança garantida</div>
+            <div className="feature"><div className="dot" /> Acesso rápido e fácil</div>
+            <div className="feature"><div className="dot" /> Interface moderna</div>
+          </div>
+        </div>
 
-              <div className="feature-list">
-                <div className="feature"><div className="dot"></div><p>Acesso seguro e rápido</p></div>
-                <div className="feature"><div className="dot"></div><p>Múltiplas opções de login</p></div>
-                <div className="feature"><div className="dot"></div><p>Seus dados protegidos</p></div>
-              </div>
-            </div>
+        <div className="login-main">
+          <div className="login-header">
+            <h1>Login</h1>
+            <p>Insira suas credenciais para continuar</p>
           </div>
 
-          <div className="login-main">
-            <div className="login-header">
-              <div style={{display:'flex',justifyContent:'center',marginBottom:12}}>
-                <div style={{background:'linear-gradient(90deg,#2563eb,#1e40af)',padding:8,borderRadius:999}}>
-                  <LogIn size={20} className="icon" />
-                </div>
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="field">
+              <label>CPF, E-mail ou Telefone</label>
+              <div className="input-container">
+                <input
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  className="input"
+                  placeholder="Digite seu CPF, email ou telefone"
+                  required
+                />
+                <User className="icon" />
               </div>
-              <h1>Login</h1>
-              <p>Acesse sua conta</p>
             </div>
 
-            <div className="info-block">
-              <h2>Fazer Login</h2>
-              <p>Use CPF, e-mail ou telefone para acessar</p>
+            <div className="field">
+              <label>Senha</label>
+              <div className="input-container">
+                <input
+                  type="password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  className="input"
+                  placeholder="Sua senha"
+                  required
+                />
+                <Lock className="icon" />
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="form">
-              <div>
-                <label htmlFor="identifier">CPF, E-mail ou Telefone</label>
-                <div className="field">
-                  <div className="icon">
-                    {identifier.includes('@') ? (
-                      <Mail size={18} />
-                    ) : identifier.includes('(') ? (
-                      <Phone size={18} />
-                    ) : (
-                      <User size={18} />
-                    )}
-                  </div>
-                  <input
-                    type="text"
-                    id="identifier"
-                    value={identifier}
-                    onChange={handleIdentifierChange}
-                    required
-                    className="input"
-                    placeholder="000.000.000-00 ou seu@email.com ou (00) 00000-0000"
-                  />
-                </div>
-              </div>
+            {message.text && (
+              <p className={`message ${message.type}`}>{message.text}</p>
+            )}
 
-              <div>
-                <label htmlFor="senha">Senha</label>
-                <div className="field">
-                  <div className="icon"><Lock size={18} /></div>
-                  <input
-                    type="password"
-                    id="senha"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    required
-                    className="input"
-                    placeholder="Digite sua senha"
-                  />
-                </div>
-              </div>
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
 
-              <div className="form-footer">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" />
-                  <span>Lembrar-me</span>
-                </label>
-                <a href="#">Esqueceu a senha?</a>
-              </div>
-
-              {message.text && (
-                <div className={`message ${message.type === 'success' ? 'success' : 'error'}`}>
-                  <p>{message.text}</p>
-                </div>
-              )}
-
-              <button type="submit" disabled={loading} className="btn-primary">
-                {loading ? 'Entrando...' : 'Entrar'}
+            <p className="meta">
+              Não possui conta?{' '}
+              <button type="button" onClick={() => navigate('/cadastro')}>
+                Cadastre-se
               </button>
-
-              <p className="meta">
-                Não possui uma conta?{' '}
-                <button type="button" onClick={() => navigate('/cadastro')}>
-                  Cadastrar
-                </button>
-              </p>
-            </form>
-          </div>
+            </p>
+          </form>
         </div>
       </div>
     </div>

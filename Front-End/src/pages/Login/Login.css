@@ -1,9 +1,11 @@
+/* Login.css atualizado para TSX */
+
 /* ==============================
    🎨 Variáveis e tema base
 ============================== */
 :root {
-  --bg-900: #0b1220;
-  --bg-800: #0f172a;
+  --bg-900: #0f172a;
+  --bg-800: #1e293b;
   --primary-700: #1e40af;
   --primary-600: #2563eb;
   --muted: #6b7280;
@@ -20,10 +22,6 @@
 /* ==============================
    🌌 Página e container
 ============================== */
-body {
-  font-size: 16.5px;
-}
-
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -34,14 +32,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.login-wrapper {
+  width: 100%;
+  max-width: 1024px;
+}
+
 /* ==============================
    🧩 Card principal
 ============================== */
-.login-wrapper {
-  width: 100%;
-  max-width: 1080px;
-}
-
 .login-card {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -49,23 +47,9 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.6s ease forwards;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
   .login-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -77,18 +61,18 @@ body {
 ============================== */
 .login-side {
   display: none;
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  color: #fff;
+  background: linear-gradient(to bottom right, var(--primary-600), var(--primary-700));
+  color: white;
   padding: 3rem;
   position: relative;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
   .login-side {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 3.5rem 2.5rem;
+    padding: 4rem 3rem;
   }
 }
 
@@ -113,13 +97,13 @@ body {
 .login-side h1 {
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
+  margin-bottom: 0.5rem;
 }
 
 .login-side p {
   color: rgba(255, 255, 255, 0.92);
   margin: 0;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .feature-list {
@@ -150,15 +134,12 @@ body {
   padding: 2rem;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 1024px) {
   .login-main {
     padding: 3rem 2.5rem;
   }
 }
 
-/* ==============================
-   🪪 Cabeçalho
-============================== */
 .login-header {
   text-align: center;
   margin-bottom: 1rem;
@@ -177,26 +158,12 @@ body {
 }
 
 /* ==============================
-   ℹ️ Bloco informativo
-============================== */
-.info-block {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .info-block {
-    display: block;
-    margin-bottom: 1rem;
-  }
-}
-
-/* ==============================
    🧾 Formulário
 ============================== */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .form label {
@@ -224,7 +191,7 @@ body {
   border: 1px solid #e6e9ee;
   border-radius: var(--radius-md);
   font-size: 1rem;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
 .input::placeholder {
@@ -236,32 +203,6 @@ body {
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
   border-color: transparent;
   transform: translateY(-1px);
-}
-
-/* ==============================
-   🧭 Rodapé do formulário
-============================== */
-.form-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  color: #374151;
-}
-
-.form-footer a,
-.form-footer button {
-  color: var(--primary-600);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  transition: opacity 0.15s;
-}
-
-.form-footer a:hover,
-.form-footer button:hover {
-  opacity: 0.8;
 }
 
 /* ==============================
@@ -286,7 +227,7 @@ body {
 }
 
 /* ==============================
-   🚀 Botões
+   🚀 Botão principal
 ============================== */
 .btn-primary {
   width: 100%;
@@ -294,7 +235,7 @@ body {
   border-radius: var(--radius-md);
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(90deg, var(--primary-600), var(--primary-700));
+  background: linear-gradient(to right, var(--primary-600), var(--primary-700));
   border: none;
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(30, 58, 138, 0.16);
@@ -313,7 +254,7 @@ body {
 }
 
 /* ==============================
-   🔹 Meta (link de cadastro)
+   🔹 Link para cadastro
 ============================== */
 .meta {
   text-align: center;

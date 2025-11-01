@@ -3,9 +3,17 @@ import { UserPlus, User, CreditCard, Mail, Phone, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './Cadastro.css';
 
+interface FormData {
+  titular: string;
+  cpf: string;
+  email: string;
+  telefone: string;
+  senha: string;
+}
+
 function Cadastro() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     titular: '',
     cpf: '',
     email: '',
@@ -59,6 +67,7 @@ function Cadastro() {
     <div className="cadastro-container">
       <div className="cadastro-content">
         <div className="cadastro-card">
+          {/* Sidebar */}
           <div className="cadastro-sidebar">
             <div className="sidebar-pattern"></div>
             <div className="sidebar-content">
@@ -67,40 +76,74 @@ function Cadastro() {
               <p className="sidebar-text">
                 Crie sua conta e tenha acesso a todos os recursos da plataforma.
               </p>
+              <div className="features-list">
+                <div className="feature-item"><div className="feature-dot"></div><p className="feature-text">Cadastro rápido e seguro</p></div>
+                <div className="feature-item"><div className="feature-dot"></div><p className="feature-text">Proteção de dados garantida</p></div>
+                <div className="feature-item"><div className="feature-dot"></div><p className="feature-text">Suporte disponível 24/7</p></div>
+              </div>
             </div>
           </div>
 
+          {/* Form */}
           <div className="form-container">
-            <h2>Criar Conta</h2>
+            <div className="mobile-header">
+              <div className="mobile-icon-container">
+                <div className="mobile-icon-bg"><UserPlus size={20} /></div>
+              </div>
+              <h1 className="mobile-title">Cadastro</h1>
+              <p className="mobile-subtitle">Preencha seus dados para começar</p>
+            </div>
+
+            <div className="desktop-header">
+              <h2 className="desktop-title">Criar Conta</h2>
+              <p className="desktop-subtitle">Preencha os campos abaixo para se cadastrar</p>
+            </div>
+
             <form onSubmit={handleSubmit} className="form">
               <div className="form-group">
                 <label htmlFor="titular">Nome Completo</label>
-                <input type="text" name="titular" id="titular" value={formData.titular} onChange={handleChange} required />
+                <div className="input-container">
+                  <div className="input-icon"><User size={18} /></div>
+                  <input type="text" name="titular" id="titular" value={formData.titular} onChange={handleChange} required className="form-input"/>
+                </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="cpf">CPF</label>
-                <input type="text" name="cpf" id="cpf" value={formData.cpf} onChange={handleChange} required maxLength={14} />
+                <div className="input-container">
+                  <div className="input-icon"><CreditCard size={18} /></div>
+                  <input type="text" name="cpf" id="cpf" value={formData.cpf} onChange={handleChange} required maxLength={14} className="form-input"/>
+                </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="email">E-mail</label>
-                <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required />
+                <div className="input-container">
+                  <div className="input-icon"><Mail size={18} /></div>
+                  <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="form-input"/>
+                </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="telefone">Telefone</label>
-                <input type="tel" name="telefone" id="telefone" value={formData.telefone} onChange={handleChange} required maxLength={15} />
+                <div className="input-container">
+                  <div className="input-icon"><Phone size={18} /></div>
+                  <input type="tel" name="telefone" id="telefone" value={formData.telefone} onChange={handleChange} required maxLength={15} className="form-input"/>
+                </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="senha">Senha</label>
-                <input type="password" name="senha" id="senha" value={formData.senha} onChange={handleChange} required minLength={6} />
+                <div className="input-container">
+                  <div className="input-icon"><Lock size={18} /></div>
+                  <input type="password" name="senha" id="senha" value={formData.senha} onChange={handleChange} required minLength={6} className="form-input"/>
+                </div>
               </div>
 
-              <button type="submit">Cadastrar</button>
-              <p>
-                Já possui conta? <button type="button" onClick={() => navigate('/login')}>Fazer login</button>
+              <button type="submit" className="submit-button">Cadastrar</button>
+
+              <p className="login-text">
+                Já possui conta? <button type="button" onClick={() => navigate('/login')} className="login-link">Fazer login</button>
               </p>
             </form>
           </div>

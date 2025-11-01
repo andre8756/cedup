@@ -1,3 +1,5 @@
+/* Cadastro.css */
+
 .cadastro-container {
   min-height: 100vh;
   background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
@@ -22,7 +24,6 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   width: 100%;
-  max-width: 100%;
 }
 
 @media (min-width: 1024px) {
@@ -32,6 +33,7 @@
   }
 }
 
+/* Sidebar */
 .cadastro-sidebar {
   display: none;
   background: linear-gradient(to bottom right, #2563eb, #1d4ed8, #1e40af);
@@ -116,6 +118,7 @@
   font-size: 1.125rem;
 }
 
+/* Form */
 .form-container {
   padding: 1rem;
   width: 100%;
@@ -235,10 +238,8 @@
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   transition: all 0.2s;
-  box-sizing: border-box;
   font-size: 1rem;
-  min-width: 0;
-  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -255,7 +256,6 @@
   border-radius: 0.5rem;
   font-weight: 600;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   border: none;
   cursor: pointer;
 }
@@ -286,9 +286,4 @@
 
 .login-link:hover {
   color: #1d4ed8;
-}
-
-.cadastro-custom {
-	color: #333;
-	padding: 1rem;
 }
