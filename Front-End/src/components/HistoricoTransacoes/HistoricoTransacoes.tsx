@@ -8,12 +8,14 @@ interface Transacao {
     dataTransacao: string;
     bancoDestino: string;
     valor: number;
+    valorTotal: number;
 }
 
 export default function HistoricoTransacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
   const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
   const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+  const transacaoTotal = transacoes.reduce((acumulador, t) => acumulador +t.valor, 0)
 
   useEffect(() => {
     const fetchTransacoes = async () => {
@@ -32,16 +34,22 @@ export default function HistoricoTransacoes() {
 
   return (
     <section className="historico-transacoes">
+
+      <div className="header-transacoes">
+        <p className="title">Transações de {mesFormatado}</p>
+        <div className="totalTransacao">
+          <small>
+            R$ {transacaoTotal}
+          </small>
+        </div>
+      </div>
       <ul>
         {transacoes.length === 0 ? (
-          <>
-            <div className="available-label">Extrado de {mesFormatado}
 
-            </div>
-            <small>R$0,00</small>
-            <p>Nenhuma transação encontrada.</p>
-          </>
+          <p>Nenhuma transação encontrada.</p>
+
         ) : (
+
           transacoes.map((t) => (
             <li key={t.id} className="transacao-item">
               <div className="transacao-info">
