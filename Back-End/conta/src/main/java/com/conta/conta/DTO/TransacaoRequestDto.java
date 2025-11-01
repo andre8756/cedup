@@ -7,11 +7,30 @@ public class TransacaoRequestDto {
     private Long id;
     private Long contaOrigemId;
     private Long bancoOrigemId;
+    private String bancoOrigemNome;
+    private String bancoOrigemTitular;
     private Long contaDestinoId;
     private Long bancoDestinoId;
+    private String bancoDestinoNome;
+    private String bancoDestinoTitular;
     private float valor;
     private String descricao;
     private LocalDateTime dataTransacao;
+
+    public TransacaoRequestDto(Long id, Long contaOrigemId, Long bancoOrigemId, String bancoOrigemNome, String bancoOrigemTitular, Long contaDestinoId, Long bancoDestinoId, String bancoDestinoNome, String bancoDestinoTitular, float valor, String descricao, LocalDateTime dataTransacao) {
+        this.id = id;
+        this.contaOrigemId = contaOrigemId;
+        this.bancoOrigemId = bancoOrigemId;
+        this.bancoOrigemNome = bancoOrigemNome;
+        this.bancoOrigemTitular = bancoOrigemTitular;
+        this.contaDestinoId = contaDestinoId;
+        this.bancoDestinoId = bancoDestinoId;
+        this.bancoDestinoNome = bancoDestinoNome;
+        this.bancoDestinoTitular = bancoDestinoTitular;
+        this.valor = valor;
+        this.descricao = descricao;
+        this.dataTransacao = dataTransacao;
+    }
 
     public TransacaoRequestDto(Long id, Long contaOrigemId, Long bancoOrigemId, Long contaDestinoId, Long bancoDestinoId, float valor, String descricao, LocalDateTime dataTransacao) {
         this.id = id;
@@ -43,8 +62,32 @@ public class TransacaoRequestDto {
     }
     public Long getBancoOrigemId() { return bancoOrigemId; }
     public void setBancoOrigemId(Long bancoOrigemId) { this.bancoOrigemId = bancoOrigemId; }
+    public String getBancoOrigemNome() {
+        return bancoOrigemNome;
+    }
+    public void setBancoOrigemNome(String bancoOrigemNome) {
+        this.bancoOrigemNome = bancoOrigemNome;
+    }
+    public String getBancoOrigemTitular() {
+        return bancoOrigemTitular;
+    }
+    public void setBancoOrigemTitular(String bancoOrigemTitular) {
+        this.bancoOrigemTitular = bancoOrigemTitular;
+    }
     public Long getBancoDestinoId() { return bancoDestinoId; }
     public void setBancoDestinoId(Long bancoDestinoId) { this.bancoDestinoId = bancoDestinoId; }
+    public String getBancoDestinoNome() {
+        return bancoDestinoNome;
+    }
+    public void setBancoDestinoNome(String bancoDestinoNome) {
+        this.bancoDestinoNome = bancoDestinoNome;
+    }
+    public String getBancoDestinoTitular() {
+        return bancoDestinoTitular;
+    }
+    public void setBancoDestinoTitular(String bancoDestinoTitular) {
+        this.bancoDestinoTitular = bancoDestinoTitular;
+    }
     public float getValor() { return valor; }
     public void setValor(float valor) { this.valor = valor; }
     public String getDescricao() { return descricao; }

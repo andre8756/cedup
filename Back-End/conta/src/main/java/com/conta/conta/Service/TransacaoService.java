@@ -174,8 +174,8 @@ public class TransacaoService {
     private TransacaoRequestDto convertToDTO(Transacao transacao) {
         if (transacao == null) return null;
 
-        TransacaoRequestDto transacaoRequestDto = new TransacaoRequestDto(transacao.getId(), transacao.getContaOringem().getId(), transacao.getBancoOrigem().getId(), transacao.getContaDestino().getId(),
-                transacao.getBancoDestino().getId(), transacao.getValor(), transacao.getDescricao(),
+        TransacaoRequestDto transacaoRequestDto = new TransacaoRequestDto(transacao.getId(), transacao.getContaOringem().getId(), transacao.getBancoOrigem().getId(), transacao.getBancoOrigem().getNomeBanco(), transacao.getBancoOrigem().getTitular(), transacao.getContaDestino().getId(),
+                transacao.getBancoDestino().getId(), transacao.getBancoDestino().getNomeBanco(), transacao.getBancoDestino().getTitular(), transacao.getValor(), transacao.getDescricao(),
                 transacao.getDataTransacao());
 
         return transacaoRequestDto;

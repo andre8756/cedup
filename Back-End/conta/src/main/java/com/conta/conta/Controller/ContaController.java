@@ -7,11 +7,12 @@ import com.conta.conta.Entity.Conta;
 import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Service.BancoService;
 import com.conta.conta.Service.ContaService;
+import com.conta.conta.Service.PdfService;
 import com.conta.conta.Service.TransacaoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,6 +38,9 @@ public class ContaController {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private PdfService pdfService;
 
 
     // Conta Principal -------------------------------------------------------------------------
@@ -201,6 +205,51 @@ public class ContaController {
         filtro.setDescricao(descricao);
 
         return transacaoService.listarComFiltros(filtro);
+    }
+
+    @GetMapping("banco/transacao/filtros/pdf")
+    public ResponseEntity<byte[]> downloadPdfComFiltros(
+            @RequestParam(required = false) Long contaId,
+            @RequestParam(required = false) Long contaOrigemId,
+            @RequestParam(required = false) Long contaDestinoId,
+            @RequestParam(required = false) Long bancoOrigemId,
+            @RequestParam(required = false) Long bancoDestinoId,
+            @RequestParam(required = false) List<Long> bancosIds,
+            @RequestParam(required = false) List<Long> contasIds,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dataFim,
+            @RequestParam(required = false) Float valor,
+            @RequestParam(required = false) String descricao) {
+
+        // Cria o filtro com os parâmetros
+        TransacaoFiltro filtro = new TransacaoFiltro();
+        filtro.setContaId(contaId);
+        filtro.setContaOrigemId(contaOrigemId);
+        filtro.setContaDestinoId(contaDestinoId);
+        filtro.setBancoOrigemId(bancoOrigemId);
+        filtro.setBancoDestinoId(bancoDestinoId);
+        filtro.setBancosIds(bancosIds);
+        filtro.setContasIds(contasIds);
+        filtro.setDataInicio(dataInicio);
+        filtro.setDataFim(dataFim);
+        filtro.setValor(valor);
+        filtro.setDescricao(descricao);
+
+        // Busca as transações filtradas
+        List<TransacaoRequestDto> transacoesFiltradas = transacaoService.listarComFiltros(filtro);
+
+        // Gera o PDF
+        byte[] pdfBytes = pdfService.generateTransacoesPdf(transacoesFiltradas);
+
+        // Configura os headers para download
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.attachment()
+                .filename("relatorio-transacoes-" + System.currentTimeMillis() + ".pdf")
+                .build());
+        headers.setContentLength(pdfBytes.length);
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
     // Metodos Antigoos (serao excluido)----------------------------------------------------------------------------------
