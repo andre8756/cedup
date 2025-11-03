@@ -43,7 +43,7 @@ Desenvolver um sistema web que permita ao usuário:
 **Time de Desenvolvimento / Estudantes (Turma):**  
 - **André Heriberto Schmidt** – Fullstack  
 - **Nicolas Rotta** – Fullstack  
-- **José Lourenço Neto** – Back-end  
+- **José Lourenço Neto** – Fullstack  
 - **Rogério** – Front-end  
 - **Arthur Novaes** – Database  
 
@@ -81,7 +81,7 @@ Desenvolver um sistema web que permita ao usuário:
    ```bash
    npm start
    ```
-6. Acesse em: `http://localhost:3000`  
+6. Acesse em: `http://localhost:5173`  
 
 ---
 
