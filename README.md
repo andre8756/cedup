@@ -79,7 +79,7 @@ Desenvolver um sistema web que permita ao usuário:
 4. Rode o back-end com Spring Boot.  
 5. Inicie o front-end React com:  
    ```bash
-   npm start
+   npm run dev
    ```
 6. Acesse em: `http://localhost:5173`  
 
