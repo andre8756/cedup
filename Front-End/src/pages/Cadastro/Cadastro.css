@@ -1,62 +1,132 @@
+/*
+ * ----------------------------------
+ * 0. Variáveis Globais (Custom Properties)
+ * Tornam a manutenção de cores e tamanhos mais fácil.
+ * ----------------------------------
+ */
+:root {
+  /* Cores da Paleta Primária (Azul) */
+  --cor-azul-clara: #2563eb;    /* Indigo-600 */
+  --cor-azul-media: #1d4ed8;    /* Indigo-700 */
+  --cor-azul-escura: #1e40af;   /* Indigo-800 */
+
+  /* Cores da Paleta de Fundo (Dark) */
+  --cor-fundo-clara: #1e293b;   /* Slate-800 */
+  --cor-fundo-escura: #0f172a;  /* Slate-900 */
+
+  /* Gradientes */
+  --gradiente-fundo: linear-gradient(to bottom right, var(--cor-fundo-escura), var(--cor-fundo-clara), var(--cor-fundo-escura));
+  --gradiente-primario: linear-gradient(to right, var(--cor-azul-clara), var(--cor-azul-media));
+  --gradiente-hover: linear-gradient(to right, var(--cor-azul-media), var(--cor-azul-escura));
+  --gradiente-sidebar: linear-gradient(to bottom right, var(--cor-azul-clara), var(--cor-azul-media), var(--cor-azul-escura));
+
+  /* Cores de Texto e Borda */
+  --cor-texto-principal: #374151; /* Gray-700 */
+  --cor-texto-secundario: #4b5563; /* Gray-600 */
+  --cor-borda-input: #d1d5db;     /* Gray-300 */
+  --cor-icon-input: #9ca3af;      /* Gray-400 */
+  --cor-shadow-focus: #3b82f6;    /* Blue-500 */
+  --cor-texto-sidebar: rgba(219, 234, 254, 0.9); /* Blue-100/90% */
+}
+
+/*
+ * 1. Configurações Globais
+ * Aplicado box-sizing: border-box; globalmente.
+ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ---------------------------------- */
+/* Layout Base */
+/* ---------------------------------- */
+
 /* Container da página */
 .cadastro-container {
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+  background: var(--gradiente-fundo); /* Usando variável */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  box-sizing: border-box;
 }
 
-/* Conteúdo central */
+/* Conteúdo central (Para o card) */
 .cadastro-content {
-  width: 100%;
-  max-width: 1024px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  margin: 0 auto;
-  padding: 0 1rem;
-  box-sizing: border-box;
+  width: 100%;
 }
 
-/* Card do cadastro */
+/* Card do cadastro (Estrutura principal) */
 .cadastro-card {
   background-color: white;
   border-radius: 1.5rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   display: flex;
+  align-self: center; /* Mantido: centraliza o card se a largura for menor que 100% */
   flex-direction: column;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 800px) {
   .cadastro-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 80vh;
+    height: 85vh;
+    width: 85vw;
   }
 }
 
-/* Sidebar (desktop) */
+/* ---------------------------------- */
+/* Estilos Comuns */
+/* ---------------------------------- */
+
+/* 2. Refatoração: Estilos base do Icon Container definidos uma única vez */
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+}
+
+.icon-container svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: white;
+}
+
+/* ---------------------------------- */
+/* Sidebar (Desktop) */
+/* ---------------------------------- */
+
 .cadastro-sidebar {
   display: none;
-  background: linear-gradient(to bottom right, #2563eb, #1d4ed8, #1e40af);
+  background: var(--gradiente-sidebar); /* Usando variável */
   padding: 3rem;
   position: relative;
   overflow: hidden;
   color: white;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 800px) {
   .cadastro-sidebar {
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100%;
   }
+}
+
+/* Estilos específicos da sidebar */
+.cadastro-sidebar .icon-container {
+  backdrop-filter: blur(4px);
+  margin-bottom: 1.5rem;
 }
 
 .sidebar-pattern {
@@ -71,24 +141,6 @@
   z-index: 10;
 }
 
-.icon-container {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 5rem;
-  height: 5rem;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
-  backdrop-filter: blur(4px);
-  margin-bottom: 1.5rem;
-}
-
-.icon-container svg {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: white;
-}
-
 .sidebar-title {
   font-size: 2.25rem;
   font-weight: bold;
@@ -98,23 +150,26 @@
 .sidebar-text {
   font-size: 1.125rem;
   line-height: 1.5;
-  color: rgba(219, 234, 254, 0.9);
+  color: var(--cor-texto-sidebar); /* Usando variável */
 }
 
-/* Header mobile */
+/* ---------------------------------- */
+/* Header Mobile */
+/* ---------------------------------- */
+
 .mobile-header {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: linear-gradient(to right, #2563eb, #1d4ed8);
+  background: var(--gradiente-primario); /* Usando variável */
   padding: 2rem 1rem;
   color: white;
   text-align: center;
 }
 
+/* Estilos específicos do mobile header */
 .mobile-header .icon-container {
-  background-color: rgba(255, 255, 255, 0.2);
   margin-bottom: 1rem;
 }
 
@@ -125,24 +180,27 @@
 }
 
 .mobile-header p {
-  color: rgba(219, 234, 254, 0.9);
+  color: var(--cor-texto-sidebar); /* Usando variável */
   font-size: 1rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 800px) {
   .mobile-header {
     display: none;
   }
 }
 
+/* ---------------------------------- */
 /* Formulário */
+/* ---------------------------------- */
+
 .form-container {
   padding: 2rem;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  box-sizing: border-box;
+  /* box-sizing: border-box; // Comentário removido, pois a intenção já é global */
 }
 
 .form {
@@ -159,7 +217,7 @@
 label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--cor-texto-principal); /* Usando variável */
   margin-bottom: 0.5rem;
 }
 
@@ -172,30 +230,29 @@ label {
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: var(--cor-icon-input); /* Usando variável */
   pointer-events: none;
 }
 
 .form-input {
   width: 100%;
   padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--cor-borda-input); /* Usando variável */
   border-radius: 0.5rem;
   transition: all 0.2s;
   font-size: 1rem;
-  box-sizing: border-box;
 }
 
 .form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #3b82f6;
+  box-shadow: 0 0 0 2px var(--cor-shadow-focus); /* Usando variável */
   border-color: transparent;
 }
 
 /* Botão de envio */
 .submit-button {
   width: 100%;
-  background: linear-gradient(to right, #2563eb, #1d4ed8);
+  background: var(--gradiente-primario); /* Usando variável */
   color: white;
   padding: 0.875rem 1rem;
   border-radius: 0.5rem;
@@ -206,30 +263,30 @@ label {
 }
 
 .submit-button:hover {
-  background: linear-gradient(to right, #1d4ed8, #1e40af);
+  background: var(--gradiente-hover); /* Usando variável para o hover */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .submit-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px white;
+  box-shadow: 0 0 0 2px var(--cor-shadow-focus), 0 0 0 4px white; /* Usando variável */
 }
 
 /* Link para login */
 .login-text {
   text-align: center;
   font-size: 0.875rem;
-  color: #4b5563;
+  color: var(--cor-texto-secundario); /* Usando variável */
   padding-top: 0.5rem;
 }
 
 .login-link {
-  color: #2563eb;
+  color: var(--cor-azul-clara); /* Usando variável */
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .login-link:hover {
-  color: #1d4ed8;
+  color: var(--cor-azul-media); /* Usando variável */
 }

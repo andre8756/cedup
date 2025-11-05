@@ -1,10 +1,10 @@
-/* Login.css (Versão FINAL com ajustes de altura, SEM CSS MODULES) */
+/* Login.css (Versão FINAL - Tamanho Mobile Igual ao Cadastro) */
 
 /* ATENÇÃO: Mantenha este arquivo como "Login.css"
-  E garanta que seu Login.tsx use a importação: import './Login.css';
-*/
+ * E garanta que seu Login.tsx use a importação: import './Login.css';
+ */
 
-/* Reset CSS básico (será aplicado globalmente se este arquivo for importado no App.js/index.js) */
+/* Reset CSS básico */
 html {
   font-size: 16px;
 }
@@ -21,63 +21,85 @@ body {
   box-sizing: border-box;
 }
 
+/* ---------------------------------- */
+/* 0. Variáveis Globais (Custom Properties) */
+/* ---------------------------------- */
 :root {
-  --bg-900: #0f172a;
-  --bg-800: #1e293b;
-  --primary-700: #1e40af;
-  --primary-600: #2563eb;
-  --muted: #6b7280;
-  --text-900: #111827;
-  --surface: #ffffff;
+  /* Cores de Fundo e Primárias */
+  --bg-900: #0f172a;           /* Fundo Escuro */
+  --bg-800: #1e293b;           /* Fundo Médio */
+  --primary-700: #1e40af;      /* Azul Escuro */
+  --primary-600: #2563eb;      /* Azul Principal */
+  --surface: #ffffff;          /* Fundo do Card */
 
+  /* Cores de Texto e Formulário */
+  --text-primary: #374151;     /* Label e Títulos */
+  --text-muted: #6b7280;       /* Texto Metadados (Link de cadastro) */
+  --text-icon: #9ca3af;        /* Ícones e Placeholder */
+  --border-input: #e6e9ee;     /* Borda do input em estado normal */
+
+  /* Gradientes */
+  --gradiente-fundo: linear-gradient(135deg, var(--bg-800) 0%, var(--bg-900) 100%);
+  --gradiente-primario: linear-gradient(to right, var(--primary-600), var(--primary-700));
+  --gradiente-sidebar: linear-gradient(to bottom right, var(--primary-600), var(--primary-700));
+
+  /* Dimensões e Efeitos */
   --radius-md: 12px;
   --radius-lg: 20px;
-
   --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.15); /* Sombra de foco azul */
 }
 
+/* ---------------------------------- */
+/* Layout Base */
+/* ---------------------------------- */
+
 .login-page {
-  height: 100%;
-  width: 100%;
-  overflow: auto !important; 
+  height: 100vh;
+  width: 100vw;
+  overflow: auto !important;
   display: flex;
   align-items: center; 
   justify-content: center; 
-  background: linear-gradient(135deg, var(--bg-800) 0%, var(--bg-900) 100%);
-  padding: 1.5rem;
-  box-sizing: border-box;
+  background: var(--gradiente-fundo);
+  padding: 0; /* ✅ CORRIGIDO: Remove o padding lateral para ocupar toda a tela */
 }
 
 /* Card */
 .login-card {
-  max-width: 400px;
+  height: 100%;
+  width: 100%; 
+  margin: auto; 
   display: flex;
   flex-direction: column;
   background: var(--surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  margin: auto; 
 }
 
-/* Desktop grid */
-@media (min-width: 1024px) {
+/* Desktop grid (Aplica a partir de 800px) */
+@media (min-width: 800px) { 
   .login-card {
-    max-width: 960px;
+    width: 80vw;
     display: grid;
     grid-template-columns: 4fr 5fr;
-    height: auto; 
+    height: 90vh; 
   }
 }
 
-/* Sidebar desktop */
+/* ---------------------------------- */
+/* Sidebar (Desktop) */
+/* ---------------------------------- */
+
 .login-side {
   display: none;
-  background: linear-gradient(to bottom right, var(--primary-600), var(--primary-700));
+  background: var(--gradiente-sidebar);
   color: white;
 }
 
-@media (min-width: 1024px) {
+/* Exibe a sidebar a partir de 800px */
+@media (min-width: 800px) { 
   .login-side {
     display: flex;
     flex-direction: column;
@@ -142,19 +164,29 @@ body {
   margin-top: 0.5em;
 }
 
+/* ---------------------------------- */
+/* Header Mobile */
+/* ---------------------------------- */
 
-/* Header mobile */
 .mobile-header {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: linear-gradient(to right, var(--primary-600), var(--primary-700));
+  background: var(--gradiente-primario);
   padding: 2.5rem 1.5rem;
   color: white;
   text-align: center;
-  border-top-left-radius: var(--radius-lg);
-  border-top-right-radius: var(--radius-lg);
+  /* Removendo border-radius superior no mobile para encostar nas bordas da tela */
+  border-top-left-radius: 0; 
+  border-top-right-radius: 0;
+}
+
+/* Oculta o header mobile a partir de 800px */
+@media (min-width: 800px) { 
+  .mobile-header {
+    display: none;
+  }
 }
 
 .mobile-header .icon-container {
@@ -175,13 +207,10 @@ body {
   font-size: 1rem;
 }
 
-@media (min-width: 1024px) {
-  .mobile-header {
-    display: none;
-  }
-}
+/* ---------------------------------- */
+/* Main Form */
+/* ---------------------------------- */
 
-/* Main form */
 .login-main {
   flex: 1;
   padding: 3rem 2.5rem;
@@ -191,7 +220,8 @@ body {
   gap: 1.5rem;
 }
 
-@media (min-width: 1024px) {
+/* Ajusta o padding do form principal a partir de 800px */
+@media (min-width: 800px) { 
   .login-main {
     padding: 4rem;
   }
@@ -206,7 +236,7 @@ body {
 
 .form label {
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   display: block;
   font-weight: 500;
@@ -221,7 +251,7 @@ body {
   left: 0.875rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: var(--text-icon);
   width: 20px;
   height: 20px;
   z-index: 1;
@@ -236,7 +266,7 @@ body {
 .input {
   width: 100%;
   padding: 0.875rem 0.875rem 0.875rem 2.875rem;
-  border: 1px solid #e6e9ee;
+  border: 1px solid var(--border-input);
   border-radius: var(--radius-md);
   font-size: 1rem;
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
@@ -245,12 +275,12 @@ body {
 }
 
 .input::placeholder {
-  color: #9ca3af;
+  color: var(--text-icon);
 }
 
 .input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: var(--shadow-focus);
   border-color: var(--primary-600);
 }
 
@@ -277,7 +307,10 @@ body {
   color: #16a34a;
 }
 
+/* ---------------------------------- */
 /* Botão */
+/* ---------------------------------- */
+
 .btn-primary {
   width: 100%;
   padding: 1rem;
@@ -285,7 +318,7 @@ body {
   font-weight: 700;
   font-size: 1.05rem;
   color: #fff;
-  background: linear-gradient(to right, var(--primary-600), var(--primary-700));
+  background: var(--gradiente-primario);
   border: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
@@ -303,11 +336,14 @@ body {
   cursor: not-allowed;
 }
 
+/* ---------------------------------- */
 /* Link para cadastro */
+/* ---------------------------------- */
+
 .meta {
   text-align: center;
   font-size: 0.9rem;
-  color: var(--muted);
+  color: var(--text-muted);
   padding-top: 0.5rem;
 }
 
@@ -328,10 +364,13 @@ body {
   text-decoration: underline;
 }
 
-/* Ajustes mobile */
+/* ---------------------------------- */
+/* Ajustes mobile (Mantido em 640px para otimizações de telas menores) */
+/* ---------------------------------- */
+
 @media (max-width: 640px) {
   .login-card {
-    border-radius: var(--radius-lg);
+    border-radius: 0;
   }
 
   .brand {
