@@ -131,7 +131,6 @@ POST /api/auth/register
   "email": "nicolas@email.com",
   "telefone": "(47) 99999-9999",
   "senha":"Banana",
-  "role": "USER"
 }
 ```
 
