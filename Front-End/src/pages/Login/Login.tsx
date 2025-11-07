@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, LogIn } from 'lucide-react';
+import { User, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { queryUser } from '../../lib/auth';
@@ -11,6 +11,7 @@ function Login() {
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState('');
   const [senha, setSenha] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -102,9 +103,9 @@ function Login() {
 
             <div className="field">
               <label>Senha</label>
-              <div className="input-container">
+              <div className="input-container password-container">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   className="input"
@@ -112,6 +113,14 @@ function Login() {
                   required
                 />
                 <Lock className="icon" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="eye-button"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPassword ? <EyeOff className="eye-icon" /> : <Eye className="eye-icon" />}
+                </button>
               </div>
             </div>
 

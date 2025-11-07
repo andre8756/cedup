@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserPlus, User, CreditCard, Mail, Phone, Lock } from 'lucide-react';
+import { UserPlus, User, CreditCard, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { queryUser } from '../../lib/auth'; // função de login
@@ -22,6 +22,7 @@ function Cadastro() {
     telefone: '',
     senha: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -145,9 +146,17 @@ function Cadastro() {
 
               <div className="form-group">
                 <label htmlFor="senha">Senha</label>
-                <div className="input-container">
+                <div className="input-container password-container">
                   <Lock size={18} className="input-icon" />
-                  <input type="password" name="senha" id="senha" value={formData.senha} onChange={handleChange} required minLength={6} className="form-input"/>
+                  <input type={showPassword ? "text" : "password"} name="senha" id="senha" value={formData.senha} onChange={handleChange} required minLength={6} className="form-input"/>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="eye-button"
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
+                    {showPassword ? <EyeOff size={18} className="eye-icon" /> : <Eye size={18} className="eye-icon" />}
+                  </button>
                 </div>
               </div>
 

@@ -240,6 +240,36 @@ label {
   font-size: 1rem;
 }
 
+.password-container .form-input {
+  padding-right: 2.5rem;
+}
+
+.eye-button {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-icon-input);
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+.eye-button:hover {
+  color: var(--cor-texto-principal);
+}
+
+.eye-icon {
+  width: 18px;
+  height: 18px;
+}
+
 .form-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--cor-shadow-focus); /* Usando variável */

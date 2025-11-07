@@ -265,6 +265,36 @@ body {
   height: 48px;
 }
 
+.password-container .input {
+  padding-right: 2.875rem;
+}
+
+.eye-button {
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-icon);
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.eye-button:hover {
+  color: var(--text-primary);
+}
+
+.eye-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .input::placeholder {
   color: var(--text-icon);
 }
