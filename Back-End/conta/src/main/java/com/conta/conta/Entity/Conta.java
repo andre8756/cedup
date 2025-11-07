@@ -65,7 +65,7 @@ public class Conta implements UserDetails {
         this.telefone = telefone;
         this.saldoTotal = 0;
         this.status = status;
-        this.role = role;
+        this.role = UserRole.USER;
         this.dataCadastro = dataCadastro;
         this.bancos = bancos;
     }

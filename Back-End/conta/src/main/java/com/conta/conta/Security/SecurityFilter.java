@@ -37,7 +37,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (token != null) {
 
-            // 🚫 Verifica se o token está na blacklist
+            // Verifica se o token está na blacklist
             if (tokenBlacklistService.isBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;

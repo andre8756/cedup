@@ -1,4 +1,3 @@
-// Cadastro.tsx
 import { useState } from 'react';
 import { UserPlus, User, CreditCard, Mail, Phone, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

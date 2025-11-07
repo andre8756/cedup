@@ -1,14 +1,13 @@
 /*
  * ----------------------------------
- * 0. Variáveis Globais (Custom Properties)
- * Tornam a manutenção de cores e tamanhos mais fácil.
+ * Variáveis Globais (Custom Properties)
  * ----------------------------------
  */
 :root {
   /* Cores da Paleta Primária (Azul) */
-  --cor-azul-clara: #2563eb;    /* Indigo-600 */
-  --cor-azul-media: #1d4ed8;    /* Indigo-700 */
-  --cor-azul-escura: #1e40af;   /* Indigo-800 */
+  --cor-azul-clara: #2563eb;    
+  --cor-azul-media: #1d4ed8;    
+  --cor-azul-escura: #1e40af;   
 
   /* Cores da Paleta de Fundo (Dark) */
   --cor-fundo-clara: #1e293b;   /* Slate-800 */
@@ -21,17 +20,16 @@
   --gradiente-sidebar: linear-gradient(to bottom right, var(--cor-azul-clara), var(--cor-azul-media), var(--cor-azul-escura));
 
   /* Cores de Texto e Borda */
-  --cor-texto-principal: #374151; /* Gray-700 */
-  --cor-texto-secundario: #4b5563; /* Gray-600 */
-  --cor-borda-input: #d1d5db;     /* Gray-300 */
-  --cor-icon-input: #9ca3af;      /* Gray-400 */
-  --cor-shadow-focus: #3b82f6;    /* Blue-500 */
-  --cor-texto-sidebar: rgba(219, 234, 254, 0.9); /* Blue-100/90% */
+  --cor-texto-principal: #374151; 
+  --cor-texto-secundario: #4b5563; 
+  --cor-borda-input: #d1d5db;     
+  --cor-icon-input: #9ca3af;      
+  --cor-shadow-focus: #3b82f6;    
+  --cor-texto-sidebar: rgba(219, 234, 254, 0.9); 
 }
 
 /*
  * 1. Configurações Globais
- * Aplicado box-sizing: border-box; globalmente.
  */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -132,7 +130,7 @@
 .sidebar-pattern {
   position: absolute;
   inset: 0;
-  background-image: url('data:image/svg+xml;base64,...'); /* seu SVG */
+  background-image: url('data:image/svg+xml;base64,...');
   opacity: 0.3;
 }
 
@@ -200,7 +198,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* box-sizing: border-box; // Comentário removido, pois a intenção já é global */
 }
 
 .form {

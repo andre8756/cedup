@@ -2,16 +2,20 @@ package com.conta.conta.Controller;
 
 import com.conta.conta.DTO.AuthResponse;
 import com.conta.conta.DTO.AuthenticationDTO;
+import com.conta.conta.DTO.ContaRegisterDTO;
 import com.conta.conta.Entity.Conta;
+import com.conta.conta.Enums.UserRole;
 import com.conta.conta.Repository.ContaRepository;
 import com.conta.conta.Security.TokenBlacklistService;
 import com.conta.conta.Security.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -34,39 +38,53 @@ public class AuthController {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
-    // Registro de usuário
+    // ===============================
+    // Cadastro
+    // ===============================
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Conta conta) {
-        if (userExists(conta)) {
+    public ResponseEntity<?> register(@RequestBody @Valid ContaRegisterDTO dto) {
+        if (userExists(dto)) {
             return ResponseEntity.badRequest().body("Usuário já cadastrado!");
         }
 
-        conta.setSenha(passwordEncoder.encode(conta.getSenha()));
-        conta.setRole(com.conta.conta.Enums.UserRole.USER);
+        Conta conta = new Conta();
+        conta.setTitular(dto.getTitular());
+        conta.setCpf(dto.getCpf());
+        conta.setEmail(dto.getEmail());
+        conta.setTelefone(dto.getTelefone());
+        conta.setSenha(passwordEncoder.encode(dto.getSenha()));
+        conta.setRole(UserRole.USER);
+        conta.setSaldoTotal(0);
+        conta.setStatus(true);
+        conta.setBancos(null);
+        conta.setRole(dto.getRole());
+        conta.setSaldoTotal(0);
+        conta.setStatus(true);
+        conta.setBancos(null);
         contaRepository.save(conta);
 
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
-    // Verifica se usuário já existe
-    private boolean userExists(Conta conta) {
-        return contaRepository.findByEmail(conta.getEmail()).isPresent()
-                || contaRepository.findByCpf(conta.getCpf()).isPresent()
-                || contaRepository.findByTelefone(conta.getTelefone()).isPresent();
+    private boolean userExists(ContaRegisterDTO dto) {
+        return contaRepository.findByEmail(dto.getEmail()).isPresent()
+                || contaRepository.findByCpf(dto.getCpf()).isPresent()
+                || contaRepository.findByTelefone(dto.getTelefone()).isPresent();
     }
 
+    // ===============================
     // Login
+    // ===============================
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
         try {
             Optional<Conta> contaOptional = Optional.empty();
 
-            // Identifica se é email, cpf ou telefone
             String identifier = loginRequest.identifier();
+
             if (identifier.contains("@")) {
                 contaOptional = contaRepository.findByEmail(identifier);
             } else if (identifier.replaceAll("\\D", "").length() == 11) {
-                // Pode ser CPF ou telefone
                 String digits = identifier.replaceAll("\\D", "");
                 if (identifier.contains(".")) {
                     contaOptional = contaRepository.findByCpf(digits);
@@ -85,21 +103,21 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Credenciais inválidas!");
             }
 
-            // Cria token JWT
             String token = tokenService.generateToken(conta);
-
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Credenciais inválidas!");
+            return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
         }
     }
 
+    // ===============================
     // Logout
+    // ===============================
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            tokenBlacklistService.add(token); // adiciona token à blacklist
+            tokenBlacklistService.add(token);
             return ResponseEntity.ok("Logout realizado com sucesso!");
         } else {
             return ResponseEntity.badRequest().body("Token não encontrado ou inválido!");
