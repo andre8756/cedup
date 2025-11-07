@@ -1,4 +1,6 @@
 // Auth.ts
+import { API_ENDPOINTS } from '../config/api';
+
 export type IdentifierType = 'cpf' | 'telefone' | 'email';
 
 export const cleanNumber = (value: string) => value.replace(/\D/g, '');
@@ -24,7 +26,7 @@ export async function queryUser({
   };
 
   try {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
+    const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

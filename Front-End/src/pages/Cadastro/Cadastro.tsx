@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { UserPlus, User, CreditCard, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { queryUser } from '../../lib/auth'; // função de login
+import { queryUser } from '../../lib/auth';
+import { API_ENDPOINTS } from '../../config/api';
 import './Cadastro.css';
 
 interface FormData {
@@ -23,6 +24,43 @@ function Cadastro() {
     senha: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+
+  // Validação de CPF
+  const validateCPF = (cpf: string): boolean => {
+    const numbers = cleanNumber(cpf);
+    if (numbers.length !== 11) return false;
+    
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1{10}$/.test(numbers)) return false;
+    
+    // Validação dos dígitos verificadores
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(numbers.charAt(i)) * (10 - i);
+    }
+    let digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(numbers.charAt(9))) return false;
+    
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(numbers.charAt(i)) * (11 - i);
+    }
+    digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(numbers.charAt(10))) return false;
+    
+    return true;
+  };
+
+  // Validação de email
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -40,22 +78,86 @@ function Cadastro() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'cpf') setFormData(prev => ({ ...prev, [name]: formatCPF(value) }));
-    else if (name === 'telefone') setFormData(prev => ({ ...prev, [name]: formatTelefone(value) }));
-    else setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Limpa erros do campo quando o usuário começa a digitar
+    if (errors[name as keyof FormData]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name as keyof FormData];
+        return newErrors;
+      });
+    }
+
+    if (name === 'cpf') {
+      const formatted = formatCPF(value);
+      setFormData(prev => ({ ...prev, [name]: formatted }));
+      // Valida CPF em tempo real quando completo
+      if (cleanNumber(formatted).length === 11) {
+        if (!validateCPF(formatted)) {
+          setErrors(prev => ({ ...prev, cpf: 'CPF inválido' }));
+        }
+      }
+    } else if (name === 'telefone') {
+      setFormData(prev => ({ ...prev, [name]: formatTelefone(value) }));
+    } else if (name === 'email') {
+      setFormData(prev => ({ ...prev, [name]: value }));
+      // Valida email em tempo real
+      if (value && !validateEmail(value)) {
+        setErrors(prev => ({ ...prev, email: 'Email inválido' }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+    setErrors({});
+
+    // Validações
+    const newErrors: Partial<Record<keyof FormData, string>> = {};
+    
+    if (!formData.titular.trim()) {
+      newErrors.titular = 'Nome completo é obrigatório';
+    }
+    
+    const cpfNumbers = cleanNumber(formData.cpf);
+    if (cpfNumbers.length !== 11) {
+      newErrors.cpf = 'CPF deve ter 11 dígitos';
+    } else if (!validateCPF(formData.cpf)) {
+      newErrors.cpf = 'CPF inválido';
+    }
+    
+    if (!validateEmail(formData.email)) {
+      newErrors.email = 'Email inválido';
+    }
+    
+    const telefoneNumbers = cleanNumber(formData.telefone);
+    if (telefoneNumbers.length < 10 || telefoneNumbers.length > 11) {
+      newErrors.telefone = 'Telefone deve ter 10 ou 11 dígitos';
+    }
+    
+    if (formData.senha.length < 6) {
+      newErrors.senha = 'Senha deve ter no mínimo 6 caracteres';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setMessage({ type: 'error', text: 'Por favor, corrija os erros no formulário.' });
+      setLoading(false);
+      return;
+    }
 
     const body = {
       ...formData,
-      cpf: cleanNumber(formData.cpf),
-      telefone: cleanNumber(formData.telefone),
+      cpf: cpfNumbers,
+      telefone: telefoneNumbers,
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const response = await fetch(API_ENDPOINTS.AUTH.REGISTER, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -63,7 +165,8 @@ function Cadastro() {
 
       if (!response.ok) {
         const text = await response.text();
-        alert('Erro: ' + text);
+        setMessage({ type: 'error', text: `Erro: ${text}` });
+        setLoading(false);
         return;
       }
 
@@ -74,15 +177,18 @@ function Cadastro() {
       });
 
       if (loginResult?.token) {
-        Cookies.set('token', loginResult.token, { expires: 7 });
-        navigate('/conta');
+        Cookies.set('token', loginResult.token, { expires: 7, secure: true, sameSite: 'strict' });
+        setMessage({ type: 'success', text: 'Cadastro realizado! Redirecionando...' });
+        setTimeout(() => navigate('/conta'), 1500);
       } else {
-        alert('Cadastro realizado, mas falha ao logar automaticamente.');
-        navigate('/login');
+        setMessage({ type: 'error', text: 'Cadastro realizado, mas falha ao logar automaticamente.' });
+        setTimeout(() => navigate('/login'), 2000);
       }
     } catch (error) {
       console.error(error);
-      alert('Erro ao registrar usuário.');
+      setMessage({ type: 'error', text: 'Erro ao registrar usuário. Tente novamente.' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,39 +222,86 @@ function Cadastro() {
                 <label htmlFor="titular">Nome Completo</label>
                 <div className="input-container">
                   <User size={18} className="input-icon" />
-                  <input type="text" name="titular" id="titular" value={formData.titular} onChange={handleChange} required className="form-input"/>
+                  <input 
+                    type="text" 
+                    name="titular" 
+                    id="titular" 
+                    value={formData.titular} 
+                    onChange={handleChange} 
+                    required 
+                    className={`form-input ${errors.titular ? 'input-error' : ''}`}
+                  />
                 </div>
+                {errors.titular && <span className="error-message">{errors.titular}</span>}
               </div>
 
               <div className="form-group">
                 <label htmlFor="cpf">CPF</label>
                 <div className="input-container">
                   <CreditCard size={18} className="input-icon" />
-                  <input type="text" name="cpf" id="cpf" value={formData.cpf} onChange={handleChange} required maxLength={14} className="form-input"/>
+                  <input 
+                    type="text" 
+                    name="cpf" 
+                    id="cpf" 
+                    value={formData.cpf} 
+                    onChange={handleChange} 
+                    required 
+                    maxLength={14} 
+                    className={`form-input ${errors.cpf ? 'input-error' : ''}`}
+                  />
                 </div>
+                {errors.cpf && <span className="error-message">{errors.cpf}</span>}
               </div>
 
               <div className="form-group">
                 <label htmlFor="email">E-mail</label>
                 <div className="input-container">
                   <Mail size={18} className="input-icon" />
-                  <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="form-input"/>
+                  <input 
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    value={formData.email} 
+                    onChange={handleChange} 
+                    required 
+                    className={`form-input ${errors.email ? 'input-error' : ''}`}
+                  />
                 </div>
+                {errors.email && <span className="error-message">{errors.email}</span>}
               </div>
 
               <div className="form-group">
                 <label htmlFor="telefone">Telefone</label>
                 <div className="input-container">
                   <Phone size={18} className="input-icon" />
-                  <input type="tel" name="telefone" id="telefone" value={formData.telefone} onChange={handleChange} required maxLength={15} className="form-input"/>
+                  <input 
+                    type="tel" 
+                    name="telefone" 
+                    id="telefone" 
+                    value={formData.telefone} 
+                    onChange={handleChange} 
+                    required 
+                    maxLength={15} 
+                    className={`form-input ${errors.telefone ? 'input-error' : ''}`}
+                  />
                 </div>
+                {errors.telefone && <span className="error-message">{errors.telefone}</span>}
               </div>
 
               <div className="form-group">
                 <label htmlFor="senha">Senha</label>
                 <div className="input-container password-container">
                   <Lock size={18} className="input-icon" />
-                  <input type={showPassword ? "text" : "password"} name="senha" id="senha" value={formData.senha} onChange={handleChange} required minLength={6} className="form-input"/>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    name="senha" 
+                    id="senha" 
+                    value={formData.senha} 
+                    onChange={handleChange} 
+                    required 
+                    minLength={6} 
+                    className={`form-input ${errors.senha ? 'input-error' : ''}`}
+                  />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -158,9 +311,16 @@ function Cadastro() {
                     {showPassword ? <EyeOff size={18} className="eye-icon" /> : <Eye size={18} className="eye-icon" />}
                   </button>
                 </div>
+                {errors.senha && <span className="error-message">{errors.senha}</span>}
               </div>
 
-              <button type="submit" className="submit-button">Cadastrar</button>
+              {message.text && (
+                <p className={`message ${message.type}`}>{message.text}</p>
+              )}
+
+              <button type="submit" className="submit-button" disabled={loading}>
+                {loading ? 'Cadastrando...' : 'Cadastrar'}
+              </button>
 
               <p className="login-text">
                 Já possui conta? <button type="button" onClick={() => navigate('/login')} className="login-link">Fazer login</button>
