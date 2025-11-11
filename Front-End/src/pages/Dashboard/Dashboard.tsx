@@ -124,7 +124,7 @@ function Dashboard() {
               </div>
 
               <p className="hero-features">
-                ✓ Sem cartão de crédito necessário • ✓ Acesso imediato • ✓ Suporte 24/7
+                ✓ Acesso imediato • ✓ Suporte 24/7
               </p>
             </div>
 
@@ -259,8 +259,6 @@ function Dashboard() {
               Criar conta grátis
               <ArrowRight className="cta-button-icon" />
             </button>
-
-            <p className="cta-note">Comece agora, sem cartão de crédito necessário</p>
           </div>
         </div>
       </section>
