@@ -1,8 +1,22 @@
-/*
- * ----------------------------------
- * Variáveis Globais
- * ----------------------------------
- */
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ---------------------------------- */
+/* Variáveis Globais */
+/* ---------------------------------- */
 :root {
   --bg-900: #0f172a;
   --bg-800: #1e293b;
@@ -25,85 +39,108 @@
   --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/*
- * Reset e Base
- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
-  height: 100%;
-  overflow: hidden; /* Remove rolagem do body */
-}
-
 /* ---------------------------------- */
-/* Container Principal */
+/* Layout Base */
 /* ---------------------------------- */
 
 .cadastro-container {
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
-  background: var(--gradiente-fundo);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  background: var(--gradiente-fundo);
+  padding: 0;
+  overflow: hidden;
 }
 
 /* Card principal */
 .cadastro-card {
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
   background: var(--surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  max-height: calc(100vh - 2rem);
   overflow: hidden;
+  min-height: 100vh;
 }
 
-/* Desktop: com sidebar */
+/* Desktop */
 @media (min-width: 800px) {
   .cadastro-card {
+    width: 80vw;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    max-width: 900px;
-    height: auto;
-    max-height: 660px;
+    grid-template-columns: 4fr 6fr;
+    height: 90vh;
+    min-height: auto;
   }
 }
 
 /* ---------------------------------- */
-/* Mobile Header */
+/* Sidebar (Desktop) */
+/* ---------------------------------- */
+
+.cadastro-sidebar {
+  display: none;
+  background: var(--gradiente-sidebar);
+  color: white;
+}
+
+@media (min-width: 800px) {
+  .cadastro-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3.5rem;
+  }
+}
+
+.cadastro-sidebar .icon-container {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.cadastro-sidebar .icon-container svg {
+  width: 36px;
+  height: 36px;
+  stroke: currentColor;
+}
+
+.sidebar-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.sidebar-text {
+  font-size: 1rem;
+  color: rgba(255, 255, 254, 0.85);
+  line-height: 1.6;
+}
+
+/* ---------------------------------- */
+/* Header Mobile */
 /* ---------------------------------- */
 
 .mobile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: var(--gradiente-primario);
-  padding: 1.5rem;
-  text-align: center;
+  padding: 2rem 1.5rem;
   color: white;
+  text-align: center;
   flex-shrink: 0;
-}
-
-.mobile-header .icon-container {
-  margin-bottom: 0.75rem;
-}
-
-.mobile-header h1 {
-  font-size: 1.75rem;
-  font-weight: bold;
-  margin-bottom: 0.25rem;
-}
-
-.mobile-header p {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  line-height: 1.4;
 }
 
 @media (min-width: 800px) {
@@ -112,35 +149,71 @@ html, body {
   }
 }
 
-/* ---------------------------------- */
-/* Form Container */
-/* ---------------------------------- */
+.mobile-header .icon-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mobile-header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-header p {
+  font-size: 1rem;
+  color: rgba(219, 234, 254, 0.9);
+}
+
+/* ---------------------- */
+/* Formulário             */
+/* ---------------------- */
 
 .form-container {
-  padding: 1.25rem;
-  flex: 1;
+  padding: 1.5rem 1.5rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  overflow: hidden; /* Sem rolagem */
+  gap: 1.5rem;
+  flex: 1;
+  overflow: hidden;
 }
 
 @media (min-width: 800px) {
   .form-container {
-    padding: 2rem;
+    padding: 2.5rem 3rem;
     justify-content: center;
+    overflow-y: auto;
+    scrollbar-width: thin;
   }
 }
 
-/* ---------------------------------- */
-/* Formulário - Compacto e Ajustável */
-/* ---------------------------------- */
+@media (max-width: 400px) {
+  .cadastro-card {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
+  .form-container {
+    overflow-y: visible;
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* Formulário */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Reduzido para caber mais */
+  gap: 1.2rem;
   width: 100%;
+}
+
+@media (min-width: 800px) {
+  .form {
+    gap: 1.4rem;
+  }
 }
 
 .form-group {
@@ -148,15 +221,17 @@ html, body {
   flex-direction: column;
 }
 
-label {
-  font-size: 0.875rem;
-  font-weight: 500;
+.form-group label {
+  font-size: 0.9rem;
   color: var(--text-primary);
-  margin-bottom: 0.375rem;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
 }
 
 .input-container {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .input-icon {
@@ -165,29 +240,28 @@ label {
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-icon);
-  width: 16px;
-  height: 16px;
-  pointer-events: none;
+  width: 20px;
+  height: 20px;
   z-index: 1;
 }
 
 .form-input {
   width: 100%;
-  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  padding: 0.875rem 0.875rem 0.875rem 2.875rem;
   border: 1px solid var(--border-input);
   border-radius: var(--radius-md);
-  font-size: 0.95rem;
-  height: 44px;
+  font-size: 1rem;
+  height: 48px;
   transition: all 0.2s ease;
 }
 
 .password-container .form-input {
-  padding-right: 2.5rem;
+  padding-right: 2.875rem;
 }
 
 .eye-button {
   position: absolute;
-  right: 0.75rem;
+  right: 0.875rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -195,7 +269,6 @@ label {
   cursor: pointer;
   padding: 0.25rem;
   color: var(--text-icon);
-  z-index: 1;
 }
 
 .eye-button:hover {
@@ -203,8 +276,8 @@ label {
 }
 
 .eye-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 .form-input:focus {
@@ -215,7 +288,6 @@ label {
 
 .form-input::placeholder {
   color: var(--text-icon);
-  font-size: 0.9rem;
 }
 
 .form-input.input-error {
@@ -233,63 +305,15 @@ label {
   line-height: 1.3;
 }
 
-/* Botão */
-.submit-button {
-  width: 100%;
-  background: var(--gradiente-primario);
-  color: white;
-  padding: 0.875rem;
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  height: 48px;
-  margin-top: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.submit-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.2);
-}
-
-.submit-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Login link */
-.login-text {
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 0.75rem;
-}
-
-.login-link {
-  color: var(--primary-600);
-  font-weight: 500;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: inherit;
-}
-
-.login-link:hover {
-  text-decoration: underline;
-}
-
 /* Mensagens */
 .message {
   padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   text-align: center;
   margin: 0.5rem 0;
   border: 1px solid transparent;
+  font-weight: 500;
 }
 
 .message.error {
@@ -304,88 +328,104 @@ label {
   color: #16a34a;
 }
 
-/* Icon Container */
-.icon-container {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 4.5rem;
-  height: 4.5rem;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
+/* Botão */
+.submit-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+  background: var(--gradiente-primario);
+  border: none;
+  cursor: pointer;
+  height: 52px;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.icon-container svg {
-  width: 2.25rem;
-  height: 2.25rem;
-  color: white;
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 12px 36px rgba(30, 58, 138, 0.25);
 }
 
-/* Sidebar */
-.cadastro-sidebar {
-  display: none;
-  background: var(--gradiente-sidebar);
-  padding: 2.5rem;
-  color: white;
-  position: relative;
-  overflow: hidden;
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-@media (min-width: 800px) {
-  .cadastro-sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+/* Link login */
+.login-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding-top: 0.5rem;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-bottom: 1rem;
 }
 
-.sidebar-title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.75rem;
+.login-link {
+  color: var(--primary-600);
+  background: none;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  text-decoration: none;
 }
 
-.sidebar-text {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  opacity: 0.9;
+.login-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
-/* Mobile fino */
-@media (max-width: 640px) {
-  .cadastro-container {
-    padding: 0;
-  }
+/* ---------------------------------- */
+/* Mobile grid*/
+/* ---------------------------------- */
 
+@media (max-width: 400px) {
   .cadastro-card {
     border-radius: 0;
-    max-height: 100vh;
+    min-height: 100vh;
   }
 
   .mobile-header {
-    padding: 1.25rem;
+    padding: 1.5rem 1rem;
   }
 
   .mobile-header h1 {
-    font-size: 1.6rem;
+    font-size: 1.75rem;
   }
 
-  .form-container {
-    padding: 1rem;
-  }
-
-  .form {
-    gap: 0.875rem;
-  }
-
-  .form-input {
-    height: 42px;
-    padding: 0.7rem 0.7rem 0.7rem 2.4rem;
+  .mobile-header p {
     font-size: 0.9rem;
   }
 
+  .form-container {
+    padding: 1rem 1rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .form {
+    gap: 0.9rem;
+  }
+
+  .form-group label {
+    margin-bottom: 0.3rem;
+    font-size: 0.875rem;
+  }
+
   .submit-button {
-    height: 46px;
-    font-size: 0.95rem;
+    margin-top: 0.4rem;
+    font-size: 1rem;
+  }
+
+  .login-text {
+    padding-bottom: 2rem;
+    font-size: 0.875rem;
   }
 }

@@ -55,7 +55,7 @@ body {
   align-items: center; 
   justify-content: center; 
   background: var(--gradiente-fundo);
-  padding: 0; /* ✅ CORRIGIDO: Remove o padding lateral para ocupar toda a tela */
+  padding: 0;
 }
 
 /* Card */
@@ -212,16 +212,45 @@ body {
   justify-content: flex-start;
   gap: 1.5rem;
   flex: 1;
+  overflow: hidden;
 }
 
 @media (min-width: 800px) { 
   .login-main {
     padding: 4rem;
     justify-content: center;
+    overflow-y: auto;         
+    scrollbar-width: thin;    
+    scrollbar-color: #9ca3af transparent;
+  }
+
+  .login-main::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .login-main::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .login-main::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 3px;
+  }
+
+  .login-main::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
   }
 }
 
+.btn-primary,
+.meta {
+  flex-shrink: 0;
+}
+
+/* ---------------------------------- */
 /* Formulario */
+/* ---------------------------------- */
+
 .form {
   display: flex;
   flex-direction: column;
@@ -425,5 +454,33 @@ body {
 
   .mobile-header p {
     font-size: 0.9rem;
+  }
+}
+
+/* ---------------------------------- */
+/* Casos extremos no desktop(Scroll)
+/* ---------------------------------- */
+
+@media (min-width: 800px) and (max-height: 700px) {
+  .login-main {
+    padding: 2.5rem 3rem;
+    gap: 1.2rem;
+  }
+
+  .form {
+    gap: 1.2rem;
+  }
+
+  .login-side {
+    padding: 2rem;
+  }
+
+  .login-side h1 {
+    font-size: 1.8rem;
+  }
+
+  .login-side p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
 }
