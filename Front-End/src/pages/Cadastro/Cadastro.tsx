@@ -230,6 +230,7 @@ function Cadastro() {
                     onChange={handleChange} 
                     required 
                     className={`form-input ${errors.titular ? 'input-error' : ''}`}
+                    placeholder='Digite seu nome completo'
                   />
                 </div>
                 {errors.titular && <span className="error-message">{errors.titular}</span>}
@@ -248,6 +249,7 @@ function Cadastro() {
                     required 
                     maxLength={14} 
                     className={`form-input ${errors.cpf ? 'input-error' : ''}`}
+                    placeholder='Digite um CPF válido'
                   />
                 </div>
                 {errors.cpf && <span className="error-message">{errors.cpf}</span>}
@@ -265,6 +267,7 @@ function Cadastro() {
                     onChange={handleChange} 
                     required 
                     className={`form-input ${errors.email ? 'input-error' : ''}`}
+                    placeholder='Digite seu melhor email'
                   />
                 </div>
                 {errors.email && <span className="error-message">{errors.email}</span>}
@@ -283,6 +286,7 @@ function Cadastro() {
                     required 
                     maxLength={15} 
                     className={`form-input ${errors.telefone ? 'input-error' : ''}`}
+                    placeholder='Digite seu telefone'
                   />
                 </div>
                 {errors.telefone && <span className="error-message">{errors.telefone}</span>}
@@ -299,8 +303,9 @@ function Cadastro() {
                     value={formData.senha} 
                     onChange={handleChange} 
                     required 
-                    minLength={6} 
+                    minLength={8} 
                     className={`form-input ${errors.senha ? 'input-error' : ''}`}
+                    placeholder='Sua senha(minimo 8 caracteres)'
                   />
                   <button
                     type="button"
