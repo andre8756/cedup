@@ -61,7 +61,7 @@ body {
   display: flex;
   flex-direction: column;
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
   box-shadow: var(--shadow-card);
   overflow: hidden;
   min-height: 100vh;
@@ -70,11 +70,12 @@ body {
 /* Desktop */
 @media (min-width: 800px) {
   .cadastro-card {
-    width: 80vw;
+    min-width: auto;
     display: grid;
     grid-template-columns: 4fr 6fr;
     height: 90vh;
     min-height: auto;
+    border-radius: var(--radius-lg);
   }
 }
 
@@ -94,6 +95,7 @@ body {
     flex-direction: column;
     justify-content: center;
     padding: 3.5rem;
+    
   }
 }
 
@@ -194,6 +196,7 @@ body {
   .cadastro-card {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    border: 0px solid;
   }
 
   .form-container {
@@ -389,7 +392,6 @@ body {
 
 @media (max-width: 400px) {
   .cadastro-card {
-    border-radius: 0;
     min-height: 100vh;
   }
 
