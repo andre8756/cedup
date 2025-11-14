@@ -40,4 +40,18 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long>, Jpa
             @Param("dataFim") LocalDateTime dataFim
     );
 
+    @Query("SELECT COALESCE(SUM(t.valor), 0) FROM Transacao t WHERE t.contaDestino.id = :contaId AND t.dataTransacao BETWEEN :inicio AND :fim")
+    float somaReceitaMensal(@Param("contaId") Long contaId,
+                            @Param("inicio") LocalDateTime inicio,
+                            @Param("fim") LocalDateTime fim
+                            );
+
+    @Query("SELECT COALESCE(SUM(t.valor), 0) FROM Transacao t WHERE t.contaOrigem.id = :contaId AND t.dataTransacao BETWEEN :inicio AND :fim")
+    float somaDespesaMensal(@Param("contaId") Long contaId,
+                            @Param("inicio") LocalDateTime inicio,
+                            @Param("fim") LocalDateTime fim
+    );
+
+
+
 }

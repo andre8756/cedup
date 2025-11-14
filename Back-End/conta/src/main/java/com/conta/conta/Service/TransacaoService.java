@@ -38,7 +38,6 @@ public class TransacaoService {
         return convertToListDTO(transacaoRepository.findAll(spec));
     }
 
-    // MÉTODOS DE CONVENIÊNCIA (opcionais - para compatibilidade)
     public List<TransacaoRequestDto> listarPorContaIdNew(Long contaId) {
         TransacaoFiltro filtro = new TransacaoFiltro();
         filtro.setContaId(contaId);
@@ -71,6 +70,26 @@ public class TransacaoService {
         filtro.setDataInicio(dataInicio);
         filtro.setDataFim(dataFim);
         return listarComFiltros(filtro);
+    }
+
+    public float calcularReceitaMensal(Long contaId) {
+        LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime fimMes = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
+                .withHour(23).withMinute(59).withSecond(59);
+
+        return transacaoRepository.somaReceitaMensal(contaId, inicioMes, fimMes);
+    }
+
+    public float calcularDespesaMensal(Long contaId) {
+        LocalDateTime inicioMes = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0);
+
+        LocalDateTime fimMes = LocalDateTime.now()
+                .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
+                .withHour(23).withMinute(59).withSecond(59);
+
+        return transacaoRepository.somaDespesaMensal(contaId, inicioMes, fimMes);
     }
 
     // Metodos antigos (alguns serao excluidos)----------------------------------------------------------------------------------------------------

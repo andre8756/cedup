@@ -259,7 +259,17 @@ public class ContaController {
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
-    // Metodos Antigoos (serao excluido)----------------------------------------------------------------------------------
+    @GetMapping("/{id}/banco/transacao/receita")
+    public float receitaMensal(@PathVariable("id") Long id){
+        return transacaoService.calcularReceitaMensal(id);
+    }
+
+    @GetMapping("/{id}/banco/transacao/despesa")
+    public float despesaMensal(@PathVariable("id") Long id){
+        return transacaoService.calcularDespesaMensal(id);
+    }
+
+    // Metodos Antigoos (serao excluidos)----------------------------------------------------------------------------------
 
     @GetMapping("banco/transacao")
     @ResponseStatus(HttpStatus.OK)
