@@ -17,9 +17,9 @@ Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=s
 - [🚀 Como Executar o Backend](#-como-executar-o-backend)
 - [📡 Endpoints Principais](#-endpoints-principais)
 - [api/Auth (login ou register)](#auth-login-e-registro)
-- [Conta 🔒](#🧍-contarequer-token-🔒)
-- [Banco 🔒](#🏦-bancorequer-token-🔒)
-- [Transações 🔒](#💸-transaçõesrequer-token-🔒)
+- [Conta 🔒](#-contarequer-token-)
+- [Banco 🔒](#-bancorequer-token-)
+- [Transações 🔒](#-transaçõesrequer-token-)
 - [🧪 Testando com Postman](#-testando-com-postman)
 - [📌 Observações Importantes](#-observações-importantes)
 
