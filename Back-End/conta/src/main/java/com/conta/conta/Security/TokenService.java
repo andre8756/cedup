@@ -28,13 +28,18 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer(issuer)
-                    .withSubject(conta.getEmail())
+                    .withSubject(conta.getId().toString()) // ID como subject
+                    .withClaim("email", conta.getEmail())
+                    .withClaim("cpf", conta.getCpf())
+                    .withClaim("telefone", conta.getTelefone())
+                    .withClaim("role", conta.getRole().name())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar token: " + e.getMessage());
         }
     }
+
 
     public String validateToken(String token) {
         try {
@@ -54,4 +59,17 @@ public class TokenService {
                 .plusHours(expirationHours)
                 .toInstant(ZoneOffset.of("-03:00"));
     }
+
+    public Long extractUserId(String token) {
+        try {
+            return JWT.decode(token).getClaim("id").asLong();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String extractRole(String token) {
+        return JWT.decode(token).getClaim("role").asString();
+    }
+
 }
