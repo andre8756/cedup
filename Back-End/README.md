@@ -16,10 +16,10 @@ Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=s
 - [🔐 Autenticação e Segurança](#-autenticação-e-segurança)
 - [🚀 Como Executar o Backend](#-como-executar-o-backend)
 - [📡 Endpoints Principais](#-endpoints-principais)
-  - [api/Auth (login ou register)](#auth-login-e-registro)
-  - [Conta 🔒](#conta)
-  - [Banco 🔒](#banco)
-  - [Transações 🔒](#transações)
+- [api/Auth (login ou register)](#auth-login-e-registro)
+- [Conta 🔒](#🧍-contarequer-token-🔒)
+- [Banco 🔒](#🏦-bancorequer-token-🔒)
+- [Transações 🔒](#💸-transaçõesrequer-token-🔒)
 - [🧪 Testando com Postman](#-testando-com-postman)
 - [📌 Observações Importantes](#-observações-importantes)
 
@@ -143,7 +143,7 @@ POST /api/auth/login
 
 ``` json
 {
-  "email": "nicolas@email.com",
+  "identifier": "nicolas@email.com",
   "senha": "Banana"
 }
 ```
