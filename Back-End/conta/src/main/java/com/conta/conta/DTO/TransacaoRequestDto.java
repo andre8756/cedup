@@ -5,19 +5,35 @@ import java.time.LocalDateTime;
 public class TransacaoRequestDto {
 
     private Long id;
+
     private Long contaOrigemId;
     private String bancoOrigemChavePix;
     private String bancoOrigemNome;
     private String bancoOrigemTitular;
+
     private Long contaDestinoId;
     private String bancoDestinoChavePix;
     private String bancoDestinoNome;
     private String bancoDestinoTitular;
+
     private float valor;
     private String descricao;
     private LocalDateTime dataTransacao;
 
-    public TransacaoRequestDto(Long id, Long contaOrigemId, String bancoOrigemChavePix, String bancoOrigemNome, String bancoOrigemTitular, Long contaDestinoId, String bancoDestinoChavePix, String bancoDestinoNome, String bancoDestinoTitular, float valor, String descricao, LocalDateTime dataTransacao) {
+    public TransacaoRequestDto(
+            Long id,
+            Long contaOrigemId,
+            String bancoOrigemChavePix,
+            String bancoOrigemNome,
+            String bancoOrigemTitular,
+            Long contaDestinoId,
+            String bancoDestinoChavePix,
+            String bancoDestinoNome,
+            String bancoDestinoTitular,
+            float valor,
+            String descricao,
+            LocalDateTime dataTransacao
+    ) {
         this.id = id;
         this.contaOrigemId = contaOrigemId;
         this.bancoOrigemChavePix = bancoOrigemChavePix;
@@ -32,25 +48,6 @@ public class TransacaoRequestDto {
         this.dataTransacao = dataTransacao;
     }
 
-    public TransacaoRequestDto(Long id, Long contaOrigemId, String bancoOrigemChavePix, Long contaDestinoId, String bancoDestinoChavePix, float valor, String descricao, LocalDateTime dataTransacao) {
-        this.id = id;
-        this.contaOrigemId = contaOrigemId;
-        this.bancoOrigemChavePix = bancoOrigemChavePix;
-        this.contaDestinoId = contaDestinoId;
-        this.bancoDestinoChavePix = bancoDestinoChavePix;
-        this.valor = valor;
-        this.descricao = descricao;
-        this.dataTransacao = dataTransacao;
-    }
-
-    public TransacaoRequestDto(Long id, Long contaOrigemId, String bancoOrigemChavePix, float valor, String descricao, LocalDateTime dataTransacao) {
-        this.id = id;
-        this.contaOrigemId = contaOrigemId;
-        this.bancoOrigemChavePix = bancoOrigemChavePix;
-        this.valor = valor;
-        this.descricao = descricao;
-        this.dataTransacao = dataTransacao;
-    }
 
     // Getters e Setters
 

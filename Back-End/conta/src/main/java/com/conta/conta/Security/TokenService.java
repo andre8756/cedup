@@ -59,18 +59,5 @@ public class TokenService {
                 .plusHours(expirationHours)
                 .toInstant(ZoneOffset.of("-03:00"));
     }
-
-    public Long extractUserId(String token) {
-    try {
-        String subject = JWT.decode(token).getSubject();
-        return Long.parseLong(subject);
-    } catch (Exception e) {
-        return null;
-    }
-}
-
-    public String extractRole(String token) {
-        return JWT.decode(token).getClaim("role").asString();
-    }
-
+    
 }

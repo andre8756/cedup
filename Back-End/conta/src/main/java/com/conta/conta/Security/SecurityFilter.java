@@ -59,7 +59,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                     if (conta.isPresent()) {
 
                         var authentication = new UsernamePasswordAuthenticationToken(
-                                userId, // principal = ID do usuário
+                                userId,
                                 null,
                                 conta.get().getAuthorities()
                         );

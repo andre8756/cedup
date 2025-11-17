@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-// Lista de Transacoes do usuario
 @Entity
 @Table(name = "tb_transacoes")
 public class Transacao {
@@ -24,23 +23,39 @@ public class Transacao {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataTransacao;
 
+    // Conta que fez a transação (sempre obrigatória)
     @ManyToOne
     @JoinColumn(name = "conta_origem_id", nullable = false)
     private Conta contaOrigem;
 
+    // Banco da conta de origem
     @ManyToOne
     @JoinColumn(name = "banco_origem_id", nullable = false)
     private Banco bancoOrigem;
 
+    // Conta destino (somente se for transferência)
     @ManyToOne
-    @JoinColumn(name = "conta_destino_id")
+    @JoinColumn(name = "conta_destino_id", nullable = true)
     private Conta contaDestino;
 
+    // Banco destino
     @ManyToOne
-    @JoinColumn(name = "banco_destino_id")
+    @JoinColumn(name = "banco_destino_id", nullable = true)
     private Banco bancoDestino;
 
-    public Transacao(float valor, String descricao, Conta contaOrigem, Banco bancoOrigem, Conta contaDestino, Banco bancoDestino){
+    // ============================
+    // CONSTRUTORES
+    // ============================
+    public Transacao() {}
+
+    public Transacao(
+            float valor,
+            String descricao,
+            Conta contaOrigem,
+            Banco bancoOrigem,
+            Conta contaDestino,
+            Banco bancoDestino
+    ) {
         this.valor = valor;
         this.descricao = descricao;
         this.contaOrigem = contaOrigem;
@@ -49,13 +64,14 @@ public class Transacao {
         this.bancoDestino = bancoDestino;
     }
 
-    public Transacao(){
-    }
-
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         dataTransacao = LocalDateTime.now();
     }
+
+    // ============================
+    // GETTERS & SETTERS
+    // ============================
 
     public Long getId() {
         return id;
@@ -85,12 +101,12 @@ public class Transacao {
         this.dataTransacao = dataTransacao;
     }
 
-    public Conta getContaOringem() {
+    public Conta getContaOrigem() {
         return contaOrigem;
     }
 
-    public void setContaOringem(Conta contaOringem) {
-        this.contaOrigem = contaOringem;
+    public void setContaOrigem(Conta contaOrigem) {
+        this.contaOrigem = contaOrigem;
     }
 
     public Conta getContaDestino() {
@@ -117,6 +133,10 @@ public class Transacao {
         this.bancoDestino = bancoDestino;
     }
 
+    // ============================
+    // TO STRING (com NPE seguro)
+    // ============================
+
     @Override
     public String toString() {
         return "Transacao{" +
@@ -124,12 +144,10 @@ public class Transacao {
                 ", valor=" + valor +
                 ", descricao='" + descricao + '\'' +
                 ", dataTransacao=" + dataTransacao +
-                ", conta=" + contaOrigem.getTitular() +
-                ", bancoOrigem=" + bancoOrigem.getNomeBanco() +
-                ", contaDestino= "+ contaDestino.getTitular() +
-                ", bancoDestino=" + bancoDestino.getNomeBanco() +
+                ", contaOrigem=" + (contaOrigem != null ? contaOrigem.getTitular() : "null") +
+                ", bancoOrigem=" + (bancoOrigem != null ? bancoOrigem.getNomeBanco() : "null") +
+                ", contaDestino=" + (contaDestino != null ? contaDestino.getTitular() : "null") +
+                ", bancoDestino=" + (bancoDestino != null ? bancoDestino.getNomeBanco() : "null") +
                 '}';
     }
-
-
 }

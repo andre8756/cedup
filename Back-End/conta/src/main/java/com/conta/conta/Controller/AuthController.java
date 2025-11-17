@@ -78,37 +78,38 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
         try {
-            Optional<Conta> contaOptional = Optional.empty();
-
             String identifier = loginRequest.identifier();
+            Optional<Conta> contaOptional = Optional.empty();
 
             if (identifier.contains("@")) {
                 contaOptional = contaRepository.findByEmail(identifier);
-            } else if (identifier.replaceAll("\\D", "").length() == 11) {
+            } else {
+                // Remove todos caracteres que não são dígitos
                 String digits = identifier.replaceAll("\\D", "");
-                if (identifier.contains(".")) {
+
+                if (digits.length() == 11) {
+                    // Pode ser CPF ou telefone, tentamos ambos
                     contaOptional = contaRepository.findByCpf(digits);
+                    if (contaOptional.isEmpty()) {
+                        contaOptional = contaRepository.findByTelefone(digits);
+                    }
                 } else {
-                    contaOptional = contaRepository.findByTelefone(digits);
+                    return ResponseEntity.badRequest().body("Identificador inválido!");
                 }
             }
 
-            if (contaOptional.isEmpty()) {
+            if (contaOptional.isEmpty() || !passwordEncoder.matches(loginRequest.senha(), contaOptional.get().getSenha())) {
                 return ResponseEntity.badRequest().body("Credenciais inválidas!");
             }
 
-            Conta conta = contaOptional.get();
-
-            if (!passwordEncoder.matches(loginRequest.senha(), conta.getSenha())) {
-                return ResponseEntity.badRequest().body("Credenciais inválidas!");
-            }
-
-            String token = tokenService.generateToken(conta);
+            String token = tokenService.generateToken(contaOptional.get());
             return ResponseEntity.ok(new AuthResponse(token));
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
         }
     }
+
 
     // ===============================
     // Logout

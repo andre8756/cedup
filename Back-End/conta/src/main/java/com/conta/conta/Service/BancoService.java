@@ -14,41 +14,87 @@ import java.util.Optional;
 public class BancoService {
 
     @Autowired
-    BancoRepository bancoRepository;
+    private BancoRepository bancoRepository;
 
     @Autowired
-    ContaService contaService;
+    private ContaService contaService;
 
+    // =========================================
+    // SALVAR (sempre ligado ao usuário logado)
+    // =========================================
     public Banco salvar(Banco banco){
+        Conta conta = contaService.buscarContaLogada(); // pega automaticamente a conta logada
+        banco.setConta(conta);
+
         Banco bancoSalvo = bancoRepository.save(banco);
-        //Atualiza o saldoTotal da conta
-        contaService.atualizarSaldoTotal(bancoSalvo.getConta().getId());
+
+        contaService.atualizarSaldoTotal(conta.getId());
+
         return bancoSalvo;
     }
 
+    // =========================================
+    // LISTAR TODOS (normalmente só admin)
+    // =========================================
     public List<Banco> listarBancos(){
         return bancoRepository.findAll();
     }
 
-    public List<Banco> listarBancoPorContaId(Long contaid){
-        return bancoRepository.findByContaId(contaid);
+    // =========================================
+    // LISTAR SOMENTE OS DO USUÁRIO LOGADO
+    // =========================================
+    public List<Banco> listarBancoPorContaId(){
+        Conta conta = contaService.buscarContaLogada();
+        return bancoRepository.findByContaId(conta.getId());
     }
 
-    public Optional<Banco> buscarPorId(Long id){
-        return bancoRepository.findById(id);
+    // =========================================
+    // BUSCAR POR ID COM VERIFICAÇÃO DE DONO
+    // =========================================
+    public Optional<Banco> buscarPorId(Long bancoId){
+        Banco banco = bancoRepository.findById(bancoId)
+                .orElseThrow(() -> new EntityNotFoundException("Banco não encontrado"));
+
+        Conta conta = contaService.buscarContaLogada();
+
+        if (!banco.getConta().getId().equals(conta.getId())) {
+            throw new EntityNotFoundException("Você não tem permissão para acessar este banco");
+        }
+
+        return Optional.of(banco);
     }
 
+    // =========================================
+    // BUSCAR CHAVE PIX DO USUÁRIO LOGADO
+    // =========================================
     public Optional<Banco> buscarPorChavePix(String chavePix){
-        return bancoRepository.findByChavePix(chavePix);
+        Banco banco = bancoRepository.findByChavePix(chavePix)
+                .orElseThrow(() -> new EntityNotFoundException("Chave PIX não encontrada"));
+
+        Conta conta = contaService.buscarContaLogada();
+
+        if (!banco.getConta().getId().equals(conta.getId())) {
+            throw new EntityNotFoundException("Você não tem permissão para acessar esta chave PIX");
+        }
+
+        return Optional.of(banco);
     }
 
+    // =========================================
+    // REMOVER COM VERIFICAÇÃO DE DONO
+    // =========================================
     public void removerPorId(Long bancoId) {
         Banco banco = bancoRepository.findById(bancoId)
                 .orElseThrow(() -> new EntityNotFoundException("Banco não encontrado"));
-        Long contaId = banco.getConta().getId();
-        bancoRepository.delete(banco);
-        // Atualizar o saldo total da conta após deletar
-        contaService.atualizarSaldoTotal(contaId);
-    }
 
+        Conta conta = contaService.buscarContaLogada();
+
+        if (!banco.getConta().getId().equals(conta.getId())) {
+            throw new EntityNotFoundException("Você não tem permissão para remover este banco");
+        }
+
+        bancoRepository.delete(banco);
+
+        contaService.atualizarSaldoTotal(conta.getId());
+    }
 }
