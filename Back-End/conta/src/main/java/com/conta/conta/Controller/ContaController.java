@@ -39,10 +39,10 @@ public class ContaController {
         return contaService.listarConta();
     }
 
-    @GetMapping("/{id}")
-    public Conta buscarConta(@PathVariable Long id) {
-        return contaService.buscarPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
+    @GetMapping("/atual")
+    public Conta buscarConta() {
+        return contaService.buscarContaLogada();
+
     }
 
     @PutMapping("/{id}")
