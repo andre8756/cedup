@@ -37,7 +37,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (token != null) {
 
-            // Verifica se o token está na blacklist
             if (tokenBlacklistService.isBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
@@ -46,15 +45,16 @@ public class SecurityFilter extends OncePerRequestFilter {
             String email = tokenService.validateToken(token);
 
             if (email != null) {
-                var contaOptional = contaRepository.findByEmail(email);
+                var conta = contaRepository.findByEmail(email);
 
-                if (contaOptional.isPresent()) {
-                    var contaDetails = contaOptional.get();
+                if (conta.isPresent()) {
+
+                    Long userId = conta.get().getId(); // 👈 EXTRAÇÃO DO ID
 
                     var authentication = new UsernamePasswordAuthenticationToken(
-                            contaDetails,
+                            userId,        // 👈 SALVA APENAS O ID
                             null,
-                            contaDetails.getAuthorities()
+                            conta.get().getAuthorities()
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
