@@ -19,47 +19,58 @@ public class SecurityFilter extends OncePerRequestFilter {
     private final ContaRepository contaRepository;
     private final TokenBlacklistService tokenBlacklistService;
 
-    public SecurityFilter(TokenService tokenService,
-                          ContaRepository contaRepository,
-                          TokenBlacklistService tokenBlacklistService) {
+    public SecurityFilter(
+            TokenService tokenService,
+            ContaRepository contaRepository,
+            TokenBlacklistService tokenBlacklistService
+    ) {
         this.tokenService = tokenService;
         this.contaRepository = contaRepository;
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String token = recoverToken(request);
 
         if (token != null) {
 
-            // Verifica se o token está na blacklist
+            // Verifica se o token foi revogado (logout)
             if (tokenBlacklistService.isBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
-            // validateToken() agora retorna o subject -> ID ou email dependendo do token
-            String email = tokenService.validateToken(token);
+            // ValidateToken agora retorna o SUBJECT → que é o ID
+            String subjectId = tokenService.validateToken(token);
 
-            if (email != null && !email.isEmpty()) {
-                var conta = contaRepository.findByEmail(email);
+            if (subjectId != null && !subjectId.isBlank()) {
 
-                if (conta.isPresent()) {
+                try {
+                    Long userId = Long.parseLong(subjectId);
 
-                    Long userId = conta.get().getId(); // recupera o ID do usuário
+                    var conta = contaRepository.findById(userId);
 
-                    var authentication = new UsernamePasswordAuthenticationToken(
-                            userId,                      // principal (ID)
-                            null,
-                            conta.get().getAuthorities() // roles / permissões
-                    );
+                    if (conta.isPresent()) {
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                        var authentication = new UsernamePasswordAuthenticationToken(
+                                userId, // principal = ID do usuário
+                                null,
+                                conta.get().getAuthorities()
+                        );
+
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+
+                } catch (NumberFormatException e) {
+                    // Caso o subject não seja um número válido
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
                 }
             }
         }
@@ -69,7 +80,9 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
         return authHeader.substring(7);
     }
 }
