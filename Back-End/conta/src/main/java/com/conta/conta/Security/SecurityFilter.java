@@ -37,24 +37,26 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (token != null) {
 
+            // Verifica se o token está na blacklist
             if (tokenBlacklistService.isBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
+            // validateToken() agora retorna o subject -> ID ou email dependendo do token
             String email = tokenService.validateToken(token);
 
-            if (email != null) {
+            if (email != null && !email.isEmpty()) {
                 var conta = contaRepository.findByEmail(email);
 
                 if (conta.isPresent()) {
 
-                    Long userId = conta.get().getId(); // 👈 EXTRAÇÃO DO ID
+                    Long userId = conta.get().getId(); // recupera o ID do usuário
 
                     var authentication = new UsernamePasswordAuthenticationToken(
-                            userId,        // 👈 SALVA APENAS O ID
+                            userId,                      // principal (ID)
                             null,
-                            conta.get().getAuthorities()
+                            conta.get().getAuthorities() // roles / permissões
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
