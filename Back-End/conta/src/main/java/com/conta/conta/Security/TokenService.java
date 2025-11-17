@@ -61,12 +61,13 @@ public class TokenService {
     }
 
     public Long extractUserId(String token) {
-        try {
-            return JWT.decode(token).getClaim("id").asLong();
-        } catch (Exception e) {
-            return null;
-        }
+    try {
+        String subject = JWT.decode(token).getSubject();
+        return Long.parseLong(subject);
+    } catch (Exception e) {
+        return null;
     }
+}
 
     public String extractRole(String token) {
         return JWT.decode(token).getClaim("role").asString();
