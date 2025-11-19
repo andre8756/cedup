@@ -30,36 +30,24 @@ public class TransacaoService {
     @Autowired
     private BancoService bancoService;
 
-
     // ================================
-    // Metodo principal com filtros
+    // LISTAGEM PRINCIPAL COM FILTROS
     // ================================
     public List<TransacaoRequestDto> listarComFiltros(TransacaoFiltro filtro) {
+
+        // Define automaticamente a conta logada se nenhum filtro de conta foi enviado
+        if (filtro.getContaId() == null && filtro.getContasIds() == null) {
+            Long contaIdLogada = contaService.buscarContaLogada().getId();
+            filtro.setContaId(contaIdLogada);
+        }
+
         Specification<Transacao> spec = TransacaoSpecifications.comFiltros(filtro);
         return convertToListDTO(transacaoRepository.findAll(spec));
     }
 
-    public List<TransacaoRequestDto> listarPorContaIdNew(Long contaId) {
+    public List<TransacaoRequestDto> listarPorContaLogadaEData(LocalDateTime dataInicio, LocalDateTime dataFim) {
         TransacaoFiltro filtro = new TransacaoFiltro();
-        filtro.setContaId(contaId);
-        return listarComFiltros(filtro);
-    }
-
-    public List<TransacaoRequestDto> listarPorContasIds(List<Long> contasIds) {
-        TransacaoFiltro filtro = new TransacaoFiltro();
-        filtro.setContasIds(contasIds);
-        return listarComFiltros(filtro);
-    }
-
-    public List<TransacaoRequestDto> listarPorBancosIds(List<Long> bancosIds) {
-        TransacaoFiltro filtro = new TransacaoFiltro();
-        filtro.setBancosIds(bancosIds);
-        return listarComFiltros(filtro);
-    }
-
-    public List<TransacaoRequestDto> listarPorContaIdEDataNew(Long contaId, LocalDateTime dataInicio, LocalDateTime dataFim) {
-        TransacaoFiltro filtro = new TransacaoFiltro();
-        filtro.setContaId(contaId);
+        filtro.setContaId(contaService.buscarContaLogada().getId());
         filtro.setDataInicio(dataInicio);
         filtro.setDataFim(dataFim);
         return listarComFiltros(filtro);
@@ -76,20 +64,26 @@ public class TransacaoService {
     // ================================
     // CÁLCULOS DE RECEITA E DESPESA
     // ================================
-    public float calcularReceitaMensal(Long contaId) {
-        LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+    public float calcularReceitaMensal() {
+        Long contaIdLogada = contaService.buscarContaLogada().getId();
+
+        LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0);
         LocalDateTime fimMes = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
                 .withHour(23).withMinute(59).withSecond(59);
 
-        return transacaoRepository.somaReceitaMensal(contaId, inicioMes, fimMes);
+        return transacaoRepository.somaReceitaMensal(contaIdLogada, inicioMes, fimMes);
     }
 
-    public float calcularDespesaMensal(Long contaId) {
-        LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+    public float calcularDespesaMensal() {
+        Long contaIdLogada = contaService.buscarContaLogada().getId();
+
+        LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0);
         LocalDateTime fimMes = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
                 .withHour(23).withMinute(59).withSecond(59);
 
-        return transacaoRepository.somaDespesaMensal(contaId, inicioMes, fimMes);
+        return transacaoRepository.somaDespesaMensal(contaIdLogada, inicioMes, fimMes);
     }
 
     // ================================
@@ -97,21 +91,19 @@ public class TransacaoService {
     // ================================
     @Transactional
     public TransacaoRequestDto processarTransacao(String bancoOrigemChavePix, String bancoDestinoChavePix, Transacao transacao) {
+
         Banco bancoOrigem = bancoService.buscarPorChavePix(bancoOrigemChavePix)
                 .orElseThrow(() -> new EntityNotFoundException("Banco de origem não encontrado"));
         Banco bancoDestino = bancoService.buscarPorChavePix(bancoDestinoChavePix)
                 .orElseThrow(() -> new EntityNotFoundException("Banco de destino não encontrado"));
 
-        // Verificar saldo do banco de origem
         if (bancoOrigem.getSaldo() < transacao.getValor()) {
             throw new RuntimeException("Saldo insuficiente no banco de origem");
         }
 
-        // Atualizar saldos
         bancoOrigem.setSaldo(bancoOrigem.getSaldo() - transacao.getValor());
         bancoDestino.setSaldo(bancoDestino.getSaldo() + transacao.getValor());
 
-        // Criar e salvar a transação
         Transacao transacaoFinal = new Transacao(
                 transacao.getValor(),
                 transacao.getDescricao(),
@@ -122,12 +114,9 @@ public class TransacaoService {
         );
 
         Transacao transacaoSalva = transacaoRepository.save(transacaoFinal);
-
-        // Salvar alterações nos bancos
         bancoService.salvar(bancoOrigem);
         bancoService.salvar(bancoDestino);
 
-        // Atualizar saldo total das contas após salvar a transação
         contaService.atualizarSaldoTotal(bancoOrigem.getConta().getId());
         contaService.atualizarSaldoTotal(bancoDestino.getConta().getId());
 
@@ -137,40 +126,13 @@ public class TransacaoService {
     // ================================
     // MÉTODOS DE LISTAGEM
     // ================================
-    public List<TransacaoRequestDto> listarTransacoes() {
-        return convertToListDTO(transacaoRepository.findAll());
+    public List<TransacaoRequestDto> listarPorContaLogada() {
+        Long contaIdLogada = contaService.buscarContaLogada().getId();
+        return convertToListDTO(transacaoRepository.findByContaId(contaIdLogada));
     }
 
     public Optional<Transacao> buscarPorId(Long id) {
         return transacaoRepository.findById(id);
-    }
-
-    public List<TransacaoRequestDto> listarPorContaOrigemId(Long contaId) {
-        return convertToListDTO(transacaoRepository.findByContaOrigemId(contaId));
-    }
-
-    public List<TransacaoRequestDto> listarPorContaDestinoId(Long contaId) {
-        return convertToListDTO(transacaoRepository.findByContaDestinoId(contaId));
-    }
-
-    public List<TransacaoRequestDto> listarPorContaId(Long contaId) {
-        return convertToListDTO(transacaoRepository.findByContaId(contaId));
-    }
-
-    public List<TransacaoRequestDto> listarPorBancoOrigem(Long bancoOrigemId) {
-        return convertToListDTO(transacaoRepository.findByBancoOrigemId(bancoOrigemId));
-    }
-
-    public List<TransacaoRequestDto> listarPorBancoDestino(Long bancoDestinoId) {
-        return convertToListDTO(transacaoRepository.findByBancoDestinoId(bancoDestinoId));
-    }
-
-    public List<TransacaoRequestDto> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim) {
-        return convertToListDTO(transacaoRepository.findByDataTransacaoBetween(dataInicio, dataFim));
-    }
-
-    public List<TransacaoRequestDto> listarPorContaIdEData(Long contaId, LocalDateTime dataInicio, LocalDateTime dataFim) {
-        return convertToListDTO(transacaoRepository.findByContaIdAndDataTransacaoBetween(contaId, dataInicio, dataFim));
     }
 
     // ================================
@@ -183,7 +145,6 @@ public class TransacaoService {
 
         transacaoRepository.deleteById(id);
 
-        // Atualizar o saldo total das contas após deletar a transação
         contaService.atualizarSaldoTotal(transacao.getBancoOrigem().getConta().getId());
         contaService.atualizarSaldoTotal(transacao.getBancoDestino().getConta().getId());
     }
