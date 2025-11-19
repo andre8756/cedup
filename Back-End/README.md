@@ -174,39 +174,39 @@ No Postman:
 
 
 
-#### 📋 Listar Contas
+#### 📋 Listar Contas(somente para admin)
 
 ``` http
 GET /conta
 ```
 
 
-#### 🔎 Buscar Conta por ID
+#### 🔎 Buscar Conta logada
 
 ``` http
-GET /conta/{id}
+GET /conta/atual
 ```
 
-#### ✏️ Atualizar Conta
+#### ✏️ Atualizar Conta logada
 
 ``` http
-PUT /conta/{id}
+PUT /conta/atual
 ```
 
-#### ❌ Deletar Conta
+#### ❌ Deletar Conta logada
 
 ``` http
-DELETE /conta/{id}
+DELETE /conta/atual
 ```
 
 ------------------------------------------------------------------------
 
 ### 🏦 Banco(Requer Token 🔒)
 
-#### ➕ Criar Banco
+#### ➕ Criar Banco na conta logada
 
 ``` http
-POST /conta/{contaId}/banco
+POST /conta/banco
 ```
 
 **Body:**
@@ -220,19 +220,19 @@ POST /conta/{contaId}/banco
 }
 ```
 
-#### 📋 Listar Todos os Bancos
+#### 📋 Listar Todos os Bancos(somente para admin)
 
 ``` http
 GET /conta/banco
 ```
 
-#### 📋 Listar Bancos por Conta
+#### 📋 Listar Bancos da Conta Logada
 
 ``` http
 GET /conta/{id}/banco
 ```
 
-#### 🔎 Buscar Banco por ID
+#### 🔎 Buscar Banco por ID (so funciona se for da conta logada)
 
 ``` http
 GET /conta/banco/{id}
@@ -244,13 +244,13 @@ GET /conta/banco/{id}
 GET /conta/banco/{chavePix}
 ```
 
-#### ✏️ Atualizar Banco
+#### ✏️ Atualizar Banco da Conta Logada
 
 ``` http
 PUT /conta/banco/{id}
 ```
 
-#### ❌ Deletar Banco
+#### ❌ Deletar Banco da Conta Logada
 
 ``` http
 DELETE /conta/banco/{id}
