@@ -147,9 +147,9 @@ const Conta: React.FC = () => {
           )}
         </div>
       </section>
-
-      {/* Histórico aqui dentro */}
-      <HistoricoTransacoes />
+      <div className="history-card">
+        <HistoricoTransacoes />
+      </div>
     </div>
 
   </div>
