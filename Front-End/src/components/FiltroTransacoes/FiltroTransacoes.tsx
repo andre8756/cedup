@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./FiltroTransacoes.css";
 
-// Definição dos tipos de filtro possíveis - APENAS OS QUE TÊM ENDPOINT FIXO NO BACKEND
+// Definição dos tipos de filtro
 type FiltroKey = 
     | 'nenhum' 
     | 'bancoOrigemId' 
     | 'bancoDestinoId' 
     | 'intervaloData'; 
-    // Removidas: 'chave', 'dataFim', 'valor', pois não têm endpoint dedicado
+
 
 const FilterForm: React.FC = () => {
     // ESTADO DE VISIBILIDADE para o botão de abrir/fechar
@@ -22,7 +22,7 @@ const FilterForm: React.FC = () => {
     const [dataInicio, setDataInicio] = useState<string>("");
     const [dataFim, setDataFim] = useState<string>("");
     
-    // Funções de limpeza e mudança (mantidas)
+    // Funções de limpeza e mudança
     const clearAllFilters = () => {
         setBancoOrigemId("");
         setBancoDestinoId("");
