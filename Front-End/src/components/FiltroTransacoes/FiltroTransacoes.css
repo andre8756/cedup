@@ -1,0 +1,53 @@
+.filtro-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Botão */
+.filtro-wrapper > button {
+  background: #2c7be5;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Container FECHADO deve ter tamanho 0 e não empurrar nada */
+.filtro-container {
+  margin-top: 10px;
+  padding: 0 12px;
+
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  transition: max-height 0.3s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Quando estiver aberto */
+.filtro-wrapper .filtro-container.open {
+  padding: 12px;
+  max-height: 300px; /* suficiente pra tudo */
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  z-index: 1;
+}
