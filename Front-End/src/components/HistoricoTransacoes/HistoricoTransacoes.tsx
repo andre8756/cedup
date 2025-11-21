@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./HistoricoTransacoes.css";
+import FiltroTransacoes from "../FiltroTransacoes/FiltroTransacoes";
 
 interface Transacao {
     id: number;
@@ -34,19 +35,27 @@ export default function HistoricoTransacoes() {
 
   return (
     <section className="historico-transacoes">
-
       <div className="header-transacoes">
-        <p className="title">Transações de {mesFormatado}</p>
-        <div className="totalTransacao">
+        <div className="saldo-transacoes">
+          <p>Extrato de {mesFormatado}</p>
           <small>
-            R$ {transacaoTotal}
+            {transacaoTotal.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </small>
         </div>
+        <div className="filtro">
+          <FiltroTransacoes/>
+        </div>
       </div>
-      <ul>
+      <ul className="lista">
+        <h3>Minhas Transações</h3>
         {transacoes.length === 0 ? (
 
-          <p>Nenhuma transação encontrada.</p>
+          <li className="nenhuma-transacao">
+            <p>Nenhuma transação encontrada</p>
+          </li>
 
         ) : (
 
@@ -55,13 +64,13 @@ export default function HistoricoTransacoes() {
               <div className="transacao-info">
                 <span>{t.dataTransacao}</span>
               </div>
-              <p className={t.valor > 0 ? "valor positivo" : "valor negativo"}>
+              <p className={t.valor > 0 ? "valor-positivo" : "valor-negativo"}>
                 {t.valor > 0 ? "+" : "-"} R$ {Math.abs(t.valor).toFixed(2).replace(".", ",")}
               </p>
             </li>
           ))
         )}
-  </ul>
+      </ul>
     </section>
   );
 }
