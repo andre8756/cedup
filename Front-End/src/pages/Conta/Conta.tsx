@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
 import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
+import DownloadReceitaPDF from "../../components/DownloadTransacaoPDF/DownloadTransacaoPDF";
 
 interface Banco {
   nome: string;
@@ -89,8 +90,8 @@ const Conta: React.FC = () => {
               <div className="connection-icon icon-add">+</div>
             </div>
           </div>
-
-          <button className="view-more-link">Ver mais</button>
+      
+          <div className="view-more-link"><DownloadReceitaPDF /></div>
           <button className="manage-accounts-link">Gerenciar Contas</button>
         </div>
       </div>
