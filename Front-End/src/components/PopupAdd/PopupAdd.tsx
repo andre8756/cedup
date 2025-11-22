@@ -25,7 +25,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await fetch("http://localhost:8080/conta/1/banco", {
+    const response = await fetch("http://localhost:8080/conta/banco", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(novaConta),
