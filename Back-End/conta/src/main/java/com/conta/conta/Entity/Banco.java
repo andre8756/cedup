@@ -59,7 +59,7 @@ public class Banco {
     protected void onCreate(){
         dataCadastro = LocalDateTime.now();
         status = true;
-        permitirTransacao = true;
+        permitirTransacao = false;
         bancoUrl = "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_account_balance_48px-512.png";
     }
 

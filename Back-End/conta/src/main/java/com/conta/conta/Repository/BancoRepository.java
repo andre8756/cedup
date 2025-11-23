@@ -10,5 +10,6 @@ public interface BancoRepository extends JpaRepository<Banco, Long> {
 
     List<Banco> findByContaId(Long contaid);
     Optional<Banco> findByChavePix(String chavePix);
+    List<Banco> findByContaIdAndPermitirTransacao(Long contaId, boolean permitirTransacao);
 
 }

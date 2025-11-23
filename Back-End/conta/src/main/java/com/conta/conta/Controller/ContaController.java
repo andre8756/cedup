@@ -80,6 +80,12 @@ public class ContaController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrado"));
     }
 
+    // BANCOS QUE PERMITEM TRANSAÇÃO
+    @GetMapping("/banco/permitir-transacao")
+    public List<Banco> listarBancosQuePermitemTransacao() {
+        return bancoService.listarBancosPermitemTransacao();
+    }
+
     @GetMapping("/banco/chave-pix/{chavePix}")
     public Banco buscarBancoPorChavePix(@PathVariable String chavePix) {
         return bancoService.buscarPorChavePix(chavePix)

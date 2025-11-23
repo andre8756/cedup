@@ -49,6 +49,14 @@ public class BancoService {
     }
 
     // =========================================
+    // LISTAR BANCOS QUE PERMITEM TRANSAÇÃO PELO USUÁRIO LOGADO
+    // =========================================
+    public List<Banco> listarBancosPermitemTransacao() {
+        Conta conta = contaService.buscarContaLogada();
+        return bancoRepository.findByContaIdAndPermitirTransacao(conta.getId(), true);
+    }
+
+    // =========================================
     // BUSCAR POR ID COM VERIFICAÇÃO DE DONO
     // =========================================
     public Optional<Banco> buscarPorId(Long bancoId){

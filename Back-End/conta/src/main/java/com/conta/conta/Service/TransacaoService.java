@@ -101,6 +101,10 @@ public class TransacaoService {
             throw new RuntimeException("Saldo insuficiente no banco de origem");
         }
 
+        if (!bancoOrigem.isPermitirTransacao()) {
+            throw new RuntimeException("O banco não permite fazer transferências");
+        }
+
         bancoOrigem.setSaldo(bancoOrigem.getSaldo() - transacao.getValor());
         bancoDestino.setSaldo(bancoDestino.getSaldo() + transacao.getValor());
 
