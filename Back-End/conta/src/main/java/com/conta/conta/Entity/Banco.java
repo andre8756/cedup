@@ -39,6 +39,12 @@ public class Banco {
     @JsonIgnore // Evita loop infinito no Json
     private Conta conta;
 
+    @Column(nullable = false)
+    private boolean permitirTransacao;
+
+    @Column
+    private String bancoUrl;
+
     public Banco(String titular, String nomeBanco, float saldo, String chavePix) {
         this.titular = titular;
         this.nomeBanco = nomeBanco;
@@ -53,6 +59,8 @@ public class Banco {
     protected void onCreate(){
         dataCadastro = LocalDateTime.now();
         status = true;
+        permitirTransacao = true;
+        bancoUrl = "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_account_balance_48px-512.png";
     }
 
     public Long getId(){
@@ -112,6 +120,22 @@ public class Banco {
 
     public void setConta(Conta conta) {
         this.conta = conta;
+    }
+
+    public boolean isPermitirTransacao() {
+        return permitirTransacao;
+    }
+
+    public void setPermitirTransacao(boolean permitirTransacao) {
+        this.permitirTransacao = permitirTransacao;
+    }
+
+    public String getBancoUrl() {
+        return bancoUrl;
+    }
+
+    public void setBancoUrl(String bancoUrl) {
+        this.bancoUrl = bancoUrl;
     }
 
     @Override
