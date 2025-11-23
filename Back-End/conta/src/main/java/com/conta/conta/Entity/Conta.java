@@ -53,6 +53,9 @@ public class Conta implements UserDetails {
     @OneToMany(mappedBy = "conta", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banco> bancos = new ArrayList<>();
 
+    @Column
+    private String avatarUrl;
+
     // Construtores
     public Conta() {}
 
@@ -74,6 +77,7 @@ public class Conta implements UserDetails {
     protected void onCreate() {
         dataCadastro = LocalDateTime.now();
         status = true;
+        avatarUrl = "https://marketplace.canva.com/A5alg/MAESXCA5alg/1/tl/canva-user-icon-MAESXCA5alg.png";
     }
 
     // Getters e setters normais
@@ -155,6 +159,14 @@ public class Conta implements UserDetails {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     // ===============================
