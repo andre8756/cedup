@@ -1,5 +1,6 @@
 package com.conta.conta.Service;
 
+import com.conta.conta.DTO.ContaUpdateRequest;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Repository.ContaRepository;
@@ -7,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,25 +18,26 @@ import java.util.Optional;
 @Service
 public class ContaService {
 
-    @Autowired
-    private ContaRepository contaRepository;
+    private final ContaRepository contaRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public ContaService(ContaRepository contaRepository, PasswordEncoder passwordEncoder) {
+        this.contaRepository = contaRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     // Pega o ID do usuário logado de forma segura
     private Long getAuthenticatedUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = auth.getPrincipal();
 
-        if (principal instanceof Long) {
-            return (Long) principal;
+        if (auth == null || !(auth.getPrincipal() instanceof Conta)) {
+            throw new IllegalStateException("Usuário não autenticado");
         }
 
-        throw new IllegalStateException("Usuário não autenticado ou tipo de principal inválido");
+        Conta conta = (Conta) auth.getPrincipal();
+        return conta.getId(); // Agora sim retorna o ID corretamente
     }
 
-    // Salvar ou atualizar conta
-    public Conta salvar(Conta conta) {
-        return contaRepository.save(conta);
-    }
 
     // Listar todas as contas (para admins ou testes)
     public List<Conta> listarConta() {
@@ -48,12 +51,28 @@ public class ContaService {
                 .orElseThrow(() -> new EntityNotFoundException("Conta do usuário logado não encontrada"));
     }
 
-    // Busca uma conta pelo ID informado
+    @Transactional
+    public Conta atualizarContaLogada(ContaUpdateRequest dto) {
+        Conta conta = buscarContaLogada();
+
+        Optional.ofNullable(dto.getTitular()).filter(s -> !s.isBlank()).ifPresent(conta::setTitular);
+        Optional.ofNullable(dto.getEmail()).filter(s -> !s.isBlank()).ifPresent(conta::setEmail);
+        Optional.ofNullable(dto.getTelefone()).filter(s -> !s.isBlank()).ifPresent(conta::setTelefone);
+        Optional.ofNullable(dto.getSenha()).filter(s -> !s.isBlank())
+                .ifPresent(s -> conta.setSenha(passwordEncoder.encode(s)));
+        Optional.ofNullable(dto.getStatus()).ifPresent(conta::setStatus);
+
+        return contaRepository.save(conta);
+    }
+
+
+    // Busca uma conta pelo ID informado(admins)
     public Optional<Conta> buscarPorId(Long id) {
         return contaRepository.findById(id);
     }
 
     // Remove a conta do usuário logado
+    @Transactional
     public void removerContaUsuario() {
         Long userId = getAuthenticatedUserId();
         Conta conta = contaRepository.findById(userId)
