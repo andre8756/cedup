@@ -500,6 +500,41 @@ Transação deletada com sucesso!
 
 ---
 
+#### 📝 Como usar os filtros de transações
+
+Os endpoints `/conta/banco/transacao/filtros` e `/conta/banco/transacao/filtros` permitem listar transações usando diversos critérios, facilitando buscar apenas os registros que você deseja. Você pode combinar diferentes filtros para especificar os resultados.  
+
+**Filtros disponíveis (opcionais):**
+
+- `contaId`: ID da conta que você deseja filtrar.
+- `contaOrigemId`: ID da conta de origem da transação.
+- `contaDestinoId`: ID da conta de destino da transação.
+- `bancoOrigemId`: ID do banco de origem.
+- `bancoDestinoId`: ID do banco de destino.
+- `bancosIds`: Lista de IDs de bancos para filtrar múltiplos bancos.
+- `contasIds`: Lista de IDs de contas para filtrar múltiplas contas.
+- `dataInicio`: Data/hora inicial do período desejado (ex: `2024-01-01T00:00:00`).
+- `dataFim`: Data/hora final do período desejado (ex: `2024-12-31T23:59:59`).
+- `valor`: Valor exato da transação que deseja filtrar.
+- `descricao`: Termo presente na descrição da transação.
+
+**Exemplo de uso:**
+
+Para listar todas as transações da conta `1` entre 1º de janeiro e 31 de dezembro de 2024:
+
+```http
+GET /conta/banco/transacao/filtros?contaId=1&dataInicio=2024-01-01T00:00:00&dataFim=2024-12-31T23:59:59
+````
+
+Você pode combinar filtros. Por exemplo, para buscar todas as transações da conta `1` enviadas para o banco de destino com chave PIX `456-def`:
+
+```http
+GET /conta/banco/transacao/filtros?contaId=1&bancoDestinoChavePix=456-def
+```
+
+> 💡 **Dica:** filtros que não forem enviados serão ignorados, retornando todas as transações que correspondem aos filtros informados. Isso permite consultas flexíveis e customizadas.
+
+
 #### 📋 Listar Transações com Filtros
 
 ```http
