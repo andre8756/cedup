@@ -119,38 +119,72 @@ mvn spring-boot:run
 ### 🔑 Auth (Login e Registro)
 
 #### ➕ Registrar Usuário
-``` http
+```http
 POST /api/auth/register
-```
-**Body:**
+````
 
-``` json
+**Body (JSON obrigatório):**
+
+> ⚠️ Todos os campos são obrigatórios e devem seguir o formato correto.
+
+* `titular` (String): nome do titular
+* `cpf` (String): 11 dígitos numéricos
+* `email` (String): e-mail válido
+* `senha` (String): mínimo 8 caracteres
+* `telefone` (String): 10 ou 11 dígitos numéricos
+
+**Exemplo de JSON válido:**
+
+```json
 {
   "titular": "Nicolas Rotta",
-  "cpf": "123.456.789-00",
+  "cpf": "12345678900",
   "email": "nicolas@email.com",
-  "telefone": "(47) 99999-9999",
-  "senha":"Banana",
+  "telefone": "47999999999",
+  "senha": "Banana123"
 }
 ```
 
 #### 🔑 Fazer Login
 ```http
 POST /api/auth/login
+````
+
+**Body (JSON obrigatório):**
+
+* `identificador`: **email, telefone ou CPF** do usuário
+* `senha`: senha cadastrada
+
+**Exemplo de JSON usando email:**
+
+```json
+{
+  "identificador": "nicolas@email.com",
+  "senha": "Banana123"
+}
 ```
 
-**Body:**
+**Exemplo de JSON usando telefone:**
 
-``` json
+```json
 {
-  "identifier": "nicolas@email.com",
-  "senha": "Banana"
+  "identificador": "47999999999",
+  "senha": "Banana123"
+}
+```
+
+**Exemplo de JSON usando CPF:**
+
+```json
+{
+  "identificador": "12345678900",
+  "senha": "Banana123"
 }
 ```
 
 **Retorno do JWT:**
 
-``` json
+```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
@@ -169,35 +203,88 @@ No Postman:
 
 ------------------------------------------------------------------------
 
+### 🧍 Conta (requer Token 🔒)
 
-### 🧍 Conta(requer Token 🔒)
+---
 
-
-
-#### 📋 Listar Contas(somente para admin)
-
-``` http
-GET /conta
-```
-
-
-#### 🔎 Buscar Conta logada
-
-``` http
+#### 🔎 Buscar Conta Logada
+```http
 GET /conta/atual
+````
+
+**Retorno (JSON - ContaResponse):**
+
+```json
+{
+  "titular": "Nicolas Rotta",
+  "cpf": "12345678900",
+  "email": "nicolas@email.com",
+  "telefone": "47999999999",
+  "saldoTotal": 1500.75,
+  "status": true,
+  "dataCadastro": "2025-11-23T20:00:00",
+  "avatarUrl": "https://exemplo.com/avatar.png",
+  "bancos": [
+    {
+      "id": 1,
+      "nome": "Banco do Brasil",
+      "agencia": "1234",
+      "conta": "56789-0"
+    }
+  ]
+}
 ```
 
-#### ✏️ Atualizar Conta logada
+---
 
-``` http
+#### ✏️ Atualizar Conta Logada
+
+```http
 PUT /conta/atual
 ```
 
-#### ❌ Deletar Conta logada
+**Body (JSON - ContaUpdateRequest):**
 
-``` http
+> ⚠️ Todos os campos abaixo são obrigatórios, exceto `senha` e `status` que são opcionais.
+
+* `titular` (String): entre 3 e 100 caracteres
+* `email` (String): e-mail válido
+* `telefone` (String): 10 ou 11 dígitos numéricos
+* `senha` (String, opcional): 6 a 20 caracteres
+* `status` (Boolean, opcional): ativar/inativar conta
+
+**Exemplo de JSON:**
+
+```json
+{
+  "titular": "Nicolas Rotta",
+  "email": "nicolas@email.com",
+  "telefone": "47999999999",
+  "senha": "NovaSenha123",
+  "status": true
+}
+```
+
+**Retorno (JSON - ContaUpdateResponse):**
+
+```json
+{
+  "titular": "Nicolas Rotta",
+  "email": "nicolas@email.com",
+  "telefone": "47999999999",
+  "status": true
+}
+```
+
+---
+
+#### ❌ Deletar Conta Logada
+
+```http
 DELETE /conta/atual
 ```
+
+**Retorno:** "Conta deletada com sucesso!"
 
 ------------------------------------------------------------------------
 
