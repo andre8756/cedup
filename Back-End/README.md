@@ -288,60 +288,155 @@ DELETE /conta/atual
 
 ------------------------------------------------------------------------
 
-### 🏦 Banco(Requer Token 🔒)
+### 🏦 Bancos (requer Token 🔒)
 
-#### ➕ Criar Banco na conta logada
+---
 
-``` http
+#### ➕ Criar Banco na Conta Logada
+```http
 POST /conta/banco
-```
+````
 
-**Body:**
+**Body (JSON - BancoRequest):**
 
-``` json
+> ⚠️ Campos obrigatórios: `titular`, `nomeBanco`, `saldo`, `chavePix`.
+> Campos opcionais: `status`, `permitirTransacao`, `bancoUrl`.
+
+* `titular` (String) → titular do banco
+* `nomeBanco` (String) → nome do banco
+* `saldo` (Double) → saldo inicial, >= 0
+* `chavePix` (String) → chave PIX válida (somente caracteres alfanuméricos e símbolos permitidos)
+* `status` (Boolean, opcional) → ativo/inativo
+* `permitirTransacao` (Boolean, opcional) → habilitar transações (PIX, TED, etc.)
+* `bancoUrl` (String, opcional) → URL do ícone/logo do banco
+
+**Exemplo de JSON:**
+
+```json
 {
-  "titular": "André",
+  "titular": "Nicolas Rotta",
   "nomeBanco": "Inter",
   "saldo": 1200.50,
-  "chavePix": "123-abc"
+  "chavePix": "123-abc",
+  "status": true,
+  "permitirTransacao": true,
+  "bancoUrl": "https://exemplo.com/banco.png"
 }
 ```
 
-#### 📋 Listar Todos os Bancos(somente para admin)
+**Retorno (JSON - BancoResponse):**
 
-``` http
-GET /conta/banco
+```json
+{
+  "id": 1,
+  "titular": "Nicolas Rotta",
+  "nomeBanco": "Inter",
+  "saldo": 1200.50,
+  "chavePix": "123-abc",
+  "status": true,
+  "permitirTransacao": true,
+  "bancoUrl": "https://exemplo.com/banco.png",
+  "dataCadastro": "23/11/2025 - 20:00"
+}
 ```
+
+---
 
 #### 📋 Listar Bancos da Conta Logada
 
-``` http
-GET /conta/{id}/banco
+```http
+GET /conta/banco
 ```
 
-#### 🔎 Buscar Banco por ID (so funciona se for da conta logada)
+**Retorno (JSON - lista de BancoResponse):**
 
-``` http
-GET /conta/banco/{id}
+```json
+[
+  {
+    "id": 1,
+    "titular": "Nicolas Rotta",
+    "nomeBanco": "Inter",
+    "saldo": 1200.50,
+    "chavePix": "123-abc",
+    "status": true,
+    "permitirTransacao": true,
+    "bancoUrl": "https://exemplo.com/banco.png",
+    "dataCadastro": "23/11/2025 - 20:00"
+  }
+]
 ```
 
-#### 🔎 Buscar Banco por chavePix
+---
 
-``` http
-GET /conta/banco/{chavePix}
+#### 🔎 Buscar Banco por ID
+
+```http
+GET /conta/banco/id/{id}
 ```
+
+**Retorno (JSON - BancoResponse):** igual ao exemplo acima.
+
+---
+
+#### 🔎 Buscar Banco por Chave Pix
+
+```http
+GET /conta/banco/chave-pix/{chavePix}
+```
+
+**Retorno (JSON - BancoResponse):** igual ao exemplo acima.
+
+---
 
 #### ✏️ Atualizar Banco da Conta Logada
 
-``` http
+```http
 PUT /conta/banco/{id}
 ```
 
+**Body (JSON - BancoUpdateRequest):**
+Todos os campos são opcionais, envie apenas os que deseja atualizar.
+
+* `titular` (String)
+* `nomeBanco` (String)
+* `saldo` (Float)
+* `chavePix` (String)
+* `status` (Boolean)
+* `permitirTransacao` (Boolean)
+* `bancoUrl` (String)
+
+**Exemplo de JSON:**
+
+```json
+{
+  "nomeBanco": "Inter Atualizado",
+  "saldo": 1500.00
+}
+```
+
+**Retorno (JSON - BancoUpdateResponse):**
+
+```json
+{
+  "id": 1,
+  "titular": "Nicolas Rotta",
+  "nomeBanco": "Inter Atualizado",
+  "saldo": 1500.00,
+  "chavePix": "123-abc",
+  "status": true,
+  "dataCadastro": "23/11/2025 - 20:00"
+}
+```
+
+---
+
 #### ❌ Deletar Banco da Conta Logada
 
-``` http
+```http
 DELETE /conta/banco/{id}
 ```
+
+**Retorno:** "Banco deletado com sucesso!"
 
 ------------------------------------------------------------------------
 
