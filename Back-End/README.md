@@ -284,7 +284,10 @@ PUT /conta/atual
 DELETE /conta/atual
 ```
 
-**Retorno:** "Conta deletada com sucesso!"
+**Retorno:** 
+```text
+Conta deletada com sucesso!
+```
 
 ------------------------------------------------------------------------
 
@@ -436,49 +439,137 @@ Todos os campos são opcionais, envie apenas os que deseja atualizar.
 DELETE /conta/banco/{id}
 ```
 
-**Retorno:** "Banco deletado com sucesso!"
+**Retorno:**
+
+```text
+Banco deletado com sucesso!
+```
 
 ------------------------------------------------------------------------
 
-### 💸 Transações(Requer token 🔒)
+### 💸 Transações (Requer token 🔒)
 
 #### ➕ Criar Transação
 
-``` http
-POST /conta/banco/{bancoOrigemChavePix}/{bancoDestinoChavePix}/transacao
-```
+```http
+POST /conta/banco/transacao
+````
 
-**Body:**
+**Body (JSON):**
 
-``` json
+```json
 {
   "valor": 500.00,
-  "descricao": "Transferência entre contas"
+  "descricao": "Transferência entre contas",
+  "chavePixBancoOrigem": "123-abc",
+  "chavePixBancoDestino": "456-def"
 }
 ```
 
-#### ✏️ Atualizar Transação
+**Retorno (TransacaoResponseDto):**
 
-``` http
-PUT /conta/banco/transacao/{id}
+```json
+{
+  "id": 1,
+  "contaOrigemId": 10,
+  "bancoOrigemChavePix": "123-abc",
+  "bancoOrigemNome": "Inter",
+  "bancoOrigemTitular": "Nicolas Rotta",
+  "contaDestinoId": 20,
+  "bancoDestinoChavePix": "456-def",
+  "bancoDestinoNome": "Bradesco",
+  "bancoDestinoTitular": "André",
+  "valor": 500.0,
+  "descricao": "Transferência entre contas",
+  "dataTransacao": "2025-11-23T14:30:00"
+}
 ```
+---
 
 #### ❌ Deletar Transação
 
-``` http
+```http
 DELETE /conta/banco/transacao/{id}
 ```
 
+**Retorno:**
+
+```text
+Transação deletada com sucesso!
+```
+
+---
+
 #### 📋 Listar Transações com Filtros
 
-``` http
+```http
 GET /conta/banco/transacao/filtros?contaId=1&dataInicio=2024-01-01T00:00:00&dataFim=2024-12-31T23:59:59
 ```
-#### 📋 Listar Transações com Filtros e gerar pdf
 
-``` http
+**Filtros possíveis (`TransacaoFiltro`):**
+
+* `contaId` (Long)
+* `contaOrigemId` (Long)
+* `contaDestinoId` (Long)
+* `bancoOrigemId` (Long)
+* `bancoDestinoId` (Long)
+* `bancosIds` (List<Long>)
+* `contasIds` (List<Long>)
+* `dataInicio` (LocalDateTime)
+* `dataFim` (LocalDateTime)
+* `valor` (Float)
+* `descricao` (String)
+
+**Retorno (List<TransacaoResponseDto>):**
+
+```json
+[
+  {
+    "id": 1,
+    "contaOrigemId": 10,
+    "bancoOrigemChavePix": "123-abc",
+    "bancoOrigemNome": "Inter",
+    "bancoOrigemTitular": "Nicolas Rotta",
+    "contaDestinoId": 20,
+    "bancoDestinoChavePix": "456-def",
+    "bancoDestinoNome": "Bradesco",
+    "bancoDestinoTitular": "André",
+    "valor": 500.0,
+    "descricao": "Transferência entre contas",
+    "dataTransacao": "2025-11-23T14:30:00"
+  }
+]
+```
+
+---
+
+#### 📋 Listar Transações com Filtros e gerar PDF
+
+```http
 GET /conta/banco/transacao/filtros/pdf?contaId=1&dataInicio=2024-01-01T00:00:00&dataFim=2024-12-31T23:59:59
 ```
+
+**Retorno:** PDF contendo as transações filtradas.
+
+---
+
+#### 📊 Resumos Mensais
+
+* **Receita Mensal:**
+
+```http
+GET /conta/banco/transacao/receita
+```
+
+**Retorno:** float (total de receitas do mês)
+
+* **Despesa Mensal:**
+
+```http
+GET /conta/banco/transacao/despesa
+```
+
+**Retorno:** float (total de despesas do mês)
 
 ------------------------------------------------------------------------
 
