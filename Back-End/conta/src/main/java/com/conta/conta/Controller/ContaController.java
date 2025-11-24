@@ -42,8 +42,8 @@ public class ContaController {
     // ================================
 
     @GetMapping("/atual")
-    public Conta buscarContaAtual() {
-        return contaService.buscarContaLogada();
+    public ContaResponse buscarContaAtual() {
+        return contaService.buscarContaAtual();
     }
 
     @PutMapping("/atual")
@@ -53,9 +53,10 @@ public class ContaController {
     }
 
     @DeleteMapping("/atual")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerConta() {
+    @ResponseStatus(HttpStatus.OK)
+    public String removerConta() {
         contaService.removerContaUsuario();
+        return "Conta deletada com sucesso!";
     }
 
     // ================================
@@ -109,32 +110,31 @@ public class ContaController {
     }
 
     @DeleteMapping("/banco/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerBanco(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public String removerBanco(@PathVariable Long id) {
         bancoService.removerPorId(id);
+        return("Banco deletado com sucesso!");
     }
 
     // ================================
     // TRANSAÇÕES
     // ================================
 
-    @PostMapping("/banco/{origemPix}/{destinoPix}/transacao")
+    @PostMapping("/banco/transacao")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransacaoResponseDto salvarTransacao(
-            @PathVariable String origemPix,
-            @PathVariable String destinoPix,
-            @RequestBody Transacao transacao) {
-        return transacaoService.processarTransacao(origemPix, destinoPix, transacao);
+    public TransacaoResponseDto salvarTransacao(@RequestBody TransacaoRequestDto transacaoDto) {
+        return transacaoService.processarTransacao(transacaoDto);
     }
 
     @DeleteMapping("/banco/transacao/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerTransacao(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public String removerTransacao(@PathVariable Long id) {
         transacaoService.removerPorId(id);
+        return  ("Transação deletada com sucesso!");
     }
 
     // ================================
-    // FILTROS & PDF
+    // FILTROS & PDF (Transações)
     // ================================
 
     @GetMapping("/banco/transacao/filtros")

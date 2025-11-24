@@ -1,6 +1,7 @@
 package com.conta.conta.Service;
 
 import com.conta.conta.DTO.TransacaoFiltro;
+import com.conta.conta.DTO.TransacaoRequestDto;
 import com.conta.conta.DTO.TransacaoResponseDto;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Transacao;
@@ -90,12 +91,12 @@ public class TransacaoService {
     // PROCESSAR TRANSFERÊNCIA
     // ================================
     @Transactional
-    public TransacaoResponseDto processarTransacao(String bancoOrigemChavePix, String bancoDestinoChavePix, Transacao transacao) {
+    public TransacaoResponseDto processarTransacao(TransacaoRequestDto dto) {
 
-        Banco bancoOrigem = bancoService.buscarEntidadePorChavePix(bancoOrigemChavePix);
-        Banco bancoDestino = bancoService.buscarEntidadePorChavePix(bancoDestinoChavePix);
+        Banco bancoOrigem = bancoService.buscarEntidadePorChavePix(dto.getChavePixBancoOrigem());
+        Banco bancoDestino = bancoService.buscarEntidadePorChavePix(dto.getChavePixBancoDestino());
 
-        if (bancoOrigem.getSaldo() < transacao.getValor()) {
+        if (bancoOrigem.getSaldo() < dto.getValor()) {
             throw new RuntimeException("Saldo insuficiente no banco de origem");
         }
 
@@ -103,12 +104,12 @@ public class TransacaoService {
             throw new RuntimeException("O banco não permite fazer transferências");
         }
 
-        bancoOrigem.setSaldo(bancoOrigem.getSaldo() - transacao.getValor());
-        bancoDestino.setSaldo(bancoDestino.getSaldo() + transacao.getValor());
+        bancoOrigem.setSaldo(bancoOrigem.getSaldo() - dto.getValor());
+        bancoDestino.setSaldo(bancoDestino.getSaldo() + dto.getValor());
 
         Transacao transacaoFinal = new Transacao(
-                transacao.getValor(),
-                transacao.getDescricao(),
+                dto.getValor(),
+                dto.getDescricao(),
                 bancoOrigem.getConta(),
                 bancoOrigem,
                 bancoDestino.getConta(),

@@ -58,6 +58,10 @@ public class Banco {
         }
     }
 
+    // ============================
+    // GETTERS & SETTERS
+    // ============================
+
     public Long getId() {
         return id;
     }

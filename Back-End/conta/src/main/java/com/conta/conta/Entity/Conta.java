@@ -80,7 +80,10 @@ public class Conta implements UserDetails {
         avatarUrl = "https://marketplace.canva.com/A5alg/MAESXCA5alg/1/tl/canva-user-icon-MAESXCA5alg.png";
     }
 
-    // Getters e setters normais
+    // ============================
+    // GETTERS & SETTERS
+    // ============================
+
     public Long getId() {
         return id;
     }
