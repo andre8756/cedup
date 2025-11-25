@@ -28,11 +28,10 @@ public class ContaService {
 
     private Long getAuthenticatedUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !(auth.getPrincipal() instanceof Conta)) {
+        if (auth == null || !(auth.getPrincipal() instanceof Long)) {
             throw new IllegalStateException("Usuário não autenticado");
         }
-        Conta conta = (Conta) auth.getPrincipal();
-        return conta.getId();
+        return (Long) auth.getPrincipal();
     }
 
     // ===============================

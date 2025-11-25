@@ -171,8 +171,8 @@ function Cadastro() {
       }
 
       const loginResult = await queryUser({
-        identifier: formData.email,
-        identifierType: 'email',
+        identificador: formData.email,
+        identificadorType: 'email',
         senha: formData.senha,
       });
 

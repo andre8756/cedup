@@ -19,7 +19,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/conta")
-@PreAuthorize("hasRole('USER')")
 public class ContaController {
 
     @Autowired

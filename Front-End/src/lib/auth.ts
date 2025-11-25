@@ -1,27 +1,27 @@
 // Auth.ts
 import { API_ENDPOINTS } from '../config/api';
 
-export type IdentifierType = 'cpf' | 'telefone' | 'email';
+export type identificadorType = 'cpf' | 'telefone' | 'email';
 
 export const cleanNumber = (value: string) => value.replace(/\D/g, '');
 
 export async function queryUser({
-  identifier,
-  identifierType,
+  identificador,
+  identificadorType,
   senha,
 }: {
-  identifier: string;
-  identifierType: IdentifierType;
+  identificador: string;
+  identificadorType: identificadorType;
   senha: string;
 }) {
   // Limpa CPF ou telefone apenas se necessário
   const value =
-    identifierType === 'cpf' || identifierType === 'telefone'
-      ? cleanNumber(identifier)
-      : identifier;
+    identificadorType === 'cpf' || identificadorType === 'telefone'
+      ? cleanNumber(identificador)
+      : identificador;
 
   const body = {
-    identifier: value,
+    identificador: value,
     senha,
   };
 

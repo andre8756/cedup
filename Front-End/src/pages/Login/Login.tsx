@@ -5,11 +5,11 @@ import Cookies from 'js-cookie';
 import { queryUser } from '../../lib/auth';
 import './Login.css';
 
-type IdentifierType = 'cpf' | 'telefone' | 'email' | null;
+type identificadorType = 'cpf' | 'telefone' | 'email' | null;
 
 function Login() {
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState('');
+  const [identificador, setidentificador] = useState('');
   const [senha, setSenha] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ function Login() {
 
   const clean = (value: string) => value.replace(/\D/g, '');
 
-  const getIdentifierType = (value: string): IdentifierType => {
+  const getidentificadorType = (value: string): identificadorType => {
     if (value.includes('@')) return 'email';
     const digits = clean(value);
     if (digits.length === 11 && value.includes('.')) return 'cpf';
@@ -31,17 +31,17 @@ function Login() {
     setMessage({ type: '', text: '' });
 
     try {
-      const identifierType = getIdentifierType(identifier);
-      if (!identifierType) {
+      const identificadorType = getidentificadorType(identificador);
+      if (!identificadorType) {
         setMessage({ type: 'error', text: 'Formato de identificador inválido.' });
         setLoading(false);
         return;
       }
 
-      const valueToSend = identifierType === 'email' ? identifier : clean(identifier);
+      const valueToSend = identificadorType === 'email' ? identificador : clean(identificador);
       const result = await queryUser({
-        identifier: valueToSend,
-        identifierType,
+        identificador: valueToSend,
+        identificadorType,
         senha,
       });
 
@@ -91,8 +91,8 @@ function Login() {
               <div className="input-container">
                 <input
                   type="text"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
+                  value={identificador}
+                  onChange={(e) => setidentificador(e.target.value)}
                   className="input"
                   placeholder="Digite seu CPF, email ou telefone"
                   required
