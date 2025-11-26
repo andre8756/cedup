@@ -91,6 +91,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Banco de dados PostgreSql -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Ferramentas de desenvolvimento -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
