@@ -99,7 +99,7 @@ mvn spring-boot:run
 
 ### **Base URL**
 
-    http://localhost:8080/conta
+    http://cedup-back-deploy.onrender.com
 
 ------------------------------------------------------------------------
 
