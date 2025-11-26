@@ -75,39 +75,44 @@ public class AuthController {
     // Login
     // ===============================
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
-        try {
-            String identifier = loginRequest.identificador();
-            Optional<Conta> contaOptional = Optional.empty();
+public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
+    try {
+        String identifier = loginRequest.identificador();
+        String senha = loginRequest.senha();
 
-            if (identifier.contains("@")) {
-                contaOptional = contaRepository.findByEmail(identifier);
-            } else {
-                // Remove todos caracteres que não são dígitos
-                String digits = identifier.replaceAll("\\D", "");
-
-                if (digits.length() == 11) {
-                    // Pode ser CPF ou telefone, tentamos ambos
-                    contaOptional = contaRepository.findByCpf(digits);
-                    if (contaOptional.isEmpty()) {
-                        contaOptional = contaRepository.findByTelefone(digits);
-                    }
-                } else {
-                    return ResponseEntity.badRequest().body("Identificador inválido!");
-                }
-            }
-
-            if (contaOptional.isEmpty() || !passwordEncoder.matches(loginRequest.senha(), contaOptional.get().getSenha())) {
-                return ResponseEntity.badRequest().body("Credenciais inválidas!");
-            }
-
-            String token = tokenService.generateToken(contaOptional.get());
-            return ResponseEntity.ok(new AuthResponse(token));
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
+        if (identifier == null || identifier.isBlank() || senha == null || senha.isBlank()) {
+            return ResponseEntity.badRequest().body("Identificador ou senha ausente!");
         }
+
+        Optional<Conta> contaOptional = Optional.empty();
+
+        if (identifier.contains("@")) {
+            contaOptional = contaRepository.findByEmail(identifier.trim());
+        } else {
+            // Remove todos caracteres que não são dígitos
+            String digits = identifier.replaceAll("\\D", "");
+
+            if (digits.length() == 11) {
+                contaOptional = contaRepository.findByCpf(digits);
+                if (contaOptional.isEmpty()) {
+                    contaOptional = contaRepository.findByTelefone(digits);
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Identificador inválido!");
+            }
+        }
+
+        if (contaOptional.isEmpty() || !passwordEncoder.matches(senha, contaOptional.get().getSenha())) {
+            return ResponseEntity.badRequest().body("Credenciais inválidas!");
+        }
+
+        String token = tokenService.generateToken(contaOptional.get());
+        return ResponseEntity.ok(new AuthResponse(token));
+
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
     }
+}
 
 
     // ===============================
