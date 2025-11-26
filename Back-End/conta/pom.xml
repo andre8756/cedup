@@ -84,6 +84,7 @@
             <version>2.6.0</version>
         </dependency>
 
+
         <!-- Banco de dados PostgreSql -->
         <dependency>
             <groupId>org.postgresql</groupId>
