@@ -1,15 +1,16 @@
-# Fase de build - Use a tag 23-jdk-jammy
-FROM maven:3.9-eclipse-temurin-23-jdk-jammy AS build
+FROM ubuntu:latest AS build
 
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+RUN apt-get update
+RUN apt-get install openjdk-21-jdk -y
+COPY . .
 
-# Fase de execução - Use a mesma variante JDK ou JRE
-FROM eclipse-temurin:23-jdk-jammy
+RUN apt-get install maven -y
+RUN mvn clean install
 
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+FROM openjdk:21-jdk-slim
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+COPY --from=build /target/deploy_render-1.0.0.jar app.jar
+
+ENTRYPOINT [ "java", "-jar", "app.jar" ]
