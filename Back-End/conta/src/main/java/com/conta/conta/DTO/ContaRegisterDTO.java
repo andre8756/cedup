@@ -29,13 +29,16 @@ public class ContaRegisterDTO {
 
     private UserRole role = UserRole.USER; // padrão
 
+    // ===========================
     // Getters e setters
+    // ===========================
+
     public String getTitular() {
         return titular;
     }
 
     public void setTitular(String titular) {
-        this.titular = titular;
+        this.titular = titular != null ? titular.trim() : null;
     }
 
     public String getCpf() {
@@ -43,7 +46,8 @@ public class ContaRegisterDTO {
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        // Remove qualquer caractere que não seja dígito
+        this.cpf = cpf != null ? cpf.replaceAll("\\D", "") : null;
     }
 
     public String getEmail() {
@@ -51,7 +55,7 @@ public class ContaRegisterDTO {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email != null ? email.trim() : null;
     }
 
     public String getSenha() {
@@ -67,7 +71,8 @@ public class ContaRegisterDTO {
     }
 
     public void setTelefone(String telefone) {
-        this.telefone = telefone;
+        // Remove qualquer caractere que não seja dígito
+        this.telefone = telefone != null ? telefone.replaceAll("\\D", "") : null;
     }
 
     public UserRole getRole() {

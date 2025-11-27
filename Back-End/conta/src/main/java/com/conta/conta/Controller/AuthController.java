@@ -48,20 +48,16 @@ public class AuthController {
 
         Conta conta = new Conta();
         conta.setTitular(dto.getTitular());
-        conta.setCpf(dto.getCpf());
+        conta.setCpf(dto.getCpf()); // já limpo pelo DTO
         conta.setEmail(dto.getEmail());
-        conta.setTelefone(dto.getTelefone());
+        conta.setTelefone(dto.getTelefone()); // já limpo pelo DTO
         conta.setSenha(passwordEncoder.encode(dto.getSenha()));
-        conta.setRole(UserRole.USER);
+        conta.setRole(dto.getRole() != null ? dto.getRole() : UserRole.USER);
         conta.setSaldoTotal(0);
         conta.setStatus(true);
         conta.setBancos(null);
-        conta.setRole(dto.getRole());
-        conta.setSaldoTotal(0);
-        conta.setStatus(true);
-        conta.setBancos(null);
-        contaRepository.save(conta);
 
+        contaRepository.save(conta);
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
@@ -75,45 +71,43 @@ public class AuthController {
     // Login
     // ===============================
     @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
-    try {
-        String identifier = loginRequest.identificador();
-        String senha = loginRequest.senha();
+    public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
+        try {
+            String identifier = loginRequest.identificador();
+            String senha = loginRequest.senha();
 
-        if (identifier == null || identifier.isBlank() || senha == null || senha.isBlank()) {
-            return ResponseEntity.badRequest().body("Identificador ou senha ausente!");
-        }
-
-        Optional<Conta> contaOptional = Optional.empty();
-
-        if (identifier.contains("@")) {
-            contaOptional = contaRepository.findByEmail(identifier.trim());
-        } else {
-            // Remove todos caracteres que não são dígitos
-            String digits = identifier.replaceAll("\\D", "");
-
-            if (digits.length() == 11) {
-                contaOptional = contaRepository.findByCpf(digits);
-                if (contaOptional.isEmpty()) {
-                    contaOptional = contaRepository.findByTelefone(digits);
-                }
-            } else {
-                return ResponseEntity.badRequest().body("Identificador inválido!");
+            if (identifier == null || identifier.isBlank() || senha == null || senha.isBlank()) {
+                return ResponseEntity.badRequest().body("Identificador ou senha ausente!");
             }
+
+            Optional<Conta> contaOptional = Optional.empty();
+
+            if (identifier.contains("@")) {
+                contaOptional = contaRepository.findByEmail(identifier.trim());
+            } else {
+                String digits = identifier.replaceAll("\\D", "");
+
+                if (digits.length() == 11) {
+                    contaOptional = contaRepository.findByCpf(digits);
+                    if (contaOptional.isEmpty()) {
+                        contaOptional = contaRepository.findByTelefone(digits);
+                    }
+                } else {
+                    return ResponseEntity.badRequest().body("Identificador inválido!");
+                }
+            }
+
+            if (contaOptional.isEmpty() || !passwordEncoder.matches(senha, contaOptional.get().getSenha())) {
+                return ResponseEntity.badRequest().body("Credenciais inválidas!");
+            }
+
+            String token = tokenService.generateToken(contaOptional.get());
+            return ResponseEntity.ok(new AuthResponse(token));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
         }
-
-        if (contaOptional.isEmpty() || !passwordEncoder.matches(senha, contaOptional.get().getSenha())) {
-            return ResponseEntity.badRequest().body("Credenciais inválidas!");
-        }
-
-        String token = tokenService.generateToken(contaOptional.get());
-        return ResponseEntity.ok(new AuthResponse(token));
-
-    } catch (Exception e) {
-        return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
     }
-}
-
 
     // ===============================
     // Logout
