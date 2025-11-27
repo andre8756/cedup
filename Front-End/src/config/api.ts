@@ -8,9 +8,9 @@ export const API_ENDPOINTS = {
   },
   CONTA: {
     BASE: `${API_BASE_URL}/conta`,
-    BANCO: (contaId: number) => `${API_BASE_URL}/conta/${contaId}/banco`,
+    BANCO:`${API_BASE_URL}/conta/banco`,
   },
-  BANCO: {
+    BANCO: {
     TRANSACAO: `${API_BASE_URL}/banco/transacao`,
   },
 };
