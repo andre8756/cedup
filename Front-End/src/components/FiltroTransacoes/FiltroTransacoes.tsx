@@ -41,49 +41,48 @@ const FilterForm: React.FC = () => {
     };
 
 
-    const handleFilter = async () => {
-        const baseUrl = "http://localhost:8080/";
-        let url = "";
+   const baseUrl = "https://cedup-back-deploy.onrender.com";
 
-        try {
-            if (filtroPrincipal === 'nenhum') {
-                alert("Selecione um filtro antes de buscar.");
-                return;
-            }
+const handleFilter = async () => {
+    let url = "";
 
-            // montagem da url baseada no filtro
-            switch (filtroPrincipal) {
-                case 'bancoOrigemId':
-                    if (!bancoOrigemId) return alert("Preencha o ID do Banco de Origem.");
-                    url = `${baseUrl}/banco/origem/${bancoOrigemId}/transacao`;
-                    break;
-
-                case 'bancoDestinoId':
-                    if (!bancoDestinoId) return alert("Preencha o ID do Banco de Destino.");
-                    url = `${baseUrl}/banco/destino/${bancoDestinoId}/transacao`;
-                    break;
-                    
-                case 'intervaloData': 
-                    if (!dataInicio || !dataFim) return alert("Preencha as duas datas para o intervalo.");
-                    url = `${baseUrl}/banco/transacao/${dataInicio}T00:00:00/${dataFim}T23:59:59`;
-                    break;
-
-                
-            }
-            
-            const response = await axios.get(url);
-            
-            console.log("Resultados:", response.data);
-            alert(`Foram encontradas ${response.data.length} transações`);
-            setIsFilterOpen(false); 
-
-        } catch (error) {
-            console.error("Erro ao filtrar:", error);
-            alert("Erro ao buscar filtros");
+    try {
+        if (filtroPrincipal === 'nenhum') {
+            alert("Selecione um filtro antes de buscar.");
+            return;
         }
-    };
-    
-    // mapeamento dos inputs que aparecem
+
+        switch (filtroPrincipal) {
+            case 'bancoOrigemId':
+                if (!bancoOrigemId) return alert("Preencha o ID do Banco de Origem.");
+                url = `${baseUrl}/conta/banco/origem/${bancoOrigemId}/transacao`;
+                break;
+
+            case 'bancoDestinoId':
+                if (!bancoDestinoId) return alert("Preencha o ID do Banco de Destino.");
+                url = `${baseUrl}/conta/banco/destino/${bancoDestinoId}/transacao`;
+                break;
+
+            case 'intervaloData':
+                if (!dataInicio || !dataFim) 
+                    return alert("Preencha as duas datas para o intervalo.");
+                url = `${baseUrl}/conta/banco/transacao/${dataInicio}T00:00:00/${dataFim}T23:59:59`;
+                break;
+        }
+
+        const response = await axios.get(url);
+        console.log("Resultados:", response.data);
+
+        alert(`Foram encontradas ${response.data.length} transações`);
+        setIsFilterOpen(false);
+
+    } catch (error) {
+        console.error("Erro ao filtrar:", error);
+        alert("Erro ao buscar filtros");
+    }
+};
+
+    // mapeamento dos inputs 
     const renderFiltroInput = () => {
         switch (filtroPrincipal) {
             case 'bancoOrigemId':
