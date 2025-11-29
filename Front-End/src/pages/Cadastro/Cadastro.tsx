@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserPlus, User, CreditCard, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, User, CreditCard, Mail, Phone, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { queryUser } from '../../lib/auth';
@@ -196,14 +196,16 @@ function Cadastro() {
     <div className="cadastro-container">
       <div className="cadastro-content">
         <div className="cadastro-card">
-
+          <button className="back-home-button" onClick={() => navigate('/Home')}>
+            <ArrowLeft size={20} />
+            Voltar para Home
+          </button>
           {/* Header mobile */}
           <div className="mobile-header">
             <div className="icon-container"><UserPlus size={28} /></div>
             <h1>Cadastro</h1>
             <p>Crie sua conta e aproveite nossa plataforma</p>
           </div>
-
           {/* Sidebar desktop */}
           <div className="cadastro-sidebar">
             <div className="sidebar-pattern"></div>

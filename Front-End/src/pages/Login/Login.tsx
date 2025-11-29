@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { queryUser } from '../../lib/auth';
@@ -63,6 +63,10 @@ function Login() {
     <div className="login-page">
       <div className="login-card">
 
+        <button className="back-home-button" onClick={() => navigate('/Home')}>
+          <ArrowLeft size={20} />
+          Voltar para Home
+        </button>
         {/* Header mobile */}
         <div className="mobile-header">
           <div className="icon-container"><LogIn size={28} /></div>
