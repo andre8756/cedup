@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Check, Zap, BarChart3, Lock, Menu, X, Database } from 'lucide-react';
-import './Homepage.css';
+import './Dashboard.css';
 
-function Home() {
+function Dashboard() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -282,6 +282,6 @@ function Home() {
   );
 }
 
-export default Home;
+export default Dashboard;
 
 

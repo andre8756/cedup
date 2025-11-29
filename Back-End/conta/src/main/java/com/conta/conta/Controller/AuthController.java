@@ -82,19 +82,19 @@ public class AuthController {
 
             Optional<Conta> contaOptional = Optional.empty();
 
-            String digits = identifier.replaceAll("\\D", "");
-
             if (identifier.contains("@")) {
                 contaOptional = contaRepository.findByEmail(identifier.trim());
             } else {
-                contaOptional = contaRepository.findByCpf(digits);
-                if (contaOptional.isEmpty()) {
-                    contaOptional = contaRepository.findByTelefone(digits);
-                }
-            }
+                String digits = identifier.replaceAll("\\D", "");
 
-            if (contaOptional.isEmpty()) {
-                return ResponseEntity.badRequest().body("Usuário não encontrado!");
+                if (digits.length() == 11) {
+                    contaOptional = contaRepository.findByCpf(digits);
+                    if (contaOptional.isEmpty()) {
+                        contaOptional = contaRepository.findByTelefone(digits);
+                    }
+                } else {
+                    return ResponseEntity.badRequest().body("Identificador inválido!");
+                }
             }
 
             if (contaOptional.isEmpty() || !passwordEncoder.matches(senha, contaOptional.get().getSenha())) {

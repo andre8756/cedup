@@ -430,48 +430,4 @@ body {
     padding-bottom: 2rem;
     font-size: 0.875rem;
   }
-
-}
-
-/* Back to Home button - works on mobile and desktop */
-.back-home-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  background: transparent;
-  border: none;
-  color: var(--surface);
-  font-size: 0.95rem;
-  cursor: pointer;
-  z-index: 40;
-  transition: opacity .2s, transform .12s;
-}
-
-.back-home-button svg {
-  width: 20px;
-  height: 20px;
-}
-
-.back-home-button:hover {
-  opacity: .85;
-  transform: translateY(-1px);
-}
-
-@media (max-width: 400px) {
-  .back-home-button {
-    color: #fff;
-    left: 16px;
-    top: 16px;
-  }
-}
-
-@media (min-width: 800px) {
-  .back-home-button {
-    color: #fff;
-    left: 24px;
-    top: 24px;
-  }
 }
