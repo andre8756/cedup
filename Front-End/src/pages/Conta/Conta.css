@@ -561,6 +561,42 @@ body {
   box-shadow: 0 0 5px rgba(35,33,155,0.3);
 }
 
+.enviar{
+  margin-top: 20px;
+  width: 132%;
+  padding: 12px;
+  background-color: white;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: black;
+}
+
+.cancelar{
+  margin-top: 10px;
+  width: 132%;
+  padding: 12px;
+  background-color: white;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  color: #000;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.enviar:hover{
+  background-color: #3294eb;
+}
+
+.cancelar:hover{
+  background-color: #eb3232;
+}
+
 /* Loading */
 .loading {
   text-align: center;
