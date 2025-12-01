@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./HistoricoTransacoes.css";
 import FiltroTransacoes from "../FiltroTransacoes/FiltroTransacoes";
+import { API_ENDPOINTS } from "../../config/api";
 
 interface Transacao {
     id: number;
@@ -21,7 +22,7 @@ export default function HistoricoTransacoes() {
   useEffect(() => {
     const fetchTransacoes = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/banco/transacao", {
+        const response = await axios.get(API_ENDPOINTS.BANCO.LISTAR_COM_FILTROS, {
           withCredentials: true, 
         });
         setTransacoes(response.data);
