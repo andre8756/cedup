@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
 import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
-import DownloadReceitaPDF from "../../components/DownloadTransacaoPDF/DownloadTransacaoPDF";
+import API_BASE_URL from "../../config/api";
+import { useEffect } from "react";
 
 interface Banco {
   nome: string;
@@ -18,29 +19,95 @@ interface Conta {
 
 const Conta: React.FC = () => {
   // Dados placeholder
-  const [contas] = useState<Conta[]>([
-    {
-      id: 1,
-      titular: "João Silva",
-      saldo: 6312.48,
-      bancos: [
-        { nome: "Banco Inter", numero: 12345 }
-      ]
-    },
-    {
-      id: 2,
-      titular: "Maria Santos",
-      saldo: 2500.00,
-      bancos: [
-        { nome: "C6 Bank", numero: 67890 }
-      ]
+const [contaAtual, setContaAtual] = useState<Conta | null>(null);
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  const fetchContaAtual = async () => {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/conta/atual`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      const data = await resp.json();
+      setContaAtual(data);
+    } catch (error) {
+      console.error("Erro ao buscar conta atual:", error);
     }
-  ]);
-  
+  };
+
+  fetchContaAtual();
+}, []);
+
+
+const [contas, setContas] = useState<Conta[]>([]);
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  const fetchContas = async () => {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/conta/banco`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      const data = await resp.json();
+      setContas(data);
+    } catch (error) {
+      console.error("Erro ao buscar contas:", error);
+    }
+  };
+
+  fetchContas();
+}, []);
   const [showPopup, setShowPopup] = useState(false);
 
   // Calcula saldo total
   const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
+
+  // Dados para pegar a receita e despesa mensal 
+  const [receita, setReceita] = useState<number | null>(null);
+  const [despesa, setDespesa] = useState<number | null>(null);
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const fetchValores = async () => {
+      try {
+        const receitaResp = await fetch(`${API_BASE_URL}/conta/banco/transacao/receita`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+
+        const despesaResp = await fetch(`${API_BASE_URL}/conta/banco/transacao/despesa`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+
+        const receitaValor = await receitaResp.json();
+        const despesaValor = await despesaResp.json();
+
+        setReceita(receitaValor);
+        setDespesa(despesaValor);
+
+      } catch (error) {
+        console.error("Erro ao buscar valores:", error);
+      }
+    };
+
+    fetchValores();
+  }, []);
 
 
 
@@ -67,31 +134,59 @@ const Conta: React.FC = () => {
         <div className="overview-card">
           <div className="welcome-section">
             <p className="greeting-text">Bem vindo,</p>
-            <h1 className="user-name">João Silva</h1>
+            <h1 className="user-name">
+              {contaAtual ? contaAtual.titular : "Carregando..."}
+            </h1>
           </div>
 
           <div className="financial-summary">
             <div className="financial-item income">
               <p className="item-label">Receita mensal</p>
-              <p className="item-value income-value">R$ 1.100,00</p>
+              <p className="item-value income-value">
+                {receita !== null
+                  ? receita.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                  : "Carregando..."}
+              </p>
+
             </div>
             <div className="vertical-divider"></div>
             <div className="financial-item expense">
               <p className="item-label">Despesa mensal</p>
-              <p className="item-value expense-value">- R$ 400,00</p>
+              <p className="item-value expense-value">
+                {despesa !== null
+                  ? despesa.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                  : "Carregando..."}
+              </p>
             </div>
           </div>
 
-          <div className="connections-section">
-            <p className="item-label connections-label">Conexões Ativas</p>
-            <div className="connection-icons">
-              <div className="connection-icon icon-orange"></div>
-              <div className="connection-icon icon-black">C6</div>
-              <div className="connection-icon icon-add">+</div>
-            </div>
+         <div className="connections-section">
+          <p className="item-label connections-label">Conexões Ativas</p>
+          <div className="connection-icons">
+
+            {contaAtual ? (
+              <article className="account-card">
+                <div className="account-header">
+                  <div className="account-info">
+                    <strong>{contaAtual.titular}</strong>
+                    {contaAtual.bancos?.map((banco) => (
+                      <small key={banco.numero}>
+                        {banco.nome} - {banco.numero}
+                      </small>
+                    ))}
+                  </div>
+                  <div className="menu-dots">...</div>
+                </div>
+              </article>
+            ) : (
+              <p>Carregando conexão...</p>
+            )}
+
+
           </div>
-      
-          <div className="view-more-link"><DownloadReceitaPDF /></div>
+        </div>
+
+    
           <button className="manage-accounts-link">Gerenciar Contas</button>
         </div>
       </div>
