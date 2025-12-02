@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
 import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
-import API_BASE_URL from "../../config/api";
+// API_BASE_URL resolved at runtime by src/config/api.ts if needed (not used directly here)
+import Cookies from 'js-cookie';
+import { apiFetch } from '../../config/apiClient';
 import { useEffect } from "react";
 
 interface Banco {
@@ -21,16 +23,17 @@ const Conta: React.FC = () => {
   // Dados placeholder
 const [contaAtual, setContaAtual] = useState<Conta | null>(null);
 useEffect(() => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get('token');
   if (!token) return;
 
   const fetchContaAtual = async () => {
     try {
-      const resp = await fetch(`${API_BASE_URL}/conta/atual`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+      const resp = await apiFetch('/conta/atual');
+
+      if (!resp.ok) {
+        console.warn('[Conta] /conta/atual returned', resp.status);
+        return;
+      }
 
       const data = await resp.json();
       setContaAtual(data);
@@ -45,16 +48,16 @@ useEffect(() => {
 
 const [contas, setContas] = useState<Conta[]>([]);
 useEffect(() => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get('token');
   if (!token) return;
 
   const fetchContas = async () => {
     try {
-      const resp = await fetch(`${API_BASE_URL}/conta/banco`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+      const resp = await apiFetch('/conta/banco');
+      if (!resp.ok) {
+        console.warn('[Conta] /conta/banco returned', resp.status);
+        return;
+      }
 
       const data = await resp.json();
       setContas(data);
@@ -76,23 +79,23 @@ useEffect(() => {
 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get('token');
     if (!token) return;
 
     const fetchValores = async () => {
       try {
-        const receitaResp = await fetch(`${API_BASE_URL}/conta/banco/transacao/receita`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const receitaResp = await apiFetch('/conta/banco/transacao/receita');
+        if (!receitaResp.ok) {
+          console.warn('[Conta] receita endpoint returned', receitaResp.status);
+          return;
+        }
 
 
-        const despesaResp = await fetch(`${API_BASE_URL}/conta/banco/transacao/despesa`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const despesaResp = await apiFetch('/conta/banco/transacao/despesa');
+        if (!despesaResp.ok) {
+          console.warn('[Conta] despesa endpoint returned', despesaResp.status);
+          return;
+        }
 
 
         const receitaValor = await receitaResp.json();
