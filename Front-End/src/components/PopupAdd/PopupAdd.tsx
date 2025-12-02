@@ -1,15 +1,56 @@
 import React, { useState } from "react";
+import Select from "react-select";
+
 
 interface PopupFormProps {
   onClose: () => void;
 }
+
+const options = [    
+    {
+        value: "Banco do Brasil", 
+        label: "Banco do Brasil",
+        img: "https://logodownload.org/wp-content/uploads/2014/05/banco-do-brasil-logo-1.png"
+    },
+
+    {
+        value: "Nubank", 
+        label: "Nubank",
+        img: "https://1000marcas.net/wp-content/uploads/2020/05/Logo-Nubank.png"
+    },
+
+    {
+        value: "Bradesco",
+        label: "Bradesco",
+        img: "https://logodownload.org/wp-content/uploads/2014/05/bradesco-logo-1.png"
+    },
+
+    {
+        value: "Itaú",
+        label: "Itaú",
+        img: "https://logodownload.org/wp-content/uploads/2014/05/itau-logo-1.png"
+    },
+
+    {
+        value: "Santander",
+        label: "Santander",
+        img: "https://logodownload.org/wp-content/uploads/2014/05/santander-logo-1.png"
+    },
+
+    {
+        value: "Outro Banco", 
+        label: "Outro Banco", 
+        img: ""
+    }
+]
 
 const PopupForm: React.FC<PopupFormProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
     titular: "",
     nomeBanco: "",
     saldo: "",
-    numero:""
+    numero:"",
+    bancoUrl: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,11 +62,12 @@ const handleSubmit = async () => {
     titular: formData.titular,
     nomeBanco: formData.nomeBanco,
     saldo: parseFloat(formData.saldo), // string -> number
-    numero: formData.numero
+    numero: formData.numero,
+    bancoUrl: formData.bancoUrl
   };
 
   try {
-    const response = await fetch("http://localhost:8080/conta/banco", {
+    const response = await fetch("http://cedup-back-deploy.onrender.com/conta/banco", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(novaConta),
@@ -45,6 +87,7 @@ const handleSubmit = async () => {
 
 
   return (
+    <>
     <div className="popup">
       <div className="popup-content">
         <h1>Adicionar Conta</h1>
@@ -58,12 +101,22 @@ const handleSubmit = async () => {
         />
 
         <label htmlFor="nomeBanco">Nome da Instituição Bancária:</label>
-        <input
-          id="nomeBanco"
-          value={formData.nomeBanco}
-          onChange={handleChange}
-          placeholder="Ex: Inter"
-        />
+       <Select
+            options={options}
+            formatOptionLabel={(option) => (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <img src={option.img} width="20" height="20" />
+                <span>{option.label}</span>
+                </div>
+            )}
+            onChange={(selected) => {
+                setFormData({
+                    ...formData,
+                    nomeBanco: selected?.value || "",
+                    bancoUrl: selected?.img || ""
+                });
+            }}
+        ></Select>
 
         <label htmlFor="saldo">Informe o Saldo Bancário:</label>
         <input
@@ -76,11 +129,12 @@ const handleSubmit = async () => {
         />
 
         <div className="popup-buttons">
-          <button onClick={handleSubmit}>Adicionar Conta</button>
-          <button onClick={onClose}>Cancelar</button>
+          <button className= "enviar"onClick={handleSubmit}>Adicionar Conta</button>
+          <button className= "cancelar"onClick={onClose}>Cancelar</button>
         </div>
       </div>
     </div>
+    </>
   );
 };
 
