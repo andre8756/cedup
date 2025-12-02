@@ -1,0 +1,611 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #dadada;
+  color: #333;
+}
+
+/* Header principal */
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #50a6ff;
+  color: #fff;
+  padding: 20px 30px;
+  border-bottom: 1px solid #dce4f0;
+  border-radius: 0 0 8px 8px;
+}
+
+.logo h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.logo p {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.header-buttons button {
+  background-color: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.header-buttons button:hover {
+  background-color: rgba(255,255,255,0.35);
+}
+
+/* Área principal */
+.app {
+  max-width: 1200px;
+  margin: 30px auto;
+  display: grid;
+  gap: 20px;
+}
+
+.vision {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.overview-container {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.overview-card {
+  background-color: white;
+  padding: 3pc;
+  border-radius: 8px;
+  position: absolute;
+  display: flex;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+/* Boas-Vindas */
+.welcome-section {
+  width: 25%;
+}
+
+.greeting-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.user-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* Financeiro */
+.financial-summary {
+  display: flex;
+  gap: 30px;
+  padding-left: 20px;
+  width: 40%;
+  align-items: flex-start;
+}
+
+.financial-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.item-label {
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
+
+
+
+.item-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.income-value { color: #04cc62; }
+.expense-value { color: #be0000; }
+
+.vertical-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #ddd;
+  margin: 0 10px;
+}
+
+/* Conexões */
+.connections-section {
+  text-align: right;
+  width: 35%;
+}
+
+.connections-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-right: 15px;
+  margin-top: -20px;
+
+}
+
+.connection-icons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.connection-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.icon-orange { background-color: #f58428; }
+.icon-black { background-color: black; font-size: 18px; }
+.icon-add { background-color: white; border: 1px solid #ccc; color: #333; font-size: 24px; }
+
+/* Links de ação */
+.view-more-link {
+  position:absolute;
+  bottom: 0px;
+  margin-left: 15%;
+  left: 230px;
+  border-radius: 4px;
+  border-color: transparent;
+  background-color: #c0e4f9;
+}
+
+.view-more-link:hover{
+  background-color: #a1d7f7;
+}
+
+.manage-accounts-link {
+  position: absolute;
+  bottom: 20px;
+  right: 27px;
+  margin: -20px;
+  color: #007bff;
+  font-size: 14px;
+  border: 1px solid #ccc; 
+  margin-right: 27px;
+  padding: 4px 10px;
+  background-color: #c0e4f9;
+  border-color: transparent;
+  border-radius: 4px;
+  transition-duration: 100ms;
+}
+
+
+.manage-accounts-link:hover{
+  background-color: #a1d7f7;
+  color: #007bff;
+}
+
+
+.Saldo-geral p {
+  color: #9ca3af;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.saldo-geral h3 {
+  color: #000;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 5px 0 0 0;
+}
+
+.saldo-geral::after {
+  content: "";
+  display: block;
+  margin-top: 10px;
+  border-bottom: 1px solid #ddd; /* linha divisória */
+}
+
+.saldo-geral {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: Arial, sans-serif;
+  position: relative;
+  border-left: 4px solid #2c7be5; /* barrinha azul */
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: block;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+}
+
+.accounts {
+  background-color: #fff;
+  max-width: 50%;
+  padding: 30px 1%;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin: -2px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Cabeçalho da seção */
+.accounts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-side {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Bloco de saldo geral */
+.Saldo-geral {
+  border-left: 4px solid #2c7be5;
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+.Saldo-geral p {
+  color: #9ca3af;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.Saldo-geral h3 {
+  color: #000;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Botão de adicionar conta */
+.accounts-header button {
+  border: 1px solid #2c7be5;
+  background-color: #fff;
+  color: #2c7be5;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.accounts-header button:hover {
+  background-color: #2c7be5;
+  color: #fff;
+}
+
+/* Título das contas */
+.section-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+}
+
+/* Cards de contas */
+.account-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px; /* define altura máxima */
+  overflow-y: auto; /* adiciona scroll se tiver muitas contas */
+  padding-right: 5px;
+}
+
+.account-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.account-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-info strong {
+  font-weight: 600;
+  color: #111;
+}
+
+.account-card small {
+  display: block;
+  font-size: 0.8rem;
+  color: #0055ff;
+}
+
+/* Scroll estilizado */
+.account-cards::-webkit-scrollbar {
+  width: 6px;
+}
+
+.account-cards::-webkit-scrollbar-thumb {
+  background-color: #c5c5c5;
+  border-radius: 10px;
+}
+
+.account-cards::-webkit-scrollbar-thumb:hover {
+  background-color: #999;
+}
+
+
+
+.icon-orange { background-color: #ff7a00; }
+.icon-black { background-color: #000; }
+.icon-blue  { background-color: #007bff; }
+
+.available-balance {
+  font-weight: 700;
+  color: #111;
+}
+
+.saldo-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.saldo-total strong {
+  color: #111;
+}
+
+.saldo-total small {
+  font-weight: 600;
+  color: #111;
+  font: bold;
+}
+
+.menu-dots {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.Saldo-geral small{
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.available-balance {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Transactions */
+.transactions {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-info strong { display: block; }
+
+.transaction-tags small {
+  margin-right: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  color: #333;
+}
+
+.transaction-date {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Botões */
+.btn-historico {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;  
+  margin: 20px;
+  margin-left: 93.5%;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.btn-historico:hover { 
+  background-color: #007bff; 
+  color: #ffff;
+}
+
+.btn-salvar, .btn-cancelar {
+  margin-top: 20px;
+  width: 132%;
+  padding: 12px;
+  background: #fff;
+  color: #000;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-salvar:hover { background: #3294eb; color: #dce4f0; }
+.btn-cancelar:hover { background-color: #eb3232; color: #fff; }
+
+/* Popup */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.popup {
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  width: 380px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  padding: 30px;
+  animation: aparecer 0.3s ease;
+  color: #222;
+  z-index: 1000;
+}
+
+.popup h2 {
+  text-align: center;
+  color: #23219b;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.popup label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+.popup input,
+.popup select {
+  width: 130%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.popup input:focus,
+.popup select:focus {
+  border-color: #3294eb;
+  box-shadow: 0 0 5px rgba(35,33,155,0.3);
+}
+
+.enviar{
+  margin-top: 20px;
+  width: 132%;
+  padding: 12px;
+  background-color: white;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: black;
+}
+
+.cancelar{
+  margin-top: 10px;
+  width: 132%;
+  padding: 12px;
+  background-color: white;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  color: #000;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.enviar:hover{
+  background-color: #3294eb;
+}
+
+.cancelar:hover{
+  background-color: #eb3232;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-top: 50px;
+  font-weight: bold;
+}
+
+.history-card{
+  margin-top: -26.5%;
+}

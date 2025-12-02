@@ -1,0 +1,72 @@
+// src/components/HistoricoTransacoes/HistoricoTransacoes.tsx
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "./HistoricoTransacoes.css";
+
+interface Transacao {
+    id: number;
+    dataTransacao: string;
+    bancoDestino: string;
+    valor: number;
+    valorTotal: number;
+}
+
+export default function HistoricoTransacoes() {
+  const [transacoes, setTransacoes] = useState<Transacao[]>([]);
+  const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
+  const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+  const transacaoTotal = transacoes.reduce((acumulador, t) => acumulador +t.valor, 0)
+
+  useEffect(() => {
+    const fetchTransacoes = async () => {
+      try {
+        const response = await axios.get("http://cedup-back-deploy.onrender.com/conta/banco/transacao", {
+          withCredentials: true, 
+        });
+        setTransacoes(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar transações:", error);
+      }
+    };
+
+    fetchTransacoes();
+  }, []);
+
+  return (
+    <section className="historico-transacoes">
+      <div className="header-transacoes">
+        <div className="saldo-transacoes">
+          <p>Extrato de {mesFormatado}</p>
+          <small>
+            {transacaoTotal.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </small>
+        </div>
+      </div>
+      <ul className="lista">
+        <h3>Minhas Transações</h3>
+        {transacoes.length === 0 ? (
+
+          <li className="nenhuma-transacao">
+            <p>Nenhuma transação encontrada</p>
+          </li>
+
+        ) : (
+
+          transacoes.map((t) => (
+            <li key={t.id} className="transacao-item">
+              <div className="transacao-info">
+                <span>{t.dataTransacao}</span>
+              </div>
+              <p className={t.valor > 0 ? "valor-positivo" : "valor-negativo"}>
+                {t.valor > 0 ? "+" : "-"} R$ {Math.abs(t.valor).toFixed(2).replace(".", ",")}
+              </p>
+            </li>
+          ))
+        )}
+      </ul>
+    </section>
+  );
+}

@@ -1,0 +1,150 @@
+import { useState } from 'react';
+import { User, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { queryUser } from '../../lib/auth';
+import './Login.css';
+
+type identificadorType = 'cpf' | 'telefone' | 'email' | null;
+
+function Login() {
+  const navigate = useNavigate();
+  const [identificador, setidentificador] = useState('');
+  const [senha, setSenha] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  const clean = (value: string) => value.replace(/\D/g, '');
+
+  const getidentificadorType = (value: string): identificadorType => {
+    if (value.includes('@')) return 'email';
+    const digits = clean(value);
+    if (digits.length === 11 && value.includes('.')) return 'cpf';
+    if (digits.length === 11) return 'telefone';
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const identificadorType = getidentificadorType(identificador);
+      if (!identificadorType) {
+        setMessage({ type: 'error', text: 'Formato de identificador inválido.' });
+        setLoading(false);
+        return;
+      }
+
+      const valueToSend = identificadorType === 'email' ? identificador : clean(identificador);
+      const result = await queryUser({
+        identificador: valueToSend,
+        identificadorType,
+        senha,
+      });
+
+      if (!result?.token) {
+        setMessage({ type: 'error', text: 'Credenciais inválidas.' });
+      } else {
+        Cookies.set('token', result.token, { expires: 7, secure: true, sameSite: 'strict' });
+        setMessage({ type: 'success', text: 'Login realizado! Redirecionando...' });
+        setTimeout(() => navigate('/conta'), 1500);
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Erro ao fazer login. Tente novamente.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+
+        {/* Header mobile */}
+        <div className="mobile-header">
+          <div className="icon-container"><LogIn size={28} /></div>
+          <h1>Login</h1>
+          <p>Insira suas credenciais para continuar</p>
+        </div>
+
+        {/* Sidebar desktop */}
+        <div className="login-side">
+          <div className="brand"><LogIn size={36} /></div>
+          <h1>Bem-vindo de volta!</h1>
+          <p>Faça login para acessar todos os recursos da plataforma.</p>
+          <div className="feature-list">
+            <div className="feature"><div className="dot" /> Segurança garantida</div>
+            <div className="feature"><div className="dot" /> Acesso rápido e fácil</div>
+            <div className="feature"><div className="dot" /> Interface moderna</div>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div className="login-main">
+          <form className="form" onSubmit={handleSubmit}>
+
+            <div className="field">
+              <label>CPF, E-mail ou Telefone</label>
+              <div className="input-container">
+                <input
+                  type="text"
+                  value={identificador}
+                  onChange={(e) => setidentificador(e.target.value)}
+                  className="input"
+                  placeholder="Digite seu CPF, email ou telefone"
+                  required
+                />
+                <User className="icon" />
+              </div>
+            </div>
+
+            <div className="field">
+              <label>Senha</label>
+              <div className="input-container password-container">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  className="input"
+                  placeholder="Sua senha"
+                  required
+                />
+                <Lock className="icon" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="eye-button"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPassword ? <EyeOff className="eye-icon" /> : <Eye className="eye-icon" />}
+                </button>
+              </div>
+            </div>
+
+            {message.text && (
+              <p className={`message ${message.type}`}>{message.text}</p>
+            )}
+
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+
+            <p className="meta">
+              Não possui conta?{' '}
+              <button type="button" onClick={() => navigate('/cadastro')}>
+                Cadastre-se
+              </button>
+            </p>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default Login;
