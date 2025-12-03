@@ -64,3 +64,22 @@
   margin: 0;
   font-size: 14px;
 }
+
+.view-more-transacoes-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 16px;
+  background-color: #e7f3fd;
+  border: none;
+  color: #2c7be5;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-more-transacoes-btn:hover {
+  background-color: #d1e9ff;
+  transform: translateY(-1px);
+}

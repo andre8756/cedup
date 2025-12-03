@@ -6,7 +6,9 @@ import com.conta.conta.DTO.BancoUpdateRequest;
 import com.conta.conta.DTO.BancoUpdateResponse;
 import com.conta.conta.Entity.Banco;
 import com.conta.conta.Entity.Conta;
+import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Repository.BancoRepository;
+import com.conta.conta.Repository.TransacaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,10 +22,12 @@ public class BancoService {
 
     private final BancoRepository bancoRepository;
     private final ContaService contaService;
+    private final TransacaoRepository transacaoRepository;
 
-    public BancoService(BancoRepository bancoRepository, ContaService contaService) {
+    public BancoService(BancoRepository bancoRepository, ContaService contaService, TransacaoRepository transacaoRepository) {
         this.bancoRepository = bancoRepository;
         this.contaService = contaService;
+        this.transacaoRepository = transacaoRepository;
     }
 
     // ========================================================
@@ -148,6 +152,23 @@ public class BancoService {
     @Transactional
     public void removerPorId(Long bancoId) {
         Banco banco = buscarEntidadePorId(bancoId);
+        
+        // Verificar se há transações associadas
+        List<Transacao> transacoesOrigem = transacaoRepository.findByBancoOrigemId(bancoId);
+        List<Transacao> transacoesDestino = transacaoRepository.findByBancoDestinoId(bancoId);
+        
+        int totalTransacoes = transacoesOrigem.size() + transacoesDestino.size();
+        
+        if (totalTransacoes > 0) {
+            throw new IllegalStateException(
+                String.format(
+                    "Não é possível deletar o banco. Existem %d transação(ões) associada(s) a este banco. " +
+                    "Delete as transações primeiro ou escolha outro banco.",
+                    totalTransacoes
+                )
+            );
+        }
+        
         bancoRepository.delete(banco);
         contaService.atualizarSaldoTotal(banco.getConta().getId());
     }

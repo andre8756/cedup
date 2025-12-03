@@ -1,6 +1,7 @@
 // src/components/HistoricoTransacoes/HistoricoTransacoes.tsx
 // src/components/HistoricoTransacoes/HistoricoTransacoes.tsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // usar a instância axios central (apiClient) e os endpoints centralizados
 import api from "../../config/apiClient";
 import { API_ENDPOINTS } from "../../config/api";
@@ -15,6 +16,7 @@ interface Transacao {
 }
 
 export default function HistoricoTransacoes() {
+    const navigate = useNavigate();
     const [transacoes, setTransacoes] = useState<Transacao[]>([]);
     const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
     const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
@@ -59,6 +61,14 @@ export default function HistoricoTransacoes() {
           ))
         )}
       </ul>
+      {transacoes.length > 0 && (
+        <button 
+          className="view-more-transacoes-btn" 
+          onClick={() => navigate('/relatorios')}
+        >
+          Ver mais
+        </button>
+      )}
     </div>
   );
 }

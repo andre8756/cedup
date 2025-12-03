@@ -1,17 +1,26 @@
 import React, { useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
+import PopupEdit from "../../components/PopupEdit/PopupEdit";
 import "./Conta.css";
 import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
 // API_BASE_URL resolved at runtime by src/config/api.ts if needed (not used directly here)
 import Cookies from 'js-cookie';
 import { apiFetch } from '../../config/apiClient';
 import { useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import api from '../../config/apiClient';
+import { API_ENDPOINTS } from '../../config/api';
 
 interface Banco {
-  id: number
-  numero: number;
-  bancoUrl: string
+  id: number;
+  titular: string;
   nomeBanco: string;
+  saldo: number;
+  chavePix?: string;
+  status?: boolean;
+  permitirTransacao?: boolean;
+  bancoUrl: string;
+  dataCadastro?: string;
 }
 
 // Função helper para obter logo do banco
@@ -35,7 +44,21 @@ interface Conta {
   bancos: Banco[];
 }
 
+interface BancoItem {
+  id: number;
+  titular: string;
+  nomeBanco: string;
+  saldo: number;
+  chavePix?: string;
+  status?: boolean;
+  permitirTransacao?: boolean;
+  bancoUrl: string;
+  dataCadastro?: string;
+}
+
 const Conta: React.FC = () => {
+  const navigate = useNavigate();
+  
   // Dados placeholder
 const [contaAtual, setContaAtual] = useState<Conta | null>(null);
 useEffect(() => {
@@ -62,12 +85,16 @@ useEffect(() => {
 }, []);
 
 
-const [contas, setContas] = useState<Conta[]>([]);
+const [bancos, setBancos] = useState<BancoItem[]>([]);
+const [showPopup, setShowPopup] = useState(false);
+const [showEditPopup, setShowEditPopup] = useState(false);
+const [bancoParaEditar, setBancoParaEditar] = useState<BancoItem | null>(null);
+
 useEffect(() => {
   const token = Cookies.get('token');
   if (!token) return;
 
-  const fetchContas = async () => {
+  const fetchBancos = async () => {
     try {
       const resp = await apiFetch('/conta/banco');
       if (!resp.ok) {
@@ -76,18 +103,17 @@ useEffect(() => {
       }
 
       const data = await resp.json();
-      setContas(data);
+      setBancos(data);
     } catch (error) {
-      console.error("Erro ao buscar contas:", error);
+      console.error("Erro ao buscar bancos:", error);
     }
   };
 
-  fetchContas();
-}, []);
-  const [showPopup, setShowPopup] = useState(false);
+  fetchBancos();
+}, [showPopup, showEditPopup]);
 
   // Calcula saldo total
-  const saldoTotal = contas.reduce((total, conta) => total + (conta.saldo || 0), 0);
+  const saldoTotal = bancos.reduce((total, banco) => total + (banco.saldo || 0), 0);
 
   // Dados para pegar a receita e despesa mensal 
   const [receita, setReceita] = useState<number | null>(null);
@@ -134,6 +160,132 @@ useEffect(() => {
   const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
   const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
 
+  // Função de logout
+  const handleLogout = async () => {
+    try {
+      // Chama o endpoint de logout
+      await api.post(API_ENDPOINTS.AUTH.LOGOUT);
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    } finally {
+      // Remove o token e redireciona para login
+      Cookies.remove('token');
+      navigate('/login');
+    }
+  };
+
+  // Função para editar banco
+  const handleEditBanco = (banco: BancoItem) => {
+    setBancoParaEditar(banco);
+    setShowEditPopup(true);
+  };
+
+  // Função para deletar banco
+  const handleDeleteBanco = async (bancoId: number) => {
+    if (!window.confirm("Tem certeza que deseja deletar este banco? Esta ação não pode ser desfeita.")) {
+      return;
+    }
+
+    try {
+      const deleteUrl = API_ENDPOINTS.BANCO.DELETAR(bancoId);
+      console.log('Deletando banco:', bancoId, 'URL:', deleteUrl);
+      
+      // Faz a requisição DELETE
+      const response = await api.delete(deleteUrl);
+      console.log('Resposta do delete:', response.status, response.data);
+      
+      // Verifica se a resposta foi bem-sucedida (200 OK ou 204 NO CONTENT)
+      // O backend retorna status 200 com uma string "Banco deletado com sucesso!"
+      if (response.status === 200 || response.status === 204) {
+        // Remove o banco da lista localmente para feedback imediato
+        setBancos(prevBancos => prevBancos.filter(banco => banco.id !== bancoId));
+        
+        // Recarrega a lista de bancos do servidor para garantir sincronização
+        // Usa setTimeout para dar tempo do backend processar a exclusão
+        setTimeout(async () => {
+          try {
+            const resp = await apiFetch('/conta/banco');
+            if (resp.ok) {
+              const data = await resp.json();
+              setBancos(data);
+            }
+          } catch (fetchError) {
+            console.warn("Erro ao recarregar lista de bancos:", fetchError);
+            // Não mostra erro ao usuário, pois a exclusão já foi bem-sucedida
+          }
+        }, 300);
+      }
+    } catch (error: any) {
+      console.error("Erro ao deletar banco:", error);
+      
+      // Tratamento detalhado de erros
+      if (error.response) {
+        const status = error.response.status;
+        const errorData = error.response.data;
+        
+        if (status === 401 || status === 403) {
+          alert("Erro de autenticação. Token inválido ou expirado. Faça login novamente.");
+          Cookies.remove('token');
+          navigate('/login');
+        } else if (status === 404) {
+          alert("Banco não encontrado. O banco pode já ter sido deletado.");
+          // Recarrega a lista mesmo assim
+          const resp = await apiFetch('/conta/banco');
+          if (resp.ok) {
+            const data = await resp.json();
+            setBancos(data);
+          }
+        } else if (status === 400 || status === 500) {
+          // Tenta extrair a mensagem de erro do backend
+          let errorMessage = "Não foi possível deletar o banco.";
+          
+          if (typeof errorData === 'string') {
+            errorMessage = errorData;
+          } else if (errorData?.message) {
+            errorMessage = errorData.message;
+          } else if (errorData?.error) {
+            errorMessage = errorData.error;
+          }
+          
+          // Verifica se a mensagem menciona transações
+          if (errorMessage.toLowerCase().includes('transação') || 
+              errorMessage.toLowerCase().includes('transacao')) {
+            alert(`⚠️ ${errorMessage}\n\nPara deletar este banco, você precisa primeiro deletar todas as transações associadas a ele.`);
+          } else {
+            alert(`Erro: ${errorMessage}`);
+          }
+        } else if (status >= 500) {
+          alert("Erro interno do servidor. Tente novamente mais tarde.");
+        } else {
+          alert(`Erro ao deletar banco (Status ${status}). Tente novamente.`);
+        }
+      } else if (error.request) {
+        alert("Erro de conexão com o servidor. Verifique sua conexão com a internet.");
+      } else {
+        alert("Erro ao processar a requisição. Tente novamente.");
+      }
+    }
+  };
+
+  // Função para atualizar banco após edição
+  const handleUpdateBanco = () => {
+    setShowEditPopup(false);
+    setBancoParaEditar(null);
+    // Recarrega a lista de bancos
+    const fetchBancos = async () => {
+      try {
+        const resp = await apiFetch('/conta/banco');
+        if (resp.ok) {
+          const data = await resp.json();
+          setBancos(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar bancos:", error);
+      }
+    };
+    fetchBancos();
+  };
+
   return (
     <>
       {/* Header azul com navegação */}
@@ -143,7 +295,25 @@ useEffect(() => {
         </div>
         <nav className="header-nav">
           <button className="nav-tab active">Visão geral</button>
-          <button className="nav-tab">Relatórios</button>
+          <button className="nav-tab" onClick={() => navigate('/relatorios')}>Relatórios</button>
+          <button 
+            className="nav-tab" 
+            onClick={() => navigate('/perfil')}
+          >
+            Perfil
+          </button>
+          <button 
+            className="nav-tab"
+            onClick={() => {
+              // Scroll para a seção de bancos
+              const banksSection = document.querySelector('.balance-accounts-card');
+              if (banksSection) {
+                banksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+          >
+            Bancos
+          </button>
         </nav>
         <div className="header-actions">
           <button className="icon-button" aria-label="Alternar visibilidade">
@@ -157,6 +327,9 @@ useEffect(() => {
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
             </svg>
+          </button>
+          <button className="logout-button" onClick={handleLogout} aria-label="Sair">
+            Sair
           </button>
         </div>
       </header>
@@ -211,7 +384,9 @@ useEffect(() => {
     </div>
   </div>
 
-  <button className="view-more-btn">Ver mais</button>
+  <button className="view-more-btn" onClick={() => navigate('/relatorios')}>
+    Ver mais
+  </button>
 </div>
 
           {/* Card de Conexões Ativas */}
@@ -244,66 +419,84 @@ useEffect(() => {
                 </button>
               )}
             </div>
-            <button className="manage-accounts-btn">Gerenciar contas</button>
+            <button className="manage-accounts-btn">Gerenciar bancos</button>
           </div>
 
-          {/* Card de Saldo Geral e Minhas Contas */}
+          {/* Card de Saldo Geral e Meus Bancos */}
           <div className="card balance-accounts-card">
             <div className="balance-section">
               <div className="card-blue-line"></div>
-              <div className="card-content">
-                <p className="card-label">Saldo geral</p>
-                <h3 className="card-value">
-                  {saldoTotal.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </h3>
+              <div className="card-content-header">
+                <div className="card-content">
+                  <p className="card-label">Saldo geral</p>
+                  <h3 className="card-value">
+                    {saldoTotal.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </h3>
+                </div>
+                <button className="add-account-btn" onClick={() => setShowPopup(true)}>
+                  Adicionar
+                </button>
               </div>
             </div>
             <div className="accounts-section">
-              <h3 className="card-title">Minhas contas</h3>
+              <h3 className="card-title">Meus bancos</h3>
               <div className="accounts-list">
-                {contas.length === 0 ? (
+                {bancos.length === 0 ? (
                   <p className="empty-state">Nenhuma conta cadastrada.</p>
                 ) : (
-                  contas.map((conta) => (
-                    <div key={conta.id} className="account-item">
-                      {conta.bancos && conta.bancos.length > 0 ? (
-                        <>
-                          <div className="bank-icon">
-                            <img
-                              src={getBankLogo(conta.bancos[0].nomeBanco, conta.bancos[0].bancoUrl)}
-                              alt={conta.bancos[0].nomeBanco}
-                              className="bank-logo-small"
-                              onError={(e) => {
-                                // Fallback se a imagem não carregar
-                                const target = e.target as HTMLImageElement;
-                                target.src = conta.bancos[0].bancoUrl || '';
-                              }}
-                            />
-                          </div>
-                          <div className="account-details">
-                            <span className="bank-name">{conta.bancos[0].nomeBanco}</span>
-                            <span className="account-balance">
-                              {(conta.saldo || 0).toLocaleString("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              })}
-                            </span>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="account-details">
-                          <span className="bank-name">{conta.titular}</span>
-                          <span className="account-balance">
-                            {(conta.saldo || 0).toLocaleString("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
-                            })}
-                          </span>
-                        </div>
-                      )}
+                  bancos.map((banco) => (
+                    <div key={banco.id} className="account-item">
+                      <div className="bank-icon">
+                        <img
+                          src={getBankLogo(banco.nomeBanco, banco.bancoUrl)}
+                          alt={banco.nomeBanco}
+                          className="bank-logo-small"
+                          onError={(e) => {
+                            // Fallback se a imagem não carregar
+                            const target = e.target as HTMLImageElement;
+                            target.src = banco.bancoUrl || '';
+                          }}
+                        />
+                      </div>
+                      <div className="account-details">
+                        <span className="bank-name">{banco.nomeBanco}</span>
+                        <span className="account-balance">
+                          {(banco.saldo || 0).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </span>
+                      </div>
+                      <div className="account-actions">
+                        <button 
+                          className="edit-account-btn" 
+                          onClick={() => handleEditBanco(banco)}
+                          aria-label="Editar conta"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                          </svg>
+                        </button>
+                        <button 
+                          className="delete-account-btn" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeleteBanco(banco.id);
+                          }}
+                          aria-label="Deletar conta"
+                          type="button"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   ))
                 )}
@@ -337,7 +530,36 @@ useEffect(() => {
       </div>
 
       {/* POPUP */}
-      {showPopup && <PopupForm onClose={() => setShowPopup(false)} />}
+      {showPopup && (
+        <PopupForm 
+          onClose={() => {
+            setShowPopup(false);
+            // Recarrega a lista de bancos
+            const fetchBancos = async () => {
+              try {
+                const resp = await apiFetch('/conta/banco');
+                if (resp.ok) {
+                  const data = await resp.json();
+                  setBancos(data);
+                }
+              } catch (error) {
+                console.error("Erro ao buscar bancos:", error);
+              }
+            };
+            fetchBancos();
+          }} 
+        />
+      )}
+      {showEditPopup && bancoParaEditar && (
+        <PopupEdit
+          banco={bancoParaEditar}
+          onClose={() => {
+            setShowEditPopup(false);
+            setBancoParaEditar(null);
+          }}
+          onUpdate={handleUpdateBanco}
+        />
+      )}
     </>
   );
 };
