@@ -52,6 +52,12 @@ public class BancoService {
             banco.setBancoUrl(dto.getBancoUrl());
         }
 
+        if (dto.getPermitirTransacao() != null) {
+            dto.setPermitirTransacao(dto.getPermitirTransacao());
+        } else {
+            dto.setPermitirTransacao(false);
+        }
+
         Banco bancoSalvo = bancoRepository.save(banco);
         contaService.atualizarSaldoTotal(conta.getId());
 
@@ -147,7 +153,7 @@ public class BancoService {
     }
 
     // ========================================================
-    // REMOVER BANCO
+    // REMOVER BANCO (CORRIGIDO)
     // ========================================================
     @Transactional
     public void removerPorId(Long bancoId) {
@@ -170,6 +176,12 @@ public class BancoService {
         }
         
         bancoRepository.delete(banco);
+
+        // 2. O PULO DO GATO: Força o comando SQL agora mesmo!
+        // Se houver transações vinculadas, o erro vai estourar NESTA LINHA.
+        bancoRepository.flush();
+
+        // 3. Se chegou aqui, é porque deletou mesmo. Agora atualiza o saldo.
         contaService.atualizarSaldoTotal(banco.getConta().getId());
     }
 

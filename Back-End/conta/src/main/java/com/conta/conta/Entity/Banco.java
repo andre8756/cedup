@@ -51,7 +51,6 @@ public class Banco {
     protected void onCreate() {
         this.dataCadastro = LocalDateTime.now();
         this.status = true;
-        this.permitirTransacao = false;
 
         if (this.bancoUrl == null) {
             this.bancoUrl = "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_account_balance_48px-512.png";
