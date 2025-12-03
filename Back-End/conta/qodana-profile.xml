@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+        <option name="myName" value="Qodana-CleanCode" />
+        <inspection_tool class="DeclarationRedundancy" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="UnusedDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="UnusedSymbol" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="FieldMayBeFinal" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+        <inspection_tool class="LocalVariableMayBeFinal" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+        <inspection_tool class="ParameterMayBeFinal" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+
+        <!-- Métodos e classes longos -->
+        <inspection_tool class="MethodMetrics" enabled="true" level="WARNING" enabled_by_default="true">
+            <option name="m_limit" value="50" /> <!-- número máximo de linhas por método -->
+            <option name="n_limit" value="10" /> <!-- número máximo de parâmetros -->
+            <option name="c_limit" value="15" /> <!-- número máximo de caminhos de decisão -->
+        </inspection_tool>
+
+        <inspection_tool class="ClassMetrics" enabled="true" level="WARNING" enabled_by_default="true">
+            <option name="maxClassComplexity" value="800" /> <!-- número máximo de linhas por classe -->
+        </inspection_tool>
+
+        <!-- Código duplicado -->
+        <inspection_tool class="DuplicateBranchesInSwitch" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="DuplicateCondition" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="DuplicateExpressions" enabled="true" level="WARNING" enabled_by_default="true" />
+
+        <!-- Imports e código morto -->
+        <inspection_tool class="RedundantImport" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+        <inspection_tool class="UnusedImport" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="UnnecessaryFullyQualifiedName" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+
+        <!-- Parâmetros e retornos redundantes -->
+        <inspection_tool class="ParameterCanBeLocal" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="RedundantCast" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="RedundantThrowsDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="ReturnOfNull" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="ReturnNullCollection" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="ReturnNullInsteadOfOptional" enabled="true" level="WARNING" enabled_by_default="true" />
+
+        <!-- Complexidade -->
+        <inspection_tool class="CyclomaticComplexity" enabled="true" level="WARNING" enabled_by_default="true">
+            <option name="m_limit" value="15" />
+        </inspection_tool>
+        <inspection_tool class="NPathComplexity" enabled="true" level="WARNING" enabled_by_default="true">
+            <option name="m_limit" value="200" />
+        </inspection_tool>
+
+        <!-- Convenções e boas práticas -->
+        <inspection_tool class="MagicNumber" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+        <inspection_tool class="ConstantNamingConvention" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+        <inspection_tool class="MethodNameSameAsClassName" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="TooManyMethods" enabled="true" level="WARNING" enabled_by_default="true">
+            <option name="m_limit" value="20" />
+        </inspection_tool>
+
+        <!-- Tratamento de exceções -->
+        <inspection_tool class="EmptyCatchBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="ThrowablePrintStackTrace" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="ThrowableNotThrown" enabled="true" level="WARNING" enabled_by_default="true" />
+
+        <!-- Comentários e documentação -->
+        <inspection_tool class="MissingPackageInfo" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+        <inspection_tool class="MissingDeprecatedAnnotation" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    </profile>
+</component>

@@ -1,0 +1,94 @@
+.historico-transacoes {
+  align-items: flex-start;
+  padding-top: 5px;
+  background-color: #fff;
+  max-width: 50%;
+  border: 1px solid #ddd;
+  margin-left: 615px;
+  margin-top: -32.6%;
+  gap: 15px;
+  padding-left: 500px;
+  padding: 30px 1%;
+  flex-direction: column;
+  border-radius: 10px;
+
+}
+
+/* saldo */
+.header-transacoes small{
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-left: 2px;
+}
+
+
+.header-transacoes::after {
+  content: "";
+  display: block;
+  max-width: 21%;
+  margin-top: 3px;
+  border-bottom: 1px solid #ddd; /* linha divisória */
+}
+
+
+.historico-transacoes h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.historico-transacoes p {
+  color: #555;
+  font-size: 14px;
+}
+
+.valor-positivo{
+  color: rgb(26, 155, 26);
+}
+
+.valor-negativo{
+  color: rgb(190, 7, 7);
+}
+
+.header-transacoes{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+  padding-top: 5px; 
+}
+
+.lista{
+  list-style: none
+}
+
+.lista p{
+  display: block;
+  margin-top: 10px;
+}
+
+
+.filtro{
+  margin-left: 80%;
+  margin-top: -4%;
+}
+
+
+.saldo-transacoes{
+  padding-left: 10px;
+  font-family: Arial, sans-serif;
+  position: relative;
+  border-left: 4px solid #2c7be5; 
+  max-width: 50%;
+}
+
+.nenhuma-transacao{
+  margin-top: 25px;
+}
+
+.saldo-transacoes p {
+  color: #9ca3af;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
