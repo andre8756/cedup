@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Edit2, Trash2, Eye, EyeOff, Plus } from 'lucide-react';
+import { Edit2, Trash2, Eye, EyeOff, Plus, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { apiFetch } from '../../config/apiClient';
 import { API_ENDPOINTS } from '../../config/api';
 import PopupAdd from '../../components/PopupAdd/PopupAdd';
 import PopupEdit from '../../components/PopupEdit/PopupEdit';
 import { getShowSensitive, setShowSensitive, subscribeSensitive } from '../../lib/sensitive';
+import api from '../../config/apiClient';
 import './Banco.css';
 
 interface Banco {
@@ -19,7 +22,17 @@ interface Banco {
   dataCadastro?: string;
 }
 
+interface Conta {
+  id: number;
+  titular: string;
+  saldo: number;
+  avatarUrl?: string;
+  bancos: Banco[];
+}
+
 const Banco = () => {
+  const navigate = useNavigate();
+  const [contaAtual, setContaAtual] = useState<Conta | null>(null);
   const [bancos, setBancos] = useState<Banco[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +43,40 @@ const Banco = () => {
   const setShowBalances = (v: boolean) => {
     setShowSensitive(v);
     setShowBalancesState(v);
+  };
+
+  // Fetch conta atual
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) return;
+
+    const fetchContaAtual = async () => {
+      try {
+        const resp = await apiFetch('/conta/atual');
+        if (!resp.ok) {
+          console.warn('[Banco] /conta/atual returned', resp.status);
+          return;
+        }
+        const data = await resp.json();
+        setContaAtual(data);
+      } catch (error) {
+        console.error("Erro ao buscar conta atual:", error);
+      }
+    };
+
+    fetchContaAtual();
+  }, []);
+
+  // Logout
+  const handleLogout = async () => {
+    try {
+      await api.post(API_ENDPOINTS.AUTH.LOGOUT);
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    } finally {
+      Cookies.remove('token');
+      navigate('/login');
+    }
   };
 
   // Fetch bancos
@@ -89,7 +136,43 @@ const Banco = () => {
   };
 
   return (
-    <div className="banco-container">
+    <>
+      {/* Header azul com navegação */}
+      <header className="header-main">
+        <div className="logo">
+          <img src="/Logo-Completa.png" alt="Solvian" className="logo-image" />
+        </div>
+        <nav className="header-nav">
+          <button className="nav-tab" onClick={() => navigate('/conta')}>Visão geral</button>
+          <button className="nav-tab" onClick={() => navigate('/relatorios')}>Relatórios</button>
+          <button className="nav-tab" onClick={() => navigate('/perfil')}>Perfil</button>
+          <button className="nav-tab active">Bancos</button>
+        </nav>
+        <div className="header-actions">
+          <button
+            className="icon-button"
+            aria-label={showBalances ? 'Ocultar saldos' : 'Mostrar saldos'}
+            onClick={() => setShowBalances(!showBalances)}
+          >
+            {showBalances ? <Eye size={20} /> : <EyeOff size={20} />}
+          </button>
+          <button className="icon-button" aria-label="Configurações">
+            <Settings size={20} />
+          </button>
+          <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8 }}>
+            <img
+              src={contaAtual?.avatarUrl || '/Logo-Completa.png'}
+              alt="avatar"
+              style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }}
+            />
+          </div>
+          <button className="logout-button" onClick={handleLogout} aria-label="Sair">
+            Sair
+          </button>
+        </div>
+      </header>
+
+      <div className="banco-container">
       <div className="banco-header">
         <div className="header-content">
           <h1>Meus Bancos</h1>
@@ -245,7 +328,8 @@ const Banco = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
