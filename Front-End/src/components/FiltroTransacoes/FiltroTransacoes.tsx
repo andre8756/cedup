@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../config/apiClient";
+import API_BASE_URL from "../../config/api";
 import "./FiltroTransacoes.css";
 
 // Definição dos tipos de filtro
@@ -9,8 +10,20 @@ type FiltroKey =
     | 'bancoDestinoId' 
     | 'intervaloData'; 
 
+interface Transacao {
+    id: number;
+    bancoDestino?: string;
+    descricao?: string;
+    dataTransacao: string;
+    valor: number;
+}
 
-const FilterForm: React.FC = () => {
+interface FiltroTransacoesProps {
+    onFilterApplied?: () => void;
+    onFilteredData?: (data: Transacao[]) => void;
+}
+
+const FilterForm: React.FC<FiltroTransacoesProps> = ({ onFilterApplied, onFilteredData }) => {
     // ESTADO DE VISIBILIDADE para o botão de abrir/fechar
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -41,8 +54,6 @@ const FilterForm: React.FC = () => {
     };
 
 
-   const baseUrl = "https://cedup-back-deploy.onrender.com";
-
 const handleFilter = async () => {
     let url = "";
 
@@ -55,23 +66,33 @@ const handleFilter = async () => {
         switch (filtroPrincipal) {
             case 'bancoOrigemId':
                 if (!bancoOrigemId) return alert("Preencha o ID do Banco de Origem.");
-                url = `${baseUrl}/conta/banco/origem/${bancoOrigemId}/transacao`;
+                url = `${API_BASE_URL}/conta/banco/origem/${bancoOrigemId}/transacao`;
                 break;
 
             case 'bancoDestinoId':
                 if (!bancoDestinoId) return alert("Preencha o ID do Banco de Destino.");
-                url = `${baseUrl}/conta/banco/destino/${bancoDestinoId}/transacao`;
+                url = `${API_BASE_URL}/conta/banco/destino/${bancoDestinoId}/transacao`;
                 break;
 
             case 'intervaloData':
                 if (!dataInicio || !dataFim) 
                     return alert("Preencha as duas datas para o intervalo.");
-                url = `${baseUrl}/conta/banco/transacao/${dataInicio}T00:00:00/${dataFim}T23:59:59`;
+                url = `${API_BASE_URL}/conta/banco/transacao/${dataInicio}T00:00:00/${dataFim}T23:59:59`;
                 break;
         }
 
-        const response = await axios.get(url);
+        const response = await api.get(url);
         console.log("Resultados:", response.data);
+
+        // Passa os dados filtrados para a página pai
+        if (onFilteredData && response.data) {
+            onFilteredData(response.data);
+        }
+
+        // Se houver callback de atualização, também chama
+        if (onFilterApplied) {
+            onFilterApplied();
+        }
 
         alert(`Foram encontradas ${response.data.length} transações`);
         setIsFilterOpen(false);

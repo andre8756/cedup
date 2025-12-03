@@ -1,7 +1,9 @@
+/* eslint-disable no-irregular-whitespace */
 import React, { useState } from "react";
 import Select from "react-select";
-import axios from "axios"; // 🔑 CORREÇÃO 1: Importar Axios para usar a função isAxiosError no catch
-import api from "../../config/apiClient"; // Importa a instância Axios configurada (apiClient)
+import type { SingleValue } from "react-select";
+import axios from "axios"; // usado para isAxiosError
+import api from "../../config/apiClient";
 import { API_ENDPOINTS } from "../../config/api";
 // Cookies handled by apiClient interceptor; no direct cookie access needed here
 
@@ -81,7 +83,7 @@ const handleSubmit = async () => {
     await api.post(API_ENDPOINTS.BANCO.CRIAR, novaConta);
 
     // Fechar o popup após sucesso
-    try { onClose(); } catch {}
+    onClose();
 
   } catch (error) {
     console.error("Erro na criação do banco:", error);
@@ -122,17 +124,17 @@ const handleSubmit = async () => {
         <label htmlFor="nomeBanco">Nome da Instituição Bancária:</label>
        <Select
             options={options}
-          formatOptionLabel={(option: any) => (
+          formatOptionLabel={(option: Option) => (
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src={option.img} width="20" height="20" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                 <span>{option.label}</span>
                 </div>
             )}
-          onChange={(selected: any) => {
+          onChange={(selected: SingleValue<Option>) => {
                 setFormData({
                     ...formData,
                     nomeBanco: selected?.value || "",
-                    bancoUrl: selected?.img || ""
+                    bancoUrl: (selected as Option | null)?.img || ""
                 });
             }}
         ></Select>

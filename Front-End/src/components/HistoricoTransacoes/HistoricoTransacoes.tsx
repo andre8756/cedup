@@ -9,9 +9,9 @@ import "./HistoricoTransacoes.css";
 interface Transacao {
     id: number;
     dataTransacao: string;
-    bancoDestino: string;
+    bancoDestino?: string;
     valor: number;
-    valorTotal: number;
+    valorTotal?: number;
 }
 
 export default function HistoricoTransacoes() {
@@ -35,40 +35,30 @@ export default function HistoricoTransacoes() {
     }, []);
 
   return (
-    <section className="historico-transacoes">
-      <div className="header-transacoes">
-        <div className="saldo-transacoes">
-          <p>Extrato de {mesFormatado}</p>
-          <small>
-            {transacaoTotal.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </small>
-        </div>
-      </div>
-      <ul className="lista">
-        <h3>Minhas Transações</h3>
+    <div className="historico-transacoes-simple">
+      <ul className="transacoes-lista">
         {transacoes.length === 0 ? (
-
           <li className="nenhuma-transacao">
             <p>Nenhuma transação encontrada</p>
           </li>
-
         ) : (
-
-          transacoes.map((t) => (
-            <li key={t.id} className="transacao-item">
-              <div className="transacao-info">
-                <span>{t.dataTransacao}</span>
-              </div>
-              <p className={t.valor > 0 ? "valor-positivo" : "valor-negativo"}>
-                {t.valor > 0 ? "+" : "-"} R$ {Math.abs(t.valor).toFixed(2).replace(".", ",")}
-              </p>
+          transacoes.slice(0, 3).map((t) => (
+            <li key={t.id} className="transacao-item-simple">
+              <span className="transacao-texto">
+                {new Date(t.dataTransacao).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}{" "}
+                {t.bancoDestino || "Transação"}{" "}
+                <span className={t.valor > 0 ? "valor-positivo" : "valor-negativo"}>
+                  R$ {Math.abs(t.valor).toFixed(2).replace(".", ",")}
+                </span>
+              </span>
             </li>
           ))
         )}
       </ul>
-    </section>
+    </div>
   );
 }

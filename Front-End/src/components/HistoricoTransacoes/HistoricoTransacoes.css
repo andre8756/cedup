@@ -1,94 +1,66 @@
-.historico-transacoes {
-  align-items: flex-start;
-  padding-top: 5px;
-  background-color: #fff;
-  max-width: 50%;
-  border: 1px solid #ddd;
-  margin-left: 615px;
-  margin-top: -32.6%;
-  gap: 15px;
-  padding-left: 500px;
-  padding: 30px 1%;
-  flex-direction: column;
-  border-radius: 10px;
-
+.historico-transacoes-simple {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* saldo */
-.header-transacoes small{
-  font-weight: 700;
-  font-size: 1.3rem;
-  margin-left: 2px;
-}
-
-
-.header-transacoes::after {
-  content: "";
-  display: block;
-  max-width: 21%;
-  margin-top: 3px;
-  border-bottom: 1px solid #ddd; /* linha divisória */
-}
-
-
-.historico-transacoes h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.historico-transacoes p {
-  color: #555;
-  font-size: 14px;
-}
-
-.valor-positivo{
-  color: rgb(26, 155, 26);
-}
-
-.valor-negativo{
-  color: rgb(190, 7, 7);
-}
-
-.header-transacoes{
+.transacoes-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-bottom: 10px;
-  padding-top: 5px; 
+  gap: 8px;
 }
 
-.lista{
-  list-style: none
+/* Scrollbar customizada para transações */
+.historico-transacoes-simple::-webkit-scrollbar {
+  width: 6px;
 }
 
-.lista p{
+.historico-transacoes-simple::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.historico-transacoes-simple::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.historico-transacoes-simple::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.transacao-item-simple {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #111;
+}
+
+.transacao-texto {
   display: block;
-  margin-top: 10px;
+  line-height: 1.5;
 }
 
-
-.filtro{
-  margin-left: 80%;
-  margin-top: -4%;
+.valor-positivo {
+  color: #10b981;
+  font-weight: 600;
 }
 
-
-.saldo-transacoes{
-  padding-left: 10px;
-  font-family: Arial, sans-serif;
-  position: relative;
-  border-left: 4px solid #2c7be5; 
-  max-width: 50%;
+.valor-negativo {
+  color: #ef4444;
+  font-weight: 600;
 }
 
-.nenhuma-transacao{
-  margin-top: 25px;
-}
-
-.saldo-transacoes p {
+.nenhuma-transacao {
+  padding: 20px;
+  text-align: center;
   color: #9ca3af;
-  font-weight: 500;
-  margin-bottom: 4px;
+}
+
+.nenhuma-transacao p {
+  margin: 0;
+  font-size: 14px;
 }
