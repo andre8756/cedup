@@ -16,12 +16,48 @@
   background-color: #fff;
   padding: 32px;
   border-radius: 16px;
-  max-width: 520px;
+  max-width: 560px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   position: relative;
+}
+
+/* Header inside popup with close button */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popup-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0b1220;
+}
+
+.popup-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #6b7280;
+}
+.popup-close:hover {
+  background: rgba(0,0,0,0.06);
+  color: #111;
 }
 
 .popup-content h1 {
@@ -32,17 +68,26 @@
 }
 
 /* Form Groups */
-.popup-content > label {
-  display: block;
-  margin-bottom: 8px;
-  margin-top: 20px;
-  color: #374151;
-  font-weight: 500;
-  font-size: 14px;
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
 }
 
-.popup-content > label:first-of-type {
-  margin-top: 0;
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Labels */
+.popup-content label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
 }
 
 /* Inputs */
@@ -82,15 +127,6 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-/* React Select Container */
-.error-select {
-  margin-bottom: 0;
-}
-
-.popup-content > div:has(> div[class*="css"]) {
-  margin-bottom: 0;
-}
-
 /* Error Messages */
 .error-message {
   display: block;
@@ -117,13 +153,63 @@
   margin-left: 2px;
 }
 
+/* React Select Container */
+.error-select {
+  margin-bottom: 0;
+}
+
+/* React Select styling */
+.popup-content .react-select__control {
+  padding: 2px 10px !important;
+  border-radius: 8px !important;
+  border: 2px solid #e5e7eb !important;
+  transition: all 0.2s !important;
+  min-height: 44px !important;
+  background-color: #fff !important;
+}
+
+.popup-content .react-select__control:hover {
+  border-color: #d1d5db !important;
+}
+
+.popup-content .react-select__control--is-focused {
+  border-color: #2c7be5 !important;
+  box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1) !important;
+}
+
+.popup-content .react-select__control--is-focused.error-select {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.popup-content .react-select__control.error-select {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.popup-content .react-select__option {
+  font-size: 14px !important;
+  cursor: pointer !important;
+}
+
+.popup-content .react-select__placeholder {
+  color: #9ca3af !important;
+}
+
+.popup-content .react-select__value-container {
+  padding: 2px 8px !important;
+}
+
+.popup-content .react-select__input-container {
+  font-size: 14px !important;
+}
+
 /* Checkbox Groups */
 .checkbox-group {
-  margin: 20px 0;
-  padding: 12px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 12px 0;
 }
 
 .checkbox-label {
@@ -131,10 +217,11 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  font-weight: 400;
   font-size: 14px;
+  font-weight: 400;
   color: #374151;
   margin: 0;
+  user-select: none;
 }
 
 .checkbox-label:hover {
@@ -158,9 +245,9 @@
 .popup-buttons {
   display: flex;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 28px;
   justify-content: flex-end;
-  padding-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid #e5e7eb;
 }
 
@@ -237,4 +324,5 @@
   .popup-buttons button {
     width: 100%;
   }
+  .form-grid { grid-template-columns: 1fr; gap: 12px; }
 }

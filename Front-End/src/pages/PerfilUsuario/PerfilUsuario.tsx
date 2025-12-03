@@ -5,6 +5,8 @@ import { apiFetch } from '../../config/apiClient';
 import api from '../../config/apiClient';
 import { API_ENDPOINTS } from '../../config/api';
 import './PerfilUsuario.css';
+import { Eye, EyeOff, Settings } from 'lucide-react';
+import { getShowSensitive, setShowSensitive, subscribeSensitive } from '../../lib/sensitive';
 
 interface ContaResponse {
   titular: string;
@@ -39,6 +41,17 @@ function PerfilUsuario() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [receita, setReceita] = useState<number | null>(null);
+  const [despesa, setDespesa] = useState<number | null>(null);
+  const [showSensitive, setShowSensitiveState] = useState<boolean>(getShowSensitive());
+
+  const setShowSensitiveAll = (v: boolean) => {
+    try {
+      setShowSensitive(v);
+    } finally {
+      setShowSensitiveState(v);
+    }
+  };
 
   // Estados do formulário de edição
   const [formData, setFormData] = useState<ContaUpdateRequest>({
@@ -87,6 +100,42 @@ function PerfilUsuario() {
 
     fetchConta();
   }, [navigate]);
+
+  // Buscar receita e despesa mensal para o resumo financeiro
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) return;
+
+    const fetchValores = async () => {
+      try {
+        const receitaResp = await apiFetch('/conta/banco/transacao/receita');
+        if (!receitaResp.ok) {
+          console.warn('[Perfil] receita endpoint returned', receitaResp.status);
+        }
+
+        const despesaResp = await apiFetch('/conta/banco/transacao/despesa');
+        if (!despesaResp.ok) {
+          console.warn('[Perfil] despesa endpoint returned', despesaResp.status);
+        }
+
+        const receitaValor = receitaResp.ok ? await receitaResp.json() : 0;
+        const despesaValor = despesaResp.ok ? await despesaResp.json() : 0;
+
+        setReceita(typeof receitaValor === 'number' ? receitaValor : 0);
+        setDespesa(typeof despesaValor === 'number' ? despesaValor : 0);
+      } catch (error) {
+        console.error('Erro ao buscar valores de receita/despesa:', error);
+      }
+    };
+
+    fetchValores();
+  }, []);
+
+  // Subscribe to global sensitive flag changes
+  useEffect(() => {
+    const unsub = subscribeSensitive((v) => setShowSensitiveState(v));
+    return unsub;
+  }, []);
 
   // Função para atualizar conta
   const handleUpdate = async (e: React.FormEvent) => {
@@ -197,19 +246,34 @@ function PerfilUsuario() {
   };
 
   // Formatar data
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateInput?: string | number | null) => {
+    if (!dateInput && dateInput !== 0) return '—';
+
+    // Normaliza entrada numérica (timestamp em segundos ou ms)
+    let date: Date;
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      if (typeof dateInput === 'number') {
+        // Se parece com segundos (10 dígitos), multiplica por 1000
+        date = new Date(dateInput > 1e12 ? dateInput : dateInput * 1000);
+      } else if (/^\d+$/.test(String(dateInput))) {
+        const n = Number(dateInput);
+        date = new Date(n > 1e12 ? n : n * 1000);
+      } else {
+        date = new Date(String(dateInput));
+      }
     } catch {
-      return dateString;
+      return String(dateInput);
     }
+
+    if (isNaN(date.getTime())) return String(dateInput);
+
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   // Formatar CPF
@@ -262,7 +326,7 @@ return (
           <button className="nav-tab" onClick={() => navigate('/conta')}>
             Visão geral
           </button>
-          <button className="nav-tab">Relatórios</button>
+          <button className="nav-tab" onClick={() => navigate('/relatorios')}>Relatórios</button>
           <button className="nav-tab active">Perfil</button>
           <button 
             className="nav-tab"
@@ -281,18 +345,23 @@ return (
           </button>
         </nav>
         <div className="header-actions">
-          <button className="icon-button" aria-label="Alternar visibilidade">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
+          <button
+            className="icon-button"
+            aria-label={showSensitive ? 'Ocultar dados sensíveis' : 'Mostrar dados sensíveis'}
+            onClick={() => setShowSensitiveAll(!showSensitive)}
+          >
+            {showSensitive ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>
           <button className="icon-button" aria-label="Configurações">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
-            </svg>
+            <Settings size={20} />
           </button>
+          <div className="avatar-circle" title={conta?.titular || 'Usuário'} style={{ marginLeft: 8 }}>
+            <img
+              src={conta?.avatarUrl || '/Logo-Completa.png'}
+              alt="avatar"
+              style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }}
+            />
+          </div>
           <button className="logout-button" onClick={handleLogout} aria-label="Sair">
             Sair
           </button>
@@ -320,6 +389,27 @@ return (
           <div className="header-info">
             <h1>{conta.titular}</h1>
             <p className="subtitle">Membro desde {formatDate(conta.dataCadastro)}</p>
+          </div>
+          <div className="perfil-header-actions">
+            <button className="btn-primary" type="button" onClick={() => { setError(null); setSuccess(null); setEditing(true); }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span className="btn-label">Editar Perfil</span>
+            </button>
+            <button 
+              className="btn-danger" 
+              onClick={handleDelete}
+              disabled={deleting}
+              type="button"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span className="btn-label">{deleting ? 'Deletando...' : 'Deletar Conta'}</span>
+            </button>
           </div>
         </div>
 
@@ -356,7 +446,7 @@ return (
                 </div>
                 <div className="info-item">
                   <label>CPF</label>
-                  <p>{formatCPF(conta.cpf)}</p>
+                  <p>{showSensitive ? formatCPF(conta.cpf) : '•••.•••.•••-••'}</p>
                 </div>
                 <div className="info-item">
                   <label>Email</label>
@@ -364,7 +454,7 @@ return (
                 </div>
                 <div className="info-item">
                   <label>Telefone</label>
-                  <p>{formatPhone(conta.telefone)}</p>
+                  <p>{showSensitive ? formatPhone(conta.telefone) : '••••••••••'}</p>
                 </div>
                 <div className="info-item">
                   <label>Status da Conta</label>
@@ -384,50 +474,70 @@ return (
               <div className="balance-display">
                 <label>Saldo Total</label>
                 <p className="balance-value">
-                  {conta.saldoTotal.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {showSensitive
+                    ? conta.saldoTotal.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                    : 'R$ ••••••'}
                 </p>
               </div>
             </div>
+              <div className="info-card">
+                <h2>Resumo Mensal</h2>
+                <div className="monthly-summary">
+                  <div className="monthly-item">
+                    <label>Receita Mensal</label>
+                    <p className="monthly-value">
+                      {receita !== null
+                        ? receita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : 'R$ 0,00'}
+                    </p>
+                  </div>
+                  <div className="monthly-item">
+                    <label>Despesa Mensal</label>
+                    <p className="monthly-value">
+                      {despesa !== null
+                        ? despesa.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : 'R$ 0,00'}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
             {conta.bancos && conta.bancos.length > 0 && (
               <div className="info-card">
                 <h2>Bancos Vinculados</h2>
-                <div className="bancos-list">
-                  {conta.bancos.map((banco) => (
-                    <div key={banco.id} className="banco-item">
-                      <div className="banco-info">
-                        <h3>{banco.nome}</h3>
-                        <p>Agência: {banco.agencia} | Conta: {banco.conta}</p>
+                <div className="bancos-list bancos-vinculados-compact">
+                  {conta.bancos.map((banco: any) => {
+                    const nome = banco.nomeBanco || banco.nome || '—';
+                    const titularBanco = banco.titular || '—';
+                    const saldoVal = Number(banco.saldo ?? 0) || 0;
+
+                    return (
+                      <div key={banco.id ?? nome} className="banco-item compact">
+                        <div className="banco-compact-row">
+                          {banco.bancoUrl && (
+                            <img src={banco.bancoUrl} alt={nome} className="banco-logo-compact" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                          )}
+                          <div className="banco-compact-info">
+                            <h4 className="banco-nome-compact">{nome}</h4>
+                            <p className="banco-titular-compact">{titularBanco}</p>
+                          </div>
+                          <div className="banco-saldo-compact">
+                            {showSensitive
+                              ? saldoVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                              : 'R$ •••••'}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            <div className="actions-card">
-              <button className="btn-primary" onClick={() => setEditing(true)}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-                Editar Perfil
-              </button>
-              <button 
-                className="btn-danger" 
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-                {deleting ? 'Deletando...' : 'Deletar Conta'}
-              </button>
-            </div>
+            
           </div>
         ) : (
           /* Modo Edição */

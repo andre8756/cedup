@@ -117,6 +117,51 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.perfil-header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Ensure labels inside action buttons can be hidden on very small screens */
+.perfil-header-actions .btn-label {
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .perfil-header-actions .btn-label {
+    display: none;
+  }
+  .perfil-header-actions {
+    margin-left: 0;
+  }
+}
+
+/* Normalize action buttons in profile header so they match visually */
+.perfil-header-actions .btn-primary,
+.perfil-header-actions .btn-danger {
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  height: 40px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.perfil-header-actions button svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.perfil-header-actions .btn-label {
+  line-height: 1;
+  display: inline-block;
+}
+
 .avatar-section {
   position: relative;
   flex-shrink: 0;
@@ -212,6 +257,35 @@
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 2px solid #e5e7eb;
+}
+
+.monthly-summary {
+  display: flex;
+  gap: 16px;
+}
+
+.monthly-item {
+  flex: 1;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.monthly-item label {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.monthly-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
 }
 
 .card-header {
@@ -338,6 +412,54 @@
   margin: 0;
 }
 
+/* Compact layout for 'Bancos Vinculados' in PerfilUsuario */
+.bancos-vinculados-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.banco-item.compact {
+  padding: 12px;
+  display: block;
+}
+
+.banco-compact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banco-logo-compact {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.banco-compact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.banco-nome-compact {
+  font-size: 15px;
+  margin: 0;
+  color: #111;
+}
+
+.banco-titular-compact {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.banco-saldo-compact {
+  font-weight: 700;
+  color: #111;
+  white-space: nowrap;
+}
+
 /* Card de ações */
 .actions-card {
   background: #fff;
@@ -347,6 +469,16 @@
   display: flex;
   gap: 16px;
   justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Ensure edit button stays compact on larger screens as well */
+.actions-card .btn-primary {
+  max-width: 220px;
+  padding: 10px 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Botões */
@@ -363,6 +495,8 @@
   align-items: center;
   gap: 8px;
   border: none;
+  white-space: nowrap;
+  flex: 0 1 auto;
 }
 
 .btn-primary {
@@ -569,6 +703,22 @@
 
   .actions-card {
     flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  /* Make edit button more compact in actions card to avoid overlap */
+  .actions-card .btn-primary {
+    max-width: 180px;
+    padding: 10px 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (min-width: 769px) {
+    .actions-card .btn-primary {
+      max-width: 220px;
+    }
   }
 
   .form-actions {

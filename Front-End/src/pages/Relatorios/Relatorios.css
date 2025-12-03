@@ -120,19 +120,31 @@
 }
 
 .relatorios-header {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  display: block;
 }
 
 .relatorios-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #111;
-  margin-bottom: 8px;
+  font-size: 40px;
+  font-weight: 800;
+  color: #0b1220;
+  margin: 0 0 8px 0;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
 }
 
 .relatorios-header p {
-  font-size: 16px;
-  color: #6b7280;
+  font-size: 15px;
+  color: #475569;
+  margin: 0;
+  max-width: 880px;
+}
+
+/* Make the header area visually separated */
+.relatorios-header {
+  padding: 8px 0 18px 0;
+  border-bottom: 1px solid #eef2ff;
+  margin-bottom: 28px;
 }
 
 /* Card de Filtros */
@@ -148,16 +160,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 20px;
+  padding: 18px 0;
+  border-bottom: none;
 }
 
 .filtros-header h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0b1220;
   margin: 0;
+}
+
+.filtros-header::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 36px;
+  background: linear-gradient(180deg, #2c7be5, #1e5bb8);
+  border-radius: 4px;
+  margin-right: 12px;
+  vertical-align: middle;
+}
+
+.filtros-header .filtros-actions {
+  gap: 10px;
 }
 
 .filtros-actions {
@@ -167,7 +194,7 @@
 
 .filtros-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
@@ -175,6 +202,13 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.filtro-group.boxed {
+  background: #fcfdff;
+  border: 1px solid #eef2ff;
+  padding: 12px;
+  border-radius: 8px;
 }
 
 .filtro-group.full-width {
@@ -194,6 +228,36 @@
   font-size: 14px;
   transition: all 0.2s;
   font-family: inherit;
+}
+
+.bancos-actions .btn-secondary {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.bancos-list {
+  border: 1px dashed #e6eefc;
+  padding: 10px;
+  border-radius: 8px;
+  max-height: 220px;
+  overflow: auto;
+  background: #ffffff;
+}
+
+.banco-checkbox {
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.12s;
+  cursor: pointer;
+}
+
+.banco-checkbox:hover {
+  background: #f8fafc;
+}
+
+.banco-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
 }
 
 .filtro-group input:focus {
@@ -252,6 +316,7 @@
   margin-bottom: 24px;
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
 }
 
 .btn-pdf {

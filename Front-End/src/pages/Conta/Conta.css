@@ -172,7 +172,10 @@ body {
 /* Grid de dashboard - Consolidado */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 300px 1fr 1fr 300px;
+  /* Increase side columns so profile & connections cards are a bit wider,
+     reducing the central area (financial summary) slightly */
+  /* Slightly increase side columns to give the connections card a bit more width */
+  grid-template-columns: 360px 1fr 1fr 360px;
   grid-template-rows: auto auto;
   gap: 24px;
   margin-top: 24px;
@@ -664,9 +667,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-height: 140px;
-  justify-content: space-between;
+  height: 200px;
   position: relative;
+  overflow: hidden;
 }
 
 .connections-card .card-title {
@@ -680,6 +683,28 @@ body {
   flex-wrap: wrap;
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+
+/* Scrollbar customizada para conexões */
+.connection-icons::-webkit-scrollbar {
+  width: 6px;
+}
+
+.connection-icons::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.connection-icons::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.connection-icons::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 .connection-icon {
@@ -724,9 +749,8 @@ body {
   cursor: pointer;
   transition: background-color 0.2s;
   align-self: flex-start;
-  margin-top: auto;
-  width: auto;
   flex-shrink: 0;
+  margin-top: 8px;
 }
 
 .manage-accounts-btn:hover {

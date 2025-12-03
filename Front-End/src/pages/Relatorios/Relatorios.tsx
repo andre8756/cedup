@@ -43,12 +43,34 @@ function Relatorios() {
 
   // Estados dos filtros
   const [filtros, setFiltros] = useState<TransacaoFiltro>({});
-  const [bancoIdsInput, setBancoIdsInput] = useState<string>("");
-  const [contaIdsInput, setContaIdsInput] = useState<string>("");
+  const [availableBancos, setAvailableBancos] = useState<any[]>([]);
+  const [selectedBankIds, setSelectedBankIds] = useState<number[]>([]);
 
   // Carregar transações iniciais
   useEffect(() => {
     buscarTransacoes();
+  }, []);
+
+  // Carregar lista de bancos disponíveis para filtros (checkboxes)
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) return;
+
+    const fetchBancos = async () => {
+      try {
+        const resp = await apiFetch('/conta/banco');
+        if (!resp.ok) {
+          console.warn('[Relatorios] /conta/banco returned', resp.status);
+          return;
+        }
+        const data = await resp.json();
+        setAvailableBancos(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Erro ao buscar bancos para filtros:', err);
+      }
+    };
+
+    fetchBancos();
   }, []);
 
   // Função para buscar transações com filtros
@@ -137,8 +159,7 @@ function Relatorios() {
   // Função para limpar filtros
   const limparFiltros = () => {
     setFiltros({});
-    setBancoIdsInput("");
-    setContaIdsInput("");
+    setSelectedBankIds([]);
   };
 
   // Função para atualizar filtros
@@ -150,18 +171,28 @@ function Relatorios() {
   };
 
   // Função para atualizar lista de IDs de bancos
-  const atualizarBancosIds = (value: string) => {
-    setBancoIdsInput(value);
-    const ids = value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+  // Seleção por checkbox para bancos
+  const selecionarTodosBancos = () => {
+    const ids = availableBancos.map(b => b.id).filter((id: any) => typeof id === 'number');
+    setSelectedBankIds(ids);
     atualizarFiltro('bancosIds', ids.length > 0 ? ids : undefined);
   };
 
-  // Função para atualizar lista de IDs de contas
-  const atualizarContasIds = (value: string) => {
-    setContaIdsInput(value);
-    const ids = value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-    atualizarFiltro('contasIds', ids.length > 0 ? ids : undefined);
+  const selecionarNenhumBanco = () => {
+    setSelectedBankIds([]);
+    atualizarFiltro('bancosIds', undefined);
   };
+
+  const alternarSelecaoBanco = (id: number) => {
+    setSelectedBankIds(prev => {
+      const exists = prev.includes(id);
+      const next = exists ? prev.filter(x => x !== id) : [...prev, id];
+      atualizarFiltro('bancosIds', next.length > 0 ? next : undefined);
+      return next;
+    });
+  };
+
+  
 
   // Função de logout
   const handleLogout = async () => {
@@ -261,83 +292,31 @@ function Relatorios() {
           </div>
 
           <div className="filtros-grid">
-            {/* Filtros de Conta */}
-            <div className="filtro-group">
-              <label>ID da Conta (Origem ou Destino)</label>
-              <input
-                type="number"
-                placeholder="Ex: 1"
-                value={filtros.contaId || ''}
-                onChange={(e) => atualizarFiltro('contaId', e.target.value ? parseInt(e.target.value) : undefined)}
-                min="1"
-              />
-            </div>
+            {/* Filtros de Conta/Banco por ID removidos — use seleção visual acima (bancos) e outros filtros */}
 
-            <div className="filtro-group">
-              <label>ID da Conta de Origem</label>
-              <input
-                type="number"
-                placeholder="Ex: 1"
-                value={filtros.contaOrigemId || ''}
-                onChange={(e) => atualizarFiltro('contaOrigemId', e.target.value ? parseInt(e.target.value) : undefined)}
-                min="1"
-              />
-            </div>
-
-            <div className="filtro-group">
-              <label>ID da Conta de Destino</label>
-              <input
-                type="number"
-                placeholder="Ex: 2"
-                value={filtros.contaDestinoId || ''}
-                onChange={(e) => atualizarFiltro('contaDestinoId', e.target.value ? parseInt(e.target.value) : undefined)}
-                min="1"
-              />
-            </div>
-
-            <div className="filtro-group">
-              <label>IDs de Contas (separados por vírgula)</label>
-              <input
-                type="text"
-                placeholder="Ex: 1,2,3"
-                value={contaIdsInput}
-                onChange={(e) => atualizarContasIds(e.target.value)}
-              />
-              <small>Múltiplas contas separadas por vírgula</small>
-            </div>
-
-            {/* Filtros de Banco */}
-            <div className="filtro-group">
-              <label>ID do Banco de Origem</label>
-              <input
-                type="number"
-                placeholder="Ex: 1"
-                value={filtros.bancoOrigemId || ''}
-                onChange={(e) => atualizarFiltro('bancoOrigemId', e.target.value ? parseInt(e.target.value) : undefined)}
-                min="1"
-              />
-            </div>
-
-            <div className="filtro-group">
-              <label>ID do Banco de Destino</label>
-              <input
-                type="number"
-                placeholder="Ex: 2"
-                value={filtros.bancoDestinoId || ''}
-                onChange={(e) => atualizarFiltro('bancoDestinoId', e.target.value ? parseInt(e.target.value) : undefined)}
-                min="1"
-              />
-            </div>
-
-            <div className="filtro-group">
-              <label>IDs de Bancos (separados por vírgula)</label>
-              <input
-                type="text"
-                placeholder="Ex: 1,2,3"
-                value={bancoIdsInput}
-                onChange={(e) => atualizarBancosIds(e.target.value)}
-              />
-              <small>Múltiplos bancos separados por vírgula</small>
+            <div className="filtro-group full-width boxed">
+              <label>Bancos</label>
+              <div className="bancos-actions" style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <button type="button" className="btn-secondary" onClick={selecionarTodosBancos}>Selecionar todos</button>
+                <button type="button" className="btn-secondary" onClick={selecionarNenhumBanco}>Selecionar nenhum</button>
+              </div>
+              <div className="bancos-list">
+                {availableBancos.length === 0 ? (
+                  <small>Nenhum banco encontrado</small>
+                ) : (
+                  availableBancos.map((banco) => (
+                    <label key={banco.id} className="banco-checkbox" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedBankIds.includes(banco.id)}
+                        onChange={() => alternarSelecaoBanco(banco.id)}
+                      />
+                      <span style={{ fontWeight: 600 }}>{banco.nomeBanco || banco.nome || '—'}</span>
+                      <small style={{ marginLeft: 8, color: '#666' }}>{banco.titular || '—'}</small>
+                    </label>
+                  ))
+                )}
+              </div>
             </div>
 
             {/* Filtros de Data */}

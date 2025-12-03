@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Eye, EyeOff, Settings } from 'lucide-react';
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import PopupEdit from "../../components/PopupEdit/PopupEdit";
 import "./Conta.css";
@@ -10,6 +11,7 @@ import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/apiClient';
 import { API_ENDPOINTS } from '../../config/api';
+import { getShowSensitive, setShowSensitive, subscribeSensitive } from '../../lib/sensitive';
 
 interface Banco {
   id: number;
@@ -41,6 +43,7 @@ interface Conta {
   id: number;
   titular: string;
   saldo: number;
+  avatarUrl?: string;
   bancos: Banco[];
 }
 
@@ -58,6 +61,11 @@ interface BancoItem {
 
 const Conta: React.FC = () => {
   const navigate = useNavigate();
+  const [showBalances, setShowBalancesState] = useState<boolean>(getShowSensitive());
+  const setShowBalances = (v: boolean) => {
+    setShowSensitive(v);
+    setShowBalancesState(v);
+  };
   
   // Dados placeholder
 const [contaAtual, setContaAtual] = useState<Conta | null>(null);
@@ -83,6 +91,12 @@ useEffect(() => {
 
   fetchContaAtual();
 }, []);
+
+  // Subscribe to global sensitive flag changes
+  useEffect(() => {
+    const unsub = subscribeSensitive((v) => setShowBalancesState(v));
+    return unsub;
+  }, []);
 
 
 const [bancos, setBancos] = useState<BancoItem[]>([]);
@@ -222,7 +236,37 @@ useEffect(() => {
       if (error.response) {
         const status = error.response.status;
         const errorData = error.response.data;
-        
+
+        const extractMessage = (d: any) => {
+          if (!d) return null;
+          if (typeof d === 'string') return d;
+          if (d?.message) return d.message;
+          if (d?.error) return d.error;
+          if (Array.isArray(d?.errors) && d.errors.length > 0) return d.errors[0];
+          return null;
+        };
+
+        const backendMessage = extractMessage(errorData);
+
+        // If backend provided a clear message, show it (and treat auth specially)
+        if (backendMessage) {
+          const lower = backendMessage.toLowerCase();
+          if ((status === 401 || status === 403) && (lower.includes('token') || lower.includes('autent') || lower.includes('credencial'))) {
+            alert("Erro de autenticação. Token inválido ou expirado. Faça login novamente.");
+            Cookies.remove('token');
+            navigate('/login');
+            return;
+          }
+
+          if (lower.includes('transação') || lower.includes('transacao')) {
+            alert(`⚠️ ${backendMessage}\n\nPara deletar este banco, você precisa primeiro deletar todas as transações associadas a ele.`);
+          } else {
+            alert(`Erro: ${backendMessage}`);
+          }
+          return;
+        }
+
+        // Fallback behavior when no clear backend message
         if (status === 401 || status === 403) {
           alert("Erro de autenticação. Token inválido ou expirado. Faça login novamente.");
           Cookies.remove('token');
@@ -236,24 +280,7 @@ useEffect(() => {
             setBancos(data);
           }
         } else if (status === 400 || status === 500) {
-          // Tenta extrair a mensagem de erro do backend
-          let errorMessage = "Não foi possível deletar o banco.";
-          
-          if (typeof errorData === 'string') {
-            errorMessage = errorData;
-          } else if (errorData?.message) {
-            errorMessage = errorData.message;
-          } else if (errorData?.error) {
-            errorMessage = errorData.error;
-          }
-          
-          // Verifica se a mensagem menciona transações
-          if (errorMessage.toLowerCase().includes('transação') || 
-              errorMessage.toLowerCase().includes('transacao')) {
-            alert(`⚠️ ${errorMessage}\n\nPara deletar este banco, você precisa primeiro deletar todas as transações associadas a ele.`);
-          } else {
-            alert(`Erro: ${errorMessage}`);
-          }
+          alert("Não foi possível deletar o banco. Verifique os dados e tente novamente.");
         } else if (status >= 500) {
           alert("Erro interno do servidor. Tente novamente mais tarde.");
         } else {
@@ -316,18 +343,23 @@ useEffect(() => {
           </button>
         </nav>
         <div className="header-actions">
-          <button className="icon-button" aria-label="Alternar visibilidade">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
+          <button
+            className="icon-button"
+            aria-label={showBalances ? 'Ocultar saldos' : 'Mostrar saldos'}
+            onClick={() => setShowBalances(!showBalances)}
+          >
+            {showBalances ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>
           <button className="icon-button" aria-label="Configurações">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
-            </svg>
+            <Settings size={20} />
           </button>
+          <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8 }}>
+            <img
+              src={contaAtual?.avatarUrl || '/Logo-Completa.png'}
+              alt="avatar"
+              style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }}
+            />
+          </div>
           <button className="logout-button" onClick={handleLogout} aria-label="Sair">
             Sair
           </button>
@@ -430,10 +462,9 @@ useEffect(() => {
                 <div className="card-content">
                   <p className="card-label">Saldo geral</p>
                   <h3 className="card-value">
-                    {saldoTotal.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {showBalances
+                      ? saldoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                      : "R$ ••••••"}
                   </h3>
                 </div>
                 <button className="add-account-btn" onClick={() => setShowPopup(true)}>
@@ -464,10 +495,9 @@ useEffect(() => {
                       <div className="account-details">
                         <span className="bank-name">{banco.nomeBanco}</span>
                         <span className="account-balance">
-                          {(banco.saldo || 0).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
+                          {showBalances
+                            ? (banco.saldo || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                            : "R$ •••••"}
                         </span>
                       </div>
                       <div className="account-actions">

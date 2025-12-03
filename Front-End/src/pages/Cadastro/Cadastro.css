@@ -235,22 +235,26 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  gap: 8px;
 }
 
 .input-icon {
-  position: absolute;
-  left: 0.875rem;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  left: 0;
+  top: 0;
+  transform: none;
   color: var(--text-icon);
   width: 20px;
   height: 20px;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
+  flex-shrink: 0;
 }
 
 .form-input {
   width: 100%;
-  padding: 0.875rem 0.875rem 0.875rem 2.875rem;
+  padding: 0.875rem 0.875rem;
   border: 1px solid var(--border-input);
   border-radius: var(--radius-md);
   font-size: 1rem;

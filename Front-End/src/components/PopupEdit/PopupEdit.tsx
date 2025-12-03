@@ -5,6 +5,7 @@ import type { SingleValue } from "react-select";
 import axios from "axios";
 import api from "../../config/apiClient";
 import { API_ENDPOINTS } from "../../config/api";
+import { X } from "lucide-react";
 import "./PopupEdit.css";
 
 interface PopupEditProps {
@@ -133,24 +134,47 @@ const PopupEdit: React.FC<PopupEditProps> = ({ banco, onClose, onUpdate }) => {
       
       // Tratamento detalhado de erros
       if (axios.isAxiosError(error)) {
-        if (error.response) {
-          const status = error.response.status;
-          const errorData = error.response.data;
-          
-          if (status === 401 || status === 403) {
-            alert("Erro de autenticação. Token inválido ou expirado. Faça login novamente.");
-          } else if (status === 400) {
-            const errorMessage = typeof errorData === 'string' 
-              ? errorData 
-              : errorData?.message || "Dados inválidos. Verifique os campos preenchidos.";
-            alert(`Erro de validação: ${errorMessage}`);
-          } else if (status === 404) {
-            alert("Banco não encontrado. O banco pode ter sido deletado.");
-          } else if (status >= 500) {
-            alert("Erro interno do servidor. Tente novamente mais tarde.");
-          } else {
-            alert(`Erro ao atualizar banco (Status ${status}). Tente novamente.`);
-          }
+          if (error.response) {
+            const status = error.response.status;
+            const errorData = error.response.data;
+
+            const extractMessage = (d: any) => {
+              if (!d) return null;
+              if (typeof d === 'string') return d;
+              if (d?.message) return d.message;
+              if (d?.error) return d.error;
+              if (Array.isArray(d?.errors) && d.errors.length > 0) return d.errors[0];
+              return null;
+            };
+
+            const backendMessage = extractMessage(errorData);
+
+            if (backendMessage) {
+              const lower = backendMessage.toLowerCase();
+              if ((status === 401 || status === 403) && (lower.includes('token') || lower.includes('autent') || lower.includes('credencial'))) {
+                alert("Erro de autenticação. Token inválido ou expirado. Faça login novamente.");
+                try { (await import('js-cookie')).default.remove('token'); } catch (e) { /* ignore */ }
+                try { window.location.href = '/login'; } catch (e) { /* ignore */ }
+                return;
+              }
+              alert(`Erro: ${backendMessage}`);
+              return;
+            }
+
+            if (status === 401 || status === 403) {
+              alert("Erro de autenticação. Token inválido ou expirado. Faça login novamente.");
+            } else if (status === 400) {
+              const errorMessage = typeof errorData === 'string'
+                ? errorData
+                : errorData?.message || "Dados inválidos. Verifique os campos preenchidos.";
+              alert(`Erro de validação: ${errorMessage}`);
+            } else if (status === 404) {
+              alert("Banco não encontrado. O banco pode ter sido deletado.");
+            } else if (status >= 500) {
+              alert("Erro interno do servidor. Tente novamente mais tarde.");
+            } else {
+              alert(`Erro ao atualizar banco (Status ${status}). Tente novamente.`);
+            }
         } else if (error.request) {
           alert("Erro de conexão com o servidor. Verifique sua conexão com a internet.");
         } else {
@@ -166,85 +190,104 @@ const PopupEdit: React.FC<PopupEditProps> = ({ banco, onClose, onUpdate }) => {
   const selectedOption = options.find(opt => opt.value === formData.nomeBanco) || null;
 
   return (
-    <>
-      <div className="popup">
-        <div className="popup-content">
+    <div className="popup">
+      <div className="popup-content">
+        <div className="popup-header">
           <h1>Editar Conta</h1>
-          
-          <label htmlFor="titular">Titular da Conta:</label>
-          <input
-            id="titular"
-            value={formData.titular}
-            onChange={handleChange}
-            placeholder="Ex: Lucas Andrade"
-          />
+          <button className="popup-close" type="button" onClick={onClose} aria-label="Fechar">
+            <X size={18} />
+          </button>
+        </div>
 
-          <label htmlFor="nomeBanco">Nome da Instituição Bancária:</label>
-          <Select
-            options={options}
-            value={selectedOption}
-            formatOptionLabel={(option: Option) => (
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <img src={option.img} width="20" height="20" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                <span>{option.label}</span>
-              </div>
-            )}
-            onChange={(selected: SingleValue<Option>) => {
-              setFormData({
-                ...formData,
-                nomeBanco: selected?.value || "",
-                bancoUrl: (selected as Option | null)?.img || ""
-              });
-            }}
-          ></Select>
-
-          <label htmlFor="chavePix">Chave Pix:</label>
-          <input
-            id="chavePix" 
-            value={formData.chavePix}
-            onChange={handleChange}
-            placeholder="Ex: email@exemplo.com"
-          />
-
-          <label htmlFor="saldo">Informe o Saldo Bancário:</label>
-          <input
-            id="saldo"
-            type="number"
-            step="0.01"
-            value={formData.saldo}
-            onChange={handleChange}
-            placeholder="Ex: 6312.48"
-          />
-
-          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-            <label htmlFor="status" style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-              <input
-                id="status"
-                type="checkbox"
-                checked={formData.status}
-                onChange={handleChange}
-              />
-              <span>Status Ativo</span>
-            </label>
-
-            <label htmlFor="permitirTransacao" style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-              <input
-                id="permitirTransacao"
-                type="checkbox"
-                checked={formData.permitirTransacao}
-                onChange={handleChange}
-              />
-              <span>Permitir Transação</span>
-            </label>
+        <div className="form-grid">
+          <div className="form-row">
+            <label htmlFor="titular">Titular da Conta:</label>
+            <input
+              id="titular"
+              type="text"
+              value={formData.titular}
+              onChange={handleChange}
+              placeholder="Ex: Lucas Andrade"
+            />
           </div>
 
-          <div className="popup-buttons">
-            <button type="button" className="enviar" onClick={handleSubmit}>Atualizar Conta</button>
-            <button type="button" className="cancelar" onClick={onClose}>Cancelar</button>
+          <div className="form-row">
+            <label htmlFor="nomeBanco">Nome da Instituição Bancária:</label>
+            <Select
+              options={options}
+              value={selectedOption}
+              formatOptionLabel={(option: Option) => (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <img src={option.img} width="20" height="20" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  <span>{option.label}</span>
+                </div>
+              )}
+              onChange={(selected: SingleValue<Option>) => {
+                setFormData({
+                  ...formData,
+                  nomeBanco: selected?.value || "",
+                  bancoUrl: (selected as Option | null)?.img || ""
+                });
+              }}
+            />
+          </div>
+
+          <div className="form-row">
+            <label htmlFor="chavePix">Chave Pix:</label>
+            <input
+              id="chavePix" 
+              type="text"
+              value={formData.chavePix}
+              onChange={handleChange}
+              placeholder="Ex: email@exemplo.com"
+            />
+          </div>
+
+          <div className="form-row">
+            <label htmlFor="saldo">Informe o Saldo Bancário:</label>
+            <input
+              id="saldo"
+              type="number"
+              step="0.01"
+              value={formData.saldo}
+              onChange={handleChange}
+              placeholder="Ex: 6312.48"
+            />
+          </div>
+
+          <div style={{ gridColumn: '1 / -1' }}>
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  id="status"
+                  type="checkbox"
+                  checked={formData.status}
+                  onChange={handleChange}
+                />
+                <span>Status Ativo</span>
+              </label>
+            </div>
+
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  id="permitirTransacao"
+                  type="checkbox"
+                  checked={formData.permitirTransacao}
+                  onChange={handleChange}
+                />
+                <span>Permitir Transação</span>
+              </label>
+            </div>
           </div>
         </div>
+
+        <div className="popup-buttons">
+          <button type="button" className="enviar" onClick={handleSubmit}>Atualizar Conta</button>
+          <button type="button" className="cancelar" onClick={onClose}>Cancelar</button>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
