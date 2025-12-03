@@ -122,8 +122,8 @@ public class TransacaoService {
         bancoService.atualizarBanco(bancoOrigem);
         bancoService.atualizarBanco(bancoDestino);
 
-        contaService.atualizarSaldoTotal(bancoOrigem.getConta().getId());
-        contaService.atualizarSaldoTotal(bancoDestino.getConta().getId());
+        contaService.atualizarSaldoTotalPorCpf(bancoOrigem.getConta().getCpf());
+        contaService.atualizarSaldoTotalPorCpf(bancoDestino.getConta().getCpf());
 
         return convertToDTO(transacaoSalva);
     }
