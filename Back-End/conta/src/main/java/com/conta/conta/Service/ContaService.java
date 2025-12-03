@@ -110,4 +110,17 @@ public class ContaService {
         conta.setSaldoTotal(saldoTotal);
     }
 
+    @Transactional
+    public void atualizarSaldoTotalPorCpf(String userId) {
+        Conta conta = contaRepository.findByCpf(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+
+        float saldoTotal = conta.getBancos()
+                .stream()
+                .map(Banco::getSaldo)
+                .reduce(0.0f, Float::sum);
+
+        conta.setSaldoTotal(saldoTotal);
+    }
+
 }
