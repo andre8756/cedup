@@ -331,13 +331,9 @@ useEffect(() => {
           </button>
           <button 
             className="nav-tab"
-            onClick={() => {
-              // Scroll para a seção de bancos
-              const banksSection = document.querySelector('.balance-accounts-card');
-              if (banksSection) {
-                banksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }}
+            onClick={() => navigate('/banco')
+
+}
           >
             Bancos
           </button>
@@ -451,7 +447,10 @@ useEffect(() => {
                 </button>
               )}
             </div>
-            <button className="manage-accounts-btn">Gerenciar bancos</button>
+            <button className="manage-accounts-btn" 
+            onClick={() => navigate('/banco')}>
+              Gerenciar bancos
+            </button>
           </div>
 
           {/* Card de Saldo Geral e Meus Bancos */}

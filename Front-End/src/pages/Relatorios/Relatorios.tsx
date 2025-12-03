@@ -239,15 +239,7 @@ function Relatorios() {
           </button>
           <button 
             className="nav-tab"
-            onClick={() => {
-              navigate('/conta');
-              setTimeout(() => {
-                const banksSection = document.querySelector('.balance-accounts-card');
-                if (banksSection) {
-                  banksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 100);
-            }}
+            onClick={() => navigate('/banco')}
           >
             Bancos
           </button>

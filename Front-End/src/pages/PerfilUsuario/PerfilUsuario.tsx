@@ -331,14 +331,7 @@ return (
           <button 
             className="nav-tab"
             onClick={() => {
-              navigate('/conta');
-              // Scroll para a seção de bancos após navegação
-              setTimeout(() => {
-                const banksSection = document.querySelector('.balance-accounts-card');
-                if (banksSection) {
-                  banksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 100);
+              navigate('/banco');
             }}
           >
             Bancos
