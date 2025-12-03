@@ -1,13 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-// import the named export API_BASE_URL (not the default axios instance) from ../config/api
-import { API_BASE_URL } from '../config/api';
+import API_BASE_URL from './api';
 
-// Create axios instance using resolved API_BASE_URL (supports runtime override in api.ts)
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  // You can add default timeouts here, e.g. timeout: 10000
 });
 
 // Attach Authorization header automatically if a token exists in cookies
@@ -87,33 +84,32 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
     }
   } catch {}
 
-  const resp = await fetch(url, merged);
+  let resp = await fetch(url, merged);
 
-  // centralize 401/403 handling: if unauthorized, try a single retry if this happened right after login (race), otherwise remove token and redirect
-  if (resp.status === 401 || resp.status === 403) {
-    try {
-      const recent = (window as any).__RECENT_LOGIN_AT__ || 0;
-      const now = Date.now();
+  try {
+    const recent = (typeof window !== 'undefined' ? (window as any).__RECENT_LOGIN_AT__ : 0) || 0;
+    const now = Date.now();
 
-      const headersObj = merged.headers instanceof Headers ? Object.fromEntries(merged.headers as any) : (merged.headers ?? {});
-      const isRetry = headersObj && (headersObj as any)['x-retry'] === '1';
+    const headersObj = merged.headers instanceof Headers ? Object.fromEntries(merged.headers as any) : (merged.headers ?? {});
+    const isRetry = headersObj && (headersObj as any)['x-retry'] === '1';
 
-      if (now - recent < 5000 && !isRetry) {
-        // retry once after short delay
-        try {
-          (merged.headers as any)['x-retry'] = '1';
-        } catch {}
-        await new Promise((r) => setTimeout(r, 350));
-        const retryResp = await fetch(url, merged);
-        if (retryResp.status !== 401 && retryResp.status !== 403) return retryResp;
+    if ((resp.status === 401 || resp.status === 403) && now - recent < 5000 && !isRetry) {
+      try {
+        (merged.headers as any)['x-retry'] = '1';
+      } catch {}
+      await new Promise((r) => setTimeout(r, 350));
+      const retryResp = await fetch(url, merged);
+      if (retryResp.status !== 401 && retryResp.status !== 403) return retryResp;
+      resp = retryResp;
+    }
+
+    if (resp.status === 401 || resp.status === 403) {
+      try { Cookies.remove('token'); } catch {}
+      if (typeof window !== 'undefined') {
+        try { window.location.href = '/login'; } catch {}
       }
-
-      Cookies.remove('token');
-    } catch (e) {}
-    try {
-      if (typeof window !== 'undefined') window.location.href = '/login';
-    } catch {}
-  }
+    }
+  } catch (e) {}
 
   return resp;
 }

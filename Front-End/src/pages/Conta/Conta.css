@@ -6,6 +6,11 @@
   font-family: 'Inter', sans-serif;
 }
 
+.bank-logo {
+  width: 12%;
+  height: auto;
+}
+
 body {
   background-color: #dadada;
   color: #333;

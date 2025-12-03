@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import "./Conta.css";
 import HistoricoTransacoes from "../../components/HistoricoTransacoes/HistoricoTransacoes";
-import API_BASE_URL from "../../config/api";
+// API_BASE_URL resolved at runtime by src/config/api.ts if needed (not used directly here)
+import Cookies from 'js-cookie';
+import { apiFetch } from '../../config/apiClient';
 import { useEffect } from "react";
 
 interface Banco {
-  nome: string;
+  id: number
   numero: number;
+  bancoUrl: string
+  nomeBanco: string;
 }
 
 interface Conta {
@@ -15,22 +19,24 @@ interface Conta {
   titular: string;
   saldo: number;
   bancos: Banco[];
+
 }
 
 const Conta: React.FC = () => {
   // Dados placeholder
 const [contaAtual, setContaAtual] = useState<Conta | null>(null);
 useEffect(() => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get('token');
   if (!token) return;
 
   const fetchContaAtual = async () => {
     try {
-      const resp = await fetch(`${API_BASE_URL}/conta/atual`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+      const resp = await apiFetch('/conta/atual');
+
+      if (!resp.ok) {
+        console.warn('[Conta] /conta/atual returned', resp.status);
+        return;
+      }
 
       const data = await resp.json();
       setContaAtual(data);
@@ -45,16 +51,16 @@ useEffect(() => {
 
 const [contas, setContas] = useState<Conta[]>([]);
 useEffect(() => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get('token');
   if (!token) return;
 
   const fetchContas = async () => {
     try {
-      const resp = await fetch(`${API_BASE_URL}/conta/banco`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
+      const resp = await apiFetch('/conta/banco');
+      if (!resp.ok) {
+        console.warn('[Conta] /conta/banco returned', resp.status);
+        return;
+      }
 
       const data = await resp.json();
       setContas(data);
@@ -76,23 +82,23 @@ useEffect(() => {
 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get('token');
     if (!token) return;
 
     const fetchValores = async () => {
       try {
-        const receitaResp = await fetch(`${API_BASE_URL}/conta/banco/transacao/receita`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const receitaResp = await apiFetch('/conta/banco/transacao/receita');
+        if (!receitaResp.ok) {
+          console.warn('[Conta] receita endpoint returned', receitaResp.status);
+          return;
+        }
 
 
-        const despesaResp = await fetch(`${API_BASE_URL}/conta/banco/transacao/despesa`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const despesaResp = await apiFetch('/conta/banco/transacao/despesa');
+        if (!despesaResp.ok) {
+          console.warn('[Conta] despesa endpoint returned', despesaResp.status);
+          return;
+        }
 
 
         const receitaValor = await receitaResp.json();
@@ -163,31 +169,32 @@ useEffect(() => {
          <div className="connections-section">
           <p className="item-label connections-label">Conexões Ativas</p>
           <div className="connection-icons">
-
             {contaAtual ? (
-              <article className="account-card">
-                <div className="account-header">
-                  <div className="account-info">
-                    <strong>{contaAtual.titular}</strong>
-                    {contaAtual.bancos?.map((banco) => (
-                      <small key={banco.numero}>
-                        {banco.nome} - {banco.numero}
-                      </small>
-                    ))}
-                  </div>
-                  <div className="menu-dots">...</div>
+              // REMOVI O <article className="account-card"> E O <div className="account-header">
+              // PARA FICAR MAIS LIMPO NA BARRA LATERAL
+              <div className="active-connections-wrapper">
+                <div className="active-connections-container">
+                  {contaAtual.bancos?.map((banco) => (
+                    <div key={banco.id} className="bank-logo-wrapper">
+                      <img
+                        src={banco.bancoUrl}
+                        alt={`Logo do ${banco.nomeBanco}`}
+                        className="bank-logo"
+                      />
+                    </div>
+                  ))}
                 </div>
-              </article>
+                </div>
             ) : (
               <p>Carregando conexão...</p>
             )}
 
+          <button className="manage-accounts-link">Gerenciar Contas</button>
 
           </div>
         </div>
 
     
-          <button className="manage-accounts-link">Gerenciar Contas</button>
         </div>
       </div>
     </section>
@@ -221,7 +228,7 @@ useEffect(() => {
                     <strong>{conta.titular}</strong>
                     {conta.bancos?.map((banco) => (
                       <small key={banco.numero}>
-                        {banco.nome} - {banco.numero}
+                        {banco.nomeBanco} - {banco.numero}
                       </small>
                     ))}
                   </div>

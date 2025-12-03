@@ -1,12 +1,12 @@
 .filtro-wrapper {
   position: relative;
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  height: 50%;
 }
 
-/* Botão */
+/* Botão menor e alinhado à esquerda */
 .filtro-wrapper > button {
   background: #2c7be5;
   color: white;
@@ -15,13 +15,13 @@
   border: none;
   cursor: pointer;
   font-weight: 600;
+
+  width: auto;         /* não ocupa 100% */
+  align-self: flex-start; /* fica alinhado à esquerda */
 }
 
 /* Container FECHADO deve ter tamanho 0 e não empurrar nada */
 .filtro-container {
-  margin-top: 10px;
-  padding: 0 12px;
-
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;

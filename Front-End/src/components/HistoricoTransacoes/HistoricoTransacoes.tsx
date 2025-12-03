@@ -1,9 +1,10 @@
 // src/components/HistoricoTransacoes/HistoricoTransacoes.tsx
+// src/components/HistoricoTransacoes/HistoricoTransacoes.tsx
 import { useEffect, useState } from "react";
-import axios from "axios";
-import "./HistoricoTransacoes.css";
-import FiltroTransacoes from "../FiltroTransacoes/FiltroTransacoes";
+// usar a instância axios central (apiClient) e os endpoints centralizados
+import api from "../../config/apiClient";
 import { API_ENDPOINTS } from "../../config/api";
+import "./HistoricoTransacoes.css";
 
 interface Transacao {
     id: number;
@@ -14,25 +15,24 @@ interface Transacao {
 }
 
 export default function HistoricoTransacoes() {
-  const [transacoes, setTransacoes] = useState<Transacao[]>([]);
-  const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
-  const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
-  const transacaoTotal = transacoes.reduce((acumulador, t) => acumulador +t.valor, 0)
+    const [transacoes, setTransacoes] = useState<Transacao[]>([]);
+    const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
+    const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+    const transacaoTotal = transacoes.reduce((acumulador, t) => acumulador + t.valor, 0)
 
-  useEffect(() => {
-    const fetchTransacoes = async () => {
-      try {
-        const response = await axios.get(API_ENDPOINTS.BANCO.LISTAR_COM_FILTROS, {
-          withCredentials: true, 
-        });
-        setTransacoes(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar transações:", error);
-      }
-    };
+    useEffect(() => {
+        const fetchTransacoes = async () => {
+            try {
+                const response = await api.get(API_ENDPOINTS.BANCO.LISTAR_COM_FILTROS);
 
-    fetchTransacoes();
-  }, []);
+                setTransacoes(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar transações:", error);
+            }
+        };
+
+        fetchTransacoes();
+    }, []);
 
   return (
     <section className="historico-transacoes">
@@ -45,9 +45,6 @@ export default function HistoricoTransacoes() {
               currency: "BRL",
             })}
           </small>
-        </div>
-        <div className="filtro">
-          <FiltroTransacoes/>
         </div>
       </div>
       <ul className="lista">

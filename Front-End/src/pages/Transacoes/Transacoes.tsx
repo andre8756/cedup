@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Transacoes.css";
 import FiltroTransacoes from "../../components/FiltroTransacoes/FiltroTransacoes";
+import Cookie from "js-cookie";
 
 interface Transacao {
   id: number;
@@ -10,16 +11,22 @@ interface Transacao {
   dataTransacao: string;
   valor: number;
 }
-
-export default function HistoricoTransacoes() {
+export default function Transacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
 
   useEffect(() => {
     const fetchTransacoes = async () => {
+      
       try {
         const response = await axios.get(
-          "",
-          { withCredentials: true }
+          "https://cedup-back-deploy.onrender.com/conta/banco/transacao",
+          {
+            withCredentials: true,
+            // pass Authorization header explicitly (if using localStorage token)
+            headers: {
+              Authorization: `Bearer ${Cookie.get("token")}`,
+            },
+          }
         );
         setTransacoes(response.data);
       } catch (error) {
@@ -32,7 +39,7 @@ export default function HistoricoTransacoes() {
 
   return (
     <>
-      <p className="tittle">Histórico de Transações</p>
+      <p className="title">Histórico de Transações</p>
       <FiltroTransacoes />
 
       <section className="painel-movimentacoes">

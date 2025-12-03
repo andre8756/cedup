@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { API_ENDPOINTS } from "../../config/api";
 
 interface Conta {
   id: number;
@@ -28,7 +27,7 @@ const ContasList: React.FC = () => {
       }
 
       try {
-        const response = await fetch(API_ENDPOINTS.CONTA.ATUAL, {
+        const response = await fetch("http://cedup-back-deploy.onrender.com/conta", {
           headers: {
             "Authorization": `Bearer ${token}`
           }

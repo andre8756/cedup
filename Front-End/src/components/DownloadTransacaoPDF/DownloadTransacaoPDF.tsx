@@ -20,7 +20,7 @@ export default function DownloadReceitaPDF() {
 
   return (
     <button className="download-button" onClick={baixarPdf}>
-      Baixar Transações
+      Imprimir Extrato 
     </button>
   );
 }
