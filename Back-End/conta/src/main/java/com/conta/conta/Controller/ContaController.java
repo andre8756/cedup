@@ -109,10 +109,18 @@ public class ContaController {
     }
 
     @DeleteMapping("/banco/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public String removerBanco(@PathVariable Long id) {
-        bancoService.removerPorId(id);
-        return("Banco deletado com sucesso!");
+    public ResponseEntity<?> removerBanco(@PathVariable Long id) {
+        try {
+            bancoService.removerPorId(id);
+            return ResponseEntity.ok("Banco deletado com sucesso!");
+        } catch (IllegalStateException e) {
+            // Erro quando há transações associadas
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            // Outros erros
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao deletar banco: " + e.getMessage());
+        }
     }
 
     // ================================

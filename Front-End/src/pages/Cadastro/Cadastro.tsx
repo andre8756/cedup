@@ -177,7 +177,13 @@ function Cadastro() {
       });
 
       if (loginResult?.token) {
-        Cookies.set('token', loginResult.token, { expires: 7, secure: true, sameSite: 'strict' });
+        // Use secure cookies only when running on HTTPS (localhost uses HTTP during dev)
+        const isSecureOrigin = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        Cookies.set('token', loginResult.token, { expires: 7, secure: isSecureOrigin, sameSite: 'strict' });
+
+        // Mark recent login so apiClient can retry immediate requests if needed
+        try { (window as any).__RECENT_LOGIN_AT__ = Date.now(); } catch (e) { /* ignore */ }
+
         setMessage({ type: 'success', text: 'Cadastro realizado! Redirecionando...' });
         setTimeout(() => navigate('/conta'), 1500);
       } else {

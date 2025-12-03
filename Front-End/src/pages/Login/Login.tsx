@@ -48,7 +48,13 @@ function Login() {
       if (!result?.token) {
         setMessage({ type: 'error', text: 'Credenciais inválidas.' });
       } else {
-        Cookies.set('token', result.token, { expires: 7, secure: true, sameSite: 'strict' });
+        // Use secure cookies only when running on HTTPS (localhost uses HTTP during dev)
+        const isSecureOrigin = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        Cookies.set('token', result.token, { expires: 7, secure: isSecureOrigin, sameSite: 'strict' });
+
+        // Mark recent login time so apiClient can retry immediate requests
+        try { (window as any).__RECENT_LOGIN_AT__ = Date.now(); } catch (e) { /* ignore */ }
+
         setMessage({ type: 'success', text: 'Login realizado! Redirecionando...' });
         setTimeout(() => navigate('/conta'), 1500);
       }

@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use((config) => {
         // eslint-disable-next-line no-console
         console.debug('[apiClient] attaching Authorization header, token present:', token ? 'yes' : 'no');
       }
-    } catch {}
+    } catch (e) { /* ignore */ }
   }
   return config;
 });
@@ -44,10 +44,10 @@ axiosInstance.interceptors.response.use(
             console.warn('[apiClient] retrying failed request immediately-after-login');
             return axiosInstance(originalRequest);
           }
-        } catch (e) {}
+        } catch (e) { /* ignore */ }
 
         // Remove stored token and force a reload to login page
-        try { Cookies.remove('token'); } catch {}
+        try { Cookies.remove('token'); } catch (e) { /* ignore */ }
         if (typeof window !== 'undefined') {
           // eslint-disable-next-line no-console
           console.warn('[apiClient] unauthorized response, clearing token and redirecting');
@@ -82,7 +82,7 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
       // eslint-disable-next-line no-console
       console.debug('[apiFetch] fetch', url, merged);
     }
-  } catch {}
+  } catch (e) { /* ignore */ }
 
   let resp = await fetch(url, merged);
 
@@ -104,9 +104,9 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
     }
 
     if (resp.status === 401 || resp.status === 403) {
-      try { Cookies.remove('token'); } catch {}
+      try { Cookies.remove('token'); } catch (e) { /* ignore */ }
       if (typeof window !== 'undefined') {
-        try { window.location.href = '/login'; } catch {}
+        try { window.location.href = '/login'; } catch (e) { /* ignore */ }
       }
     }
   } catch (e) {}

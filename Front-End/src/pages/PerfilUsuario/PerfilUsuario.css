@@ -1,1 +1,739 @@
-/* Estilos para o componente PerfilUsuario */
+/* Container principal */
+.perfil-container {
+  min-height: 100vh;
+  background-color: #dadada;
+}
+
+/* Header (reutilizando estilos do Conta.css) */
+.perfil-container .header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #2c7be5 0%, #1e5bb8 100%);
+  color: #fff;
+  padding: 16px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.perfil-container .logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.perfil-container .logo-image {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.perfil-container .header-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.perfil-container .nav-tab {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  position: relative;
+  border-radius: 4px;
+}
+
+.perfil-container .nav-tab.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.perfil-container .nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px 2px 0 0;
+}
+
+.perfil-container .nav-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.perfil-container .header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.perfil-container .header-action-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.perfil-container .header-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Conteúdo principal */
+.perfil-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* Header do perfil */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.perfil-header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Ensure labels inside action buttons can be hidden on very small screens */
+.perfil-header-actions .btn-label {
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .perfil-header-actions .btn-label {
+    display: none;
+  }
+  .perfil-header-actions {
+    margin-left: 0;
+  }
+}
+
+/* Normalize action buttons in profile header so they match visually */
+.perfil-header-actions .btn-primary,
+.perfil-header-actions .btn-danger {
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  height: 40px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.perfil-header-actions button svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.perfil-header-actions .btn-label {
+  line-height: 1;
+  display: inline-block;
+}
+
+.avatar-section {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #2c7be5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2c7be5 0%, #1e5bb8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 4px solid #2c7be5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.status-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e5e7eb;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.active {
+  background-color: #10b981;
+}
+
+.status-dot.inactive {
+  background-color: #ef4444;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.header-info h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.header-info .subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Cards de informação */
+.perfil-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.monthly-summary {
+  display: flex;
+  gap: 16px;
+}
+
+.monthly-item {
+  flex: 1;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.monthly-item label {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.monthly-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.card-header h2 {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #f3f4f6;
+  color: #111;
+}
+
+/* Grid de informações */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item p {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+}
+
+.status-active {
+  color: #10b981 !important;
+}
+
+.status-inactive {
+  color: #ef4444 !important;
+}
+
+/* Display de saldo */
+.balance-display {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: linear-gradient(135deg, #2c7be5 0%, #1e5bb8 100%);
+  border-radius: 8px;
+  color: #fff;
+}
+
+.balance-display label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.balance-value {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Lista de bancos */
+.bancos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.banco-item {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+.banco-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.banco-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.banco-info p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Compact layout for 'Bancos Vinculados' in PerfilUsuario */
+.bancos-vinculados-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.banco-item.compact {
+  padding: 12px;
+  display: block;
+}
+
+.banco-compact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banco-logo-compact {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.banco-compact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.banco-nome-compact {
+  font-size: 15px;
+  margin: 0;
+  color: #111;
+}
+
+.banco-titular-compact {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.banco-saldo-compact {
+  font-weight: 700;
+  color: #111;
+  white-space: nowrap;
+}
+
+/* Card de ações */
+.actions-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Ensure edit button stays compact on larger screens as well */
+.actions-card .btn-primary {
+  max-width: 220px;
+  padding: 10px 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botões */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  white-space: nowrap;
+  flex: 0 1 auto;
+}
+
+.btn-primary {
+  background: #2c7be5;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1e5bb8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 123, 229, 0.3);
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Formulário de edição */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #2c7be5;
+  box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1);
+}
+
+.form-group small {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #2c7be5;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Alertas */
+.alert {
+  padding: 16px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.alert svg {
+  flex-shrink: 0;
+}
+
+/* Loading */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2c7be5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  text-align: center;
+}
+
+.error-message p {
+  font-size: 18px;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .perfil-content {
+    padding: 24px 16px;
+  }
+
+  .perfil-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .header-info h1 {
+    font-size: 24px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-card {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  /* Make edit button more compact in actions card to avoid overlap */
+  .actions-card .btn-primary {
+    max-width: 180px;
+    padding: 10px 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (min-width: 769px) {
+    .actions-card .btn-primary {
+      max-width: 220px;
+    }
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .perfil-container .header-nav {
+    display: none;
+  }
+
+  .perfil-container .header-action-btn span {
+    display: none;
+  }
+
+  .perfil-container .header-action-btn {
+    padding: 8px;
+  }
+}

@@ -1,11 +1,11 @@
-import axios from "axios";
+import api from "../../config/apiClient";
+import { API_ENDPOINTS } from "../../config/api";
 import './DownloadTransacaoPDF.css';
-
 
 export default function DownloadReceitaPDF() {
   const baixarPdf = async () => {
-    const res = await axios.get('/banco/transacao/filtros/pdf', {
-      responseType: 'blob'
+    const res = await api.get(API_ENDPOINTS.BANCO.DOWNLOAD_PDF, {
+      responseType: 'arraybuffer'
     });
 
     const pdfBlob = new Blob([res.data], { type: 'application/pdf' });

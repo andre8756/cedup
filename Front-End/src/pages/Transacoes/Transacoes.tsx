@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../config/apiClient";
+import { API_ENDPOINTS } from "../../config/api";
 import "./Transacoes.css";
 import FiltroTransacoes from "../../components/FiltroTransacoes/FiltroTransacoes";
-import Cookie from "js-cookie";
 
 interface Transacao {
   id: number;
-  bancoDestino: string;
+  bancoDestino?: string;
   descricao?: string;
   dataTransacao: string;
   valor: number;
@@ -14,33 +14,31 @@ interface Transacao {
 export default function Transacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
 
-  useEffect(() => {
-    const fetchTransacoes = async () => {
-      
-      try {
-        const response = await axios.get(
-          "https://cedup-back-deploy.onrender.com/conta/banco/transacao",
-          {
-            withCredentials: true,
-            // pass Authorization header explicitly (if using localStorage token)
-            headers: {
-              Authorization: `Bearer ${Cookie.get("token")}`,
-            },
-          }
-        );
-        setTransacoes(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar transações:", error);
-      }
-    };
+  const fetchTransacoes = async () => {
+    try {
+      const resp = await api.get(API_ENDPOINTS.BANCO.LISTAR_COM_FILTROS);
+      setTransacoes(resp.data || []);
+    } catch (error) {
+      console.error("Erro ao buscar transações:", error);
+      setTransacoes([]);
+    }
+  };
 
+  useEffect(() => {
     fetchTransacoes();
   }, []);
+
+  const handleFilteredData = (filteredData: Transacao[]) => {
+    setTransacoes(filteredData);
+  };
 
   return (
     <>
       <p className="title">Histórico de Transações</p>
-      <FiltroTransacoes />
+      <FiltroTransacoes 
+        onFilterApplied={fetchTransacoes} 
+        onFilteredData={handleFilteredData}
+      />
 
       <section className="painel-movimentacoes">
         <header className="titulo-historico">
@@ -61,12 +59,18 @@ export default function Transacoes() {
                   </div>
 
                   <div className="conteudo-card">
-                    <strong className="nome-banco">{t.bancoDestino}</strong>
+                    <strong className="nome-banco">
+                      {t.bancoDestino ?? "Transação"}
+                    </strong>
                     <p className="descricao-mov">
                       {t.descricao ?? "Transação bancária"}
                     </p>
                     <small className="data-mov">
-                      {new Date(t.dataTransacao).toLocaleDateString("pt-BR")}
+                      {new Date(t.dataTransacao).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
                     </small>
                   </div>
 

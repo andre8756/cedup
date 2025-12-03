@@ -1,0 +1,328 @@
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Header inside popup with close button */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popup-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0b1220;
+}
+
+.popup-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #6b7280;
+}
+.popup-close:hover {
+  background: rgba(0,0,0,0.06);
+  color: #111;
+}
+
+.popup-content h1 {
+  margin: 0 0 24px 0;
+  color: #111;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Form Groups */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Labels */
+.popup-content label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+}
+
+/* Inputs */
+.popup-content input[type="text"],
+.popup-content input[type="number"] {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 0;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.popup-content input[type="text"]:focus,
+.popup-content input[type="number"]:focus {
+  outline: none;
+  border-color: #2c7be5;
+  box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1);
+}
+
+.popup-content input[type="text"]:hover,
+.popup-content input[type="number"]:hover {
+  border-color: #d1d5db;
+}
+
+.popup-content input.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.popup-content input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Error Messages */
+.error-message {
+  display: block;
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 6px;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+/* Hint Text */
+.hint {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+/* Required Indicator */
+.required {
+  color: #ef4444;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* React Select Container */
+.error-select {
+  margin-bottom: 0;
+}
+
+/* React Select styling */
+.popup-content .react-select__control {
+  padding: 2px 10px !important;
+  border-radius: 8px !important;
+  border: 2px solid #e5e7eb !important;
+  transition: all 0.2s !important;
+  min-height: 44px !important;
+  background-color: #fff !important;
+}
+
+.popup-content .react-select__control:hover {
+  border-color: #d1d5db !important;
+}
+
+.popup-content .react-select__control--is-focused {
+  border-color: #2c7be5 !important;
+  box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1) !important;
+}
+
+.popup-content .react-select__control--is-focused.error-select {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.popup-content .react-select__control.error-select {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.popup-content .react-select__option {
+  font-size: 14px !important;
+  cursor: pointer !important;
+}
+
+.popup-content .react-select__placeholder {
+  color: #9ca3af !important;
+}
+
+.popup-content .react-select__value-container {
+  padding: 2px 8px !important;
+}
+
+.popup-content .react-select__input-container {
+  font-size: 14px !important;
+}
+
+/* Checkbox Groups */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  color: #374151;
+  margin: 0;
+  user-select: none;
+}
+
+.checkbox-label:hover {
+  color: #111;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #2c7be5;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.checkbox-label span {
+  user-select: none;
+}
+
+/* Buttons */
+.popup-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.popup-buttons button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.popup-buttons .enviar {
+  background-color: #2c7be5;
+  color: white;
+}
+
+.popup-buttons .enviar:hover {
+  background-color: #1e5bb8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 123, 229, 0.3);
+}
+
+.popup-buttons .enviar:active {
+  transform: translateY(0);
+}
+
+.popup-buttons .cancelar {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.popup-buttons .cancelar:hover {
+  background-color: #e5e7eb;
+}
+
+/* Scrollbar */
+.popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .popup-content {
+    padding: 24px;
+    max-width: 95%;
+  }
+
+  .popup-content h1 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .popup-buttons {
+    flex-direction: column;
+  }
+
+  .popup-buttons button {
+    width: 100%;
+  }
+  .form-grid { grid-template-columns: 1fr; gap: 12px; }
+}
