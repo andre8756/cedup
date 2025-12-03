@@ -48,6 +48,12 @@ public class BancoService {
             banco.setBancoUrl(dto.getBancoUrl());
         }
 
+        if (dto.getPermitirTransacao() != null) {
+            dto.setPermitirTransacao(dto.getPermitirTransacao());
+        } else {
+            dto.setPermitirTransacao(false);
+        }
+
         Banco bancoSalvo = bancoRepository.save(banco);
         contaService.atualizarSaldoTotal(conta.getId());
 
