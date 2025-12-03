@@ -8,7 +8,10 @@ import java.util.Optional;
 
 public interface BancoRepository extends JpaRepository<Banco, Long> {
 
-    List<Banco> findByContaId(Long contaid);
+    List<Banco> findByContaId(Long contaId);
+
     Optional<Banco> findByChavePix(String chavePix);
+
+    List<Banco> findByContaIdAndPermitirTransacao(Long contaId, boolean permitirTransacao);
 
 }

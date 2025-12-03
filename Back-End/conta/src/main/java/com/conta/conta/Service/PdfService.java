@@ -1,14 +1,13 @@
 package com.conta.conta.Service;
 
-import com.conta.conta.DTO.TransacaoRequestDto;
+import com.conta.conta.DTO.TransacaoResponseDto;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
-import java.util.List;
 import java.io.ByteArrayOutputStream;
-
+import java.util.List;
 
 @Service
 public class PdfService {
@@ -19,18 +18,20 @@ public class PdfService {
         this.templateEngine = templateEngine;
     }
 
-    public byte[] generateTransacoesPdf(List<TransacaoRequestDto> transacoes) {
+    public byte[] generateTransacoesPdf(List<TransacaoResponseDto> transacoes) {
         try {
-            // Prepara os dados para o template
+            // Preparar dados para o template
             Context context = new Context();
             context.setVariable("transacoes", transacoes);
 
-            // Processa o template Thymeleaf
+            // Processar template HTML com Thymeleaf
             String htmlContent = templateEngine.process("relatorio-transacoes", context);
 
-            // Converte HTML para PDF
+            // Converter HTML para PDF
             ByteArrayOutputStream target = new ByteArrayOutputStream();
             ConverterProperties converterProperties = new ConverterProperties();
+            converterProperties.setCharset("UTF-8");
+            converterProperties.setBaseUri("src/main/resources/templates/");
 
             HtmlConverter.convertToPdf(htmlContent, target, converterProperties);
 
@@ -40,5 +41,4 @@ public class PdfService {
             throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage(), e);
         }
     }
-
 }

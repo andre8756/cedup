@@ -2,8 +2,8 @@ package com.conta.conta.Service;
 
 import com.conta.conta.DTO.TransacaoFiltro;
 import com.conta.conta.DTO.TransacaoRequestDto;
+import com.conta.conta.DTO.TransacaoResponseDto;
 import com.conta.conta.Entity.Banco;
-import com.conta.conta.Entity.Conta;
 import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Repository.TransacaoRepository;
 import com.conta.conta.Specification.TransacaoSpecifications;
@@ -33,9 +33,8 @@ public class TransacaoService {
     // ================================
     // LISTAGEM PRINCIPAL COM FILTROS
     // ================================
-    public List<TransacaoRequestDto> listarComFiltros(TransacaoFiltro filtro) {
+    public List<TransacaoResponseDto> listarComFiltros(TransacaoFiltro filtro) {
 
-        // Define automaticamente a conta logada se nenhum filtro de conta foi enviado
         if (filtro.getContaId() == null && filtro.getContasIds() == null) {
             Long contaIdLogada = contaService.buscarContaLogada().getId();
             filtro.setContaId(contaIdLogada);
@@ -45,7 +44,7 @@ public class TransacaoService {
         return convertToListDTO(transacaoRepository.findAll(spec));
     }
 
-    public List<TransacaoRequestDto> listarPorContaLogadaEData(LocalDateTime dataInicio, LocalDateTime dataFim) {
+    public List<TransacaoResponseDto> listarPorContaLogadaEData(LocalDateTime dataInicio, LocalDateTime dataFim) {
         TransacaoFiltro filtro = new TransacaoFiltro();
         filtro.setContaId(contaService.buscarContaLogada().getId());
         filtro.setDataInicio(dataInicio);
@@ -53,7 +52,7 @@ public class TransacaoService {
         return listarComFiltros(filtro);
     }
 
-    public List<TransacaoRequestDto> listarPorBancoIdEData(Long bancoId, LocalDateTime dataInicio, LocalDateTime dataFim) {
+    public List<TransacaoResponseDto> listarPorBancoIdEData(Long bancoId, LocalDateTime dataInicio, LocalDateTime dataFim) {
         TransacaoFiltro filtro = new TransacaoFiltro();
         filtro.setBancosIds(List.of(bancoId));
         filtro.setDataInicio(dataInicio);
@@ -69,6 +68,7 @@ public class TransacaoService {
 
         LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1)
                 .withHour(0).withMinute(0).withSecond(0);
+
         LocalDateTime fimMes = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
                 .withHour(23).withMinute(59).withSecond(59);
 
@@ -80,6 +80,7 @@ public class TransacaoService {
 
         LocalDateTime inicioMes = LocalDateTime.now().withDayOfMonth(1)
                 .withHour(0).withMinute(0).withSecond(0);
+
         LocalDateTime fimMes = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
                 .withHour(23).withMinute(59).withSecond(59);
 
@@ -90,23 +91,25 @@ public class TransacaoService {
     // PROCESSAR TRANSFERÊNCIA
     // ================================
     @Transactional
-    public TransacaoRequestDto processarTransacao(String bancoOrigemChavePix, String bancoDestinoChavePix, Transacao transacao) {
+    public TransacaoResponseDto processarTransacao(TransacaoRequestDto dto) {
 
-        Banco bancoOrigem = bancoService.buscarPorChavePix(bancoOrigemChavePix)
-                .orElseThrow(() -> new EntityNotFoundException("Banco de origem não encontrado"));
-        Banco bancoDestino = bancoService.buscarPorChavePix(bancoDestinoChavePix)
-                .orElseThrow(() -> new EntityNotFoundException("Banco de destino não encontrado"));
+        Banco bancoOrigem = bancoService.buscarEntidadePorChavePix(dto.getChavePixBancoOrigem());
+        Banco bancoDestino = bancoService.buscarEntidadePorChavePix(dto.getChavePixBancoDestino());
 
-        if (bancoOrigem.getSaldo() < transacao.getValor()) {
+        if (bancoOrigem.getSaldo() < dto.getValor()) {
             throw new RuntimeException("Saldo insuficiente no banco de origem");
         }
 
-        bancoOrigem.setSaldo(bancoOrigem.getSaldo() - transacao.getValor());
-        bancoDestino.setSaldo(bancoDestino.getSaldo() + transacao.getValor());
+        if (!bancoOrigem.isPermitirTransacao()) {
+            throw new RuntimeException("O banco não permite fazer transferências");
+        }
+
+        bancoOrigem.setSaldo(bancoOrigem.getSaldo() - dto.getValor());
+        bancoDestino.setSaldo(bancoDestino.getSaldo() + dto.getValor());
 
         Transacao transacaoFinal = new Transacao(
-                transacao.getValor(),
-                transacao.getDescricao(),
+                dto.getValor(),
+                dto.getDescricao(),
                 bancoOrigem.getConta(),
                 bancoOrigem,
                 bancoDestino.getConta(),
@@ -114,8 +117,10 @@ public class TransacaoService {
         );
 
         Transacao transacaoSalva = transacaoRepository.save(transacaoFinal);
-        bancoService.salvar(bancoOrigem);
-        bancoService.salvar(bancoDestino);
+
+        // salvar atualizações de saldo
+        bancoService.atualizarBanco(bancoOrigem);
+        bancoService.atualizarBanco(bancoDestino);
 
         contaService.atualizarSaldoTotal(bancoOrigem.getConta().getId());
         contaService.atualizarSaldoTotal(bancoDestino.getConta().getId());
@@ -126,7 +131,7 @@ public class TransacaoService {
     // ================================
     // MÉTODOS DE LISTAGEM
     // ================================
-    public List<TransacaoRequestDto> listarPorContaLogada() {
+    public List<TransacaoResponseDto> listarPorContaLogada() {
         Long contaIdLogada = contaService.buscarContaLogada().getId();
         return convertToListDTO(transacaoRepository.findByContaId(contaIdLogada));
     }
@@ -139,7 +144,7 @@ public class TransacaoService {
     // REMOVER TRANSAÇÃO
     // ================================
     @Transactional
-    public void removerPorId(Long id){
+    public void removerPorId(Long id) {
         Transacao transacao = transacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transação não encontrada"));
 
@@ -152,10 +157,10 @@ public class TransacaoService {
     // ================================
     // CONVERSORES DTO
     // ================================
-    private TransacaoRequestDto convertToDTO(Transacao transacao) {
+    private TransacaoResponseDto convertToDTO(Transacao transacao) {
         if (transacao == null) return null;
 
-        return new TransacaoRequestDto(
+        return new TransacaoResponseDto(
                 transacao.getId(),
                 transacao.getContaOrigem().getId(),
                 transacao.getBancoOrigem().getChavePix(),
@@ -171,7 +176,7 @@ public class TransacaoService {
         );
     }
 
-    private List<TransacaoRequestDto> convertToListDTO(List<Transacao> transacoes) {
+    private List<TransacaoResponseDto> convertToListDTO(List<Transacao> transacoes) {
         return transacoes.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

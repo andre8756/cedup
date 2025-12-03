@@ -1,14 +1,13 @@
 package com.conta.conta.Controller;
 
-import com.conta.conta.DTO.TransacaoFiltro;
-import com.conta.conta.DTO.TransacaoRequestDto;
-import com.conta.conta.Entity.Banco;
+import com.conta.conta.DTO.*;
 import com.conta.conta.Entity.Conta;
 import com.conta.conta.Entity.Transacao;
 import com.conta.conta.Service.BancoService;
 import com.conta.conta.Service.ContaService;
 import com.conta.conta.Service.PdfService;
 import com.conta.conta.Service.TransacaoService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -20,49 +19,43 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/conta")
-@PreAuthorize("hasRole('USER')")
 public class ContaController {
 
     @Autowired
     private ContaService contaService;
+
     @Autowired
     private BancoService bancoService;
+
     @Autowired
     private TransacaoService transacaoService;
-    @Autowired
-    private ModelMapper modelMapper;
+
     @Autowired
     private PdfService pdfService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     // ================================
     // CONTA
     // ================================
 
-    // Somente para ADMIN
-    /*
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<Conta> listarTodasContas() {
-        return contaService.listarConta();
-    }
-    */
-
     @GetMapping("/atual")
-    public Conta buscarContaAtual() {
-        return contaService.buscarContaLogada();
+    public ContaResponse buscarContaAtual() {
+        return contaService.buscarContaAtual();
     }
 
     @PutMapping("/atual")
-    public void atualizarConta(@RequestBody Conta conta) {
-        Conta contaBase = contaService.buscarContaLogada();
-        modelMapper.map(conta, contaBase);
-        contaService.salvar(contaBase);
+    public ResponseEntity<?> atualizarConta(@Valid @RequestBody ContaUpdateRequest dto) {
+        contaService.atualizarContaLogada(dto);
+        return ResponseEntity.ok("Dados atualizados com sucesso!");
     }
 
     @DeleteMapping("/atual")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerConta() {
+    @ResponseStatus(HttpStatus.OK)
+    public String removerConta() {
         contaService.removerContaUsuario();
+        return "Conta deletada com sucesso!";
     }
 
     // ================================
@@ -70,86 +63,87 @@ public class ContaController {
     // ================================
 
     @GetMapping("/banco")
-    public List<Banco> listarBancosDaContaAtual() {
+    public List<BancoResponse> listarBancosDaContaAtual() {
         return bancoService.listarBancoPorContaId();
     }
 
     @GetMapping("/banco/id/{id}")
-    public Banco buscarBanco(@PathVariable Long id) {
-        return bancoService.buscarPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrado"));
+    public BancoResponse buscarBanco(@PathVariable Long id) {
+        try {
+            return bancoService.buscarPorId(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrado");
+        }
+    }
+
+    @GetMapping("/banco/permitir-transacao")
+    public List<BancoResponse> listarBancosQuePermitemTransacao() {
+        return bancoService.listarBancosPermitemTransacao()
+                .stream()
+                .map(BancoResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/banco/chave-pix/{chavePix}")
-    public Banco buscarBancoPorChavePix(@PathVariable String chavePix) {
-        return bancoService.buscarPorChavePix(chavePix)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrado"));
+    public BancoResponse buscarBancoPorChavePix(@PathVariable String chavePix) {
+        try {
+            return BancoResponse.fromEntity(bancoService.buscarEntidadePorChavePix(chavePix));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrado");
+        }
     }
 
     @PostMapping("/banco")
     @ResponseStatus(HttpStatus.CREATED)
-    public Banco salvarBanco(@RequestBody Banco banco) {
-        banco.setConta(contaService.buscarContaLogada());
-        return bancoService.salvar(banco);
+    public BancoResponse salvarBanco(@Valid @RequestBody BancoRequest dto) {
+        return bancoService.salvar(dto);
     }
 
     @PutMapping("/banco/{id}")
-    public void atualizarBanco(@PathVariable Long id, @RequestBody Banco banco) {
-        Banco bancoBase = bancoService.buscarPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Banco não encontrado"));
-        modelMapper.map(banco, bancoBase);
-        bancoService.salvar(bancoBase);
+    public BancoUpdateResponse atualizarBanco(@PathVariable Long id, @Valid @RequestBody BancoUpdateRequest dto) {
+        try {
+            return bancoService.atualizar(id, dto);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @DeleteMapping("/banco/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerBanco(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public String removerBanco(@PathVariable Long id) {
         bancoService.removerPorId(id);
+        return("Banco deletado com sucesso!");
     }
 
     // ================================
     // TRANSAÇÕES
     // ================================
 
-    @PostMapping("/banco/{origemPix}/{destinoPix}/transacao")
+    @PostMapping("/banco/transacao")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransacaoRequestDto salvarTransacao(
-            @PathVariable String origemPix,
-            @PathVariable String destinoPix,
-            @RequestBody Transacao transacao) {
-        return transacaoService.processarTransacao(origemPix, destinoPix, transacao);
-    }
-
-    @PutMapping("/banco/transacao/{id}")
-    public void atualizarTransacao(@PathVariable Long id, @RequestBody Transacao transacao) {
-        Transacao transacaoBase = transacaoService.buscarPorId(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transação não encontrada"));
-        modelMapper.map(transacao, transacaoBase);
-        transacaoService.processarTransacao(
-                transacaoBase.getBancoOrigem().getChavePix(),
-                transacaoBase.getBancoDestino().getChavePix(),
-                transacaoBase
-        );
+    public TransacaoResponseDto salvarTransacao(@RequestBody TransacaoRequestDto transacaoDto) {
+        return transacaoService.processarTransacao(transacaoDto);
     }
 
     @DeleteMapping("/banco/transacao/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerTransacao(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public String removerTransacao(@PathVariable Long id) {
         transacaoService.removerPorId(id);
+        return  ("Transação deletada com sucesso!");
     }
 
     // ================================
-    // FILTROS & PDF
+    // FILTROS & PDF (Transações)
     // ================================
 
     @GetMapping("/banco/transacao/filtros")
-    public List<TransacaoRequestDto> listarComFiltros(TransacaoFiltro filtro) {
+    public List<TransacaoResponseDto> listarComFiltros(TransacaoFiltro filtro) {
         return transacaoService.listarComFiltros(filtro);
     }
 
     @GetMapping("/banco/transacao/filtros/pdf")
     public ResponseEntity<byte[]> downloadPdfComFiltros(TransacaoFiltro filtro) {
-        List<TransacaoRequestDto> transacoesFiltradas = transacaoService.listarComFiltros(filtro);
+        List<TransacaoResponseDto> transacoesFiltradas = transacaoService.listarComFiltros(filtro);
         byte[] pdfBytes = pdfService.generateTransacoesPdf(transacoesFiltradas);
 
         HttpHeaders headers = new HttpHeaders();
@@ -188,4 +182,3 @@ public class ContaController {
         }
     }
 }
-

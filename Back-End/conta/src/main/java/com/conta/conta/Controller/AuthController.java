@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -49,20 +48,16 @@ public class AuthController {
 
         Conta conta = new Conta();
         conta.setTitular(dto.getTitular());
-        conta.setCpf(dto.getCpf());
+        conta.setCpf(dto.getCpf()); // já limpo pelo DTO
         conta.setEmail(dto.getEmail());
-        conta.setTelefone(dto.getTelefone());
+        conta.setTelefone(dto.getTelefone()); // já limpo pelo DTO
         conta.setSenha(passwordEncoder.encode(dto.getSenha()));
-        conta.setRole(UserRole.USER);
+        conta.setRole(dto.getRole() != null ? dto.getRole() : UserRole.USER);
         conta.setSaldoTotal(0);
         conta.setStatus(true);
         conta.setBancos(null);
-        conta.setRole(dto.getRole());
-        conta.setSaldoTotal(0);
-        conta.setStatus(true);
-        conta.setBancos(null);
-        contaRepository.save(conta);
 
+        contaRepository.save(conta);
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
 
@@ -78,27 +73,31 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO loginRequest) {
         try {
-            String identifier = loginRequest.identifier();
+            String identifier = loginRequest.identificador();
+            String senha = loginRequest.senha();
+
+            if (identifier == null || identifier.isBlank() || senha == null || senha.isBlank()) {
+                return ResponseEntity.badRequest().body("Identificador ou senha ausente!");
+            }
+
             Optional<Conta> contaOptional = Optional.empty();
 
-            if (identifier.contains("@")) {
-                contaOptional = contaRepository.findByEmail(identifier);
-            } else {
-                // Remove todos caracteres que não são dígitos
-                String digits = identifier.replaceAll("\\D", "");
+            String digits = identifier.replaceAll("\\D", "");
 
-                if (digits.length() == 11) {
-                    // Pode ser CPF ou telefone, tentamos ambos
-                    contaOptional = contaRepository.findByCpf(digits);
-                    if (contaOptional.isEmpty()) {
-                        contaOptional = contaRepository.findByTelefone(digits);
-                    }
-                } else {
-                    return ResponseEntity.badRequest().body("Identificador inválido!");
+            if (identifier.contains("@")) {
+                contaOptional = contaRepository.findByEmail(identifier.trim());
+            } else {
+                contaOptional = contaRepository.findByCpf(digits);
+                if (contaOptional.isEmpty()) {
+                    contaOptional = contaRepository.findByTelefone(digits);
                 }
             }
 
-            if (contaOptional.isEmpty() || !passwordEncoder.matches(loginRequest.senha(), contaOptional.get().getSenha())) {
+            if (contaOptional.isEmpty()) {
+                return ResponseEntity.badRequest().body("Usuário não encontrado!");
+            }
+
+            if (contaOptional.isEmpty() || !passwordEncoder.matches(senha, contaOptional.get().getSenha())) {
                 return ResponseEntity.badRequest().body("Credenciais inválidas!");
             }
 
@@ -109,7 +108,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Erro no login: " + e.getMessage());
         }
     }
-
 
     // ===============================
     // Logout

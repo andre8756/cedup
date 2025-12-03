@@ -1,4 +1,3 @@
-//Banco - multiplas contas bancarias do usuario
 package com.conta.conta.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,7 +23,7 @@ public class Banco {
     @Column(nullable = false)
     private float saldo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true) // Evita chave PIX duplicada
     private String chavePix;
 
     @Column(nullable = false)
@@ -34,28 +33,36 @@ public class Banco {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
-    @ManyToOne
-    @JoinColumn(name = "conta_id", nullable = false) // Define o nome da coluna de chave estrangeira
-    @JsonIgnore // Evita loop infinito no Json
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conta_id", nullable = false)
+    @JsonIgnore
     private Conta conta;
 
-    public Banco(String titular, String nomeBanco, float saldo, String chavePix) {
-        this.titular = titular;
-        this.nomeBanco = nomeBanco;
-        this.saldo = saldo;
-        this.chavePix = chavePix;
-    }
+    @Column(nullable = false)
+    private boolean permitirTransacao;
 
-    public Banco(){
+    @Column(nullable = false)
+    private String bancoUrl;
+
+    public Banco() {
     }
 
     @PrePersist
-    protected void onCreate(){
-        dataCadastro = LocalDateTime.now();
-        status = true;
+    protected void onCreate() {
+        this.dataCadastro = LocalDateTime.now();
+        this.status = true;
+        this.permitirTransacao = false;
+
+        if (this.bancoUrl == null) {
+            this.bancoUrl = "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_account_balance_48px-512.png";
+        }
     }
 
-    public Long getId(){
+    // ============================
+    // GETTERS & SETTERS
+    // ============================
+
+    public Long getId() {
         return id;
     }
 
@@ -86,6 +93,7 @@ public class Banco {
     public String getChavePix() {
         return chavePix;
     }
+
     public void setChavePix(String chavePix) {
         this.chavePix = chavePix;
     }
@@ -112,6 +120,22 @@ public class Banco {
 
     public void setConta(Conta conta) {
         this.conta = conta;
+    }
+
+    public boolean isPermitirTransacao() {
+        return permitirTransacao;
+    }
+
+    public void setPermitirTransacao(boolean permitirTransacao) {
+        this.permitirTransacao = permitirTransacao;
+    }
+
+    public String getBancoUrl() {
+        return bancoUrl;
+    }
+
+    public void setBancoUrl(String bancoUrl) {
+        this.bancoUrl = bancoUrl;
     }
 
     @Override

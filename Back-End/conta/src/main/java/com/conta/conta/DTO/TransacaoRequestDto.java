@@ -1,118 +1,57 @@
 package com.conta.conta.DTO;
 
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class TransacaoRequestDto {
 
-    private Long id;
+    @NotNull(message = "O valor é obrigatório")
+    @PositiveOrZero(message = "O valor não pode ser negativo")
+    private Float valor;
 
-    private Long contaOrigemId;
-    private String bancoOrigemChavePix;
-    private String bancoOrigemNome;
-    private String bancoOrigemTitular;
-
-    private Long contaDestinoId;
-    private String bancoDestinoChavePix;
-    private String bancoDestinoNome;
-    private String bancoDestinoTitular;
-
-    private float valor;
+    @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
-    private LocalDateTime dataTransacao;
 
-    public TransacaoRequestDto(
-            Long id,
-            Long contaOrigemId,
-            String bancoOrigemChavePix,
-            String bancoOrigemNome,
-            String bancoOrigemTitular,
-            Long contaDestinoId,
-            String bancoDestinoChavePix,
-            String bancoDestinoNome,
-            String bancoDestinoTitular,
-            float valor,
-            String descricao,
-            LocalDateTime dataTransacao
-    ) {
-        this.id = id;
-        this.contaOrigemId = contaOrigemId;
-        this.bancoOrigemChavePix = bancoOrigemChavePix;
-        this.bancoOrigemNome = bancoOrigemNome;
-        this.bancoOrigemTitular = bancoOrigemTitular;
-        this.contaDestinoId = contaDestinoId;
-        this.bancoDestinoChavePix = bancoDestinoChavePix;
-        this.bancoDestinoNome = bancoDestinoNome;
-        this.bancoDestinoTitular = bancoDestinoTitular;
+    @NotBlank(message = "A chave PIX do banco de origem é obrigatória")
+    private String chavePixBancoOrigem;
+
+    @NotBlank(message = "A chave PIX do banco de destino é obrigatória")
+    private String chavePixBancoDestino;
+
+    // =====================
+    // GETTERS & SETTERS
+    // =====================
+
+    public Float getValor() {
+        return valor;
+    }
+
+    public void setValor(Float valor) {
         this.valor = valor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
         this.descricao = descricao;
-        this.dataTransacao = dataTransacao;
     }
 
+    public String getChavePixBancoOrigem() {
+        return chavePixBancoOrigem;
+    }
 
-    // Getters e Setters
+    public void setChavePixBancoOrigem(String chavePixBancoOrigem) {
+        this.chavePixBancoOrigem = chavePixBancoOrigem;
+    }
 
-    public Long getId() {
-        return id;
+    public String getChavePixBancoDestino() {
+        return chavePixBancoDestino;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getBancoDestinoChavePix() {
-        return bancoDestinoChavePix;
-    }
-    public void setBancoDestinoChavePix(String bancoDestinoChavePix) {
-        this.bancoDestinoChavePix = bancoDestinoChavePix;
-    }
-    public String getBancoOrigemNome() {
-        return bancoOrigemNome;
-    }
-    public void setBancoOrigemNome(String bancoOrigemNome) {
-        this.bancoOrigemNome = bancoOrigemNome;
-    }
-    public String getBancoOrigemTitular() {
-        return bancoOrigemTitular;
-    }
-    public void setBancoOrigemTitular(String bancoOrigemTitular) {
-        this.bancoOrigemTitular = bancoOrigemTitular;
-    }
-    public String getBancoOrigemChavePix() {
-        return bancoOrigemChavePix;
-    }
-    public void setBancoOrigemChavePix(String bancoOrigemChavePix) {
-        this.bancoOrigemChavePix = bancoOrigemChavePix;
-    }
-    public String getBancoDestinoNome() {
-        return bancoDestinoNome;
-    }
-    public void setBancoDestinoNome(String bancoDestinoNome) {
-        this.bancoDestinoNome = bancoDestinoNome;
-    }
-    public String getBancoDestinoTitular() {
-        return bancoDestinoTitular;
-    }
-    public void setBancoDestinoTitular(String bancoDestinoTitular) {
-        this.bancoDestinoTitular = bancoDestinoTitular;
-    }
-    public float getValor() { return valor; }
-    public void setValor(float valor) { this.valor = valor; }
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
-    public Long getContaOrigemId() {
-        return contaOrigemId;
-    }
-    public void setContaOrigemId(Long contaId) {
-        this.contaOrigemId = contaId;
-    }
-    public Long getContaDestinoId() {
-        return contaDestinoId;
-    }
-    public void setContaDestinoId(Long contaId) {
-        this.contaDestinoId = contaId;
-    }
-    public LocalDateTime getDataTransacao() {
-        return dataTransacao;
-    }
-    public void setDataTransacao(LocalDateTime dataTransacao) {
-        this.dataTransacao = dataTransacao;
+
+    public void setChavePixBancoDestino(String chavePixBancoDestino) {
+        this.chavePixBancoDestino = chavePixBancoDestino;
     }
 }
