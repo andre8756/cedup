@@ -139,7 +139,7 @@ const handleFilter = async () => {
                 break;
 
             case 'valor':
-                if (!valor || valor === "") {
+                if (typeof valor !== "number" || Number.isNaN(valor)) {
                     alert("Preencha o valor da transação.");
                     return;
                 }

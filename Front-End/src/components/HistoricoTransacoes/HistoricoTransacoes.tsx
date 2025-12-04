@@ -18,9 +18,7 @@ interface Transacao {
 export default function HistoricoTransacoes() {
     const navigate = useNavigate();
     const [transacoes, setTransacoes] = useState<Transacao[]>([]);
-    const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
-    const mesFormatado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
-    const transacaoTotal = transacoes.reduce((acumulador, t) => acumulador + t.valor, 0)
+    // const nomeMes = new Date().toLocaleString('pt-BR', { month: 'long' });
 
     useEffect(() => {
         const fetchTransacoes = async () => {
