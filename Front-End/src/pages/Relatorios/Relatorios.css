@@ -18,6 +18,10 @@
   z-index: 100;
 }
 
+.relatorios-header{
+  background-color: #ffffff;
+}
+
 .relatorios-container .logo {
   display: flex;
   align-items: center;
@@ -142,9 +146,10 @@
 
 /* Make the header area visually separated */
 .relatorios-header {
-  padding: 8px 0 18px 0;
+  padding: 3% 3%;
   border-bottom: 1px solid #eef2ff;
   margin-bottom: 28px;
+  border-radius: 12px;
 }
 
 /* Card de Filtros */
@@ -166,9 +171,11 @@
 }
 
 .filtros-header h2 {
-  font-size: 22px;
+  font-size: 300%;
+  margin-left: 600px;
   font-weight: 700;
   color: #0b1220;
+  display: flex;
   margin: 0;
 }
 
@@ -177,7 +184,6 @@
   display: inline-block;
   width: 6px;
   height: 36px;
-  background: linear-gradient(180deg, #2c7be5, #1e5bb8);
   border-radius: 4px;
   margin-right: 12px;
   vertical-align: middle;
