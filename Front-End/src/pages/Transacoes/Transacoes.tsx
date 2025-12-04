@@ -3,6 +3,7 @@ import api from "../../config/apiClient";
 import { API_ENDPOINTS } from "../../config/api";
 import "./Transacoes.css";
 import FiltroTransacoes from "../../components/FiltroTransacoes/FiltroTransacoes";
+import { parseDateString } from "../../lib/date";
 
 interface Transacao {
   id: number;
@@ -66,11 +67,16 @@ export default function Transacoes() {
                       {t.descricao ?? "Transação bancária"}
                     </p>
                     <small className="data-mov">
-                      {new Date(t.dataTransacao).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
+                      {(() => {
+                        const d = parseDateString(t.dataTransacao);
+                        return d
+                          ? d.toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : t.dataTransacao;
+                      })()}
                     </small>
                   </div>
 

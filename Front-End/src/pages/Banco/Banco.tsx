@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Edit2, Trash2, Eye, EyeOff, Plus, Settings } from 'lucide-react';
+import { Edit2, Trash2, Eye, EyeOff, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { apiFetch } from '../../config/apiClient';
@@ -9,6 +9,7 @@ import PopupEdit from '../../components/PopupEdit/PopupEdit';
 import { getShowSensitive, setShowSensitive, subscribeSensitive } from '../../lib/sensitive';
 import api from '../../config/apiClient';
 import './Banco.css';
+import { parseDateString } from '../../lib/date';
 
 interface Banco {
   id: number;
@@ -123,23 +124,20 @@ const Banco = () => {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
-    } catch {
-      return 'N/A';
-    }
+    const d = parseDateString(dateString);
+    if (!d) return 'N/A';
+    return d.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   };
 
   return (
     <>
       {/* Header azul com navegação */}
       <header className="header-main">
-        <div className="logo">
+        <div className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/conta')}>
           <img src="/Logo-Completa.png" alt="Solvian" className="logo-image" />
         </div>
         <nav className="header-nav">
@@ -156,10 +154,8 @@ const Banco = () => {
           >
             {showBalances ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>
-          <button className="icon-button" aria-label="Configurações">
-            <Settings size={20} />
-          </button>
-          <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8 }}>
+          {/* Configurações removido - botão eliminado */}
+            <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>
             <img
               src={contaAtual?.avatarUrl || '/Logo-Completa.png'}
               alt="avatar"

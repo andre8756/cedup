@@ -34,27 +34,39 @@
 }
 
 .transacao-item-simple {
-  padding: 8px 0;
-  font-size: 14px;
+  padding: 12px 0;
+  font-size: 16px;
   color: #111;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .transacao-texto {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   line-height: 1.5;
   font-size: 150%;
+  flex: 1 1 auto;
+  color: #111;
 }
 
 .valor-positivo {
   color: #10b981;
   font-weight: 600;
-  margin-left: 50%;
-  margin-top: -20px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .valor-negativo {
   color: #ef4444;
   font-weight: 600;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .nenhuma-transacao {

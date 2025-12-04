@@ -5,7 +5,7 @@ import { apiFetch } from '../../config/apiClient';
 import api from '../../config/apiClient';
 import { API_ENDPOINTS } from '../../config/api';
 import './PerfilUsuario.css';
-import { Eye, EyeOff, Settings } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { getShowSensitive, setShowSensitive, subscribeSensitive } from '../../lib/sensitive';
 
 interface ContaResponse {
@@ -319,7 +319,7 @@ return (
     <div className="perfil-container">
       {/* Header */}
       <header className="header-main">
-        <div className="logo">
+        <div className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/conta')}>
           <img src="/Logo-Completa.png" alt="Solvian" className="logo-image" />
         </div>
         <nav className="header-nav">
@@ -345,10 +345,8 @@ return (
           >
             {showSensitive ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>
-          <button className="icon-button" aria-label="Configurações">
-            <Settings size={20} />
-          </button>
-          <div className="avatar-circle" title={conta?.titular || 'Usuário'} style={{ marginLeft: 8 }}>
+          {/* Configurações removido - botão eliminado */}
+          <div className="avatar-circle" title={conta?.titular || 'Usuário'} style={{ marginLeft: 8 }} onClick={() => navigate('/perfil')}>
             <img
               src={conta?.avatarUrl || '/Logo-Completa.png'}
               alt="avatar"

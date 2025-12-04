@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../config/apiClient";
 import { API_ENDPOINTS } from "../../config/api";
 import "./HistoricoTransacoes.css";
+import { parseDateString } from "../../lib/date";
 
 interface Transacao {
     id: number;
@@ -45,11 +46,16 @@ export default function HistoricoTransacoes() {
           transacoes.slice(0, 3).map((t) => (
             <li key={t.id} className="transacao-item-simple">
               <span className="transacao-texto">
-                {new Date(t.dataTransacao).toLocaleDateString("pt-BR", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}{" "}
+                {(() => {
+                  const d = parseDateString(t.dataTransacao);
+                  return d
+                    ? d.toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                    : t.dataTransacao;
+                })()}{" "}
                 {t.bancoDestino || "Transação"}{" "}
                 <span className={t.valor > 0 ? "valor-positivo" : "valor-negativo"}>
                   R$ {Math.abs(t.valor).toFixed(2).replace(".", ",")}
