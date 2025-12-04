@@ -42,11 +42,14 @@
 .transacao-texto {
   display: block;
   line-height: 1.5;
+  font-size: 150%;
 }
 
 .valor-positivo {
   color: #10b981;
   font-weight: 600;
+  margin-left: 50%;
+  margin-top: -20px;
 }
 
 .valor-negativo {
@@ -67,7 +70,7 @@
 
 .view-more-transacoes-btn {
   width: 100%;
-  margin-top: 16px;
+  margin-top: 9%;
   padding: 10px 16px;
   background-color: #e7f3fd;
   border: none;
