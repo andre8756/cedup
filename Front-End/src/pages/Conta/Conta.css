@@ -217,7 +217,7 @@ body {
   text-align: center;
 }
 
-.financial-item .item-label {
+.financial-item{
   font-size: 14px;
   color: #6b7280;
   margin-bottom: 8px;
@@ -351,20 +351,12 @@ body {
   display: inline-block;
 }
 
-/* Card com linha azul */
-.card-blue-line {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: #2c7be5;
-  border-radius: 12px 0 0 12px;
+.balance-section {
+  padding-left: 0%;
 }
 
-.balance-section,
 .statement-section {
-  padding-left: 24px;
+  padding-left: 1%;
 }
 
 /* Card de Saldo Geral e Meus Bancos */
@@ -385,6 +377,7 @@ body {
 
 .card-content-header {
   display: flex;
+  padding-left: 10px;
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
@@ -394,9 +387,9 @@ body {
   background-color: #2563eb;
   border: none;
   color: white;
-  padding: 8px 16px;
+  padding: 16px 32px;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -481,7 +474,7 @@ body {
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 23px;
   font-weight: 600;
   color: #111;
   margin-bottom: 16px;
@@ -624,10 +617,6 @@ body {
   height: 120px;
 }
 
-.item-label {
-  font-size: 14px;
-  color: #6b7280;
-}
 
 .item-value {
   font-size: 18px;
@@ -751,6 +740,9 @@ body {
   align-self: flex-start;
   flex-shrink: 0;
   margin-top: 8px;
+}
+.manage-accounts-btn{
+  margin-left: 26%;
 }
 
 .manage-accounts-btn:hover {
@@ -928,4 +920,20 @@ body {
   .header-actions {
     gap: 4px;
   }
+}
+
+
+.item-label{
+  font-size: 1.4rem;
+  color: black;
+}
+
+.item-value.expense-value,
+.item-value.income-value{
+  font-size: 2.2rem;
+}
+
+.card-content{
+  border-left: #2c7be5 5px solid;
+  padding-left: 10px;
 }
