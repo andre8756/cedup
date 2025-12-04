@@ -31,36 +31,36 @@ interface Option {
 
 // Opções de bancos para o Select
 const options: Option[] = [    
-    {
-        value: "Banco do Brasil", 
-        label: "Banco do Brasil",
-        img: "https://logodownload.org/wp-content/uploads/2014/05/banco-do-brasil-logo-1.png"
-    },
-    {
-        value: "Nubank", 
-        label: "Nubank",
-        img: "https://1000marcas.net/wp-content/uploads/2020/05/Logo-Nubank.png"
-    },
-    {
-        value: "Bradesco",
-        label: "Bradesco",
-        img: "https://logodownload.org/wp-content/uploads/2014/05/bradesco-logo-1.png"
-    },
-    {
-        value: "Itaú",
-        label: "Itaú",
-        img: "https://logodownload.org/wp-content/uploads/2014/05/itau-logo-1.png"
-    },
-    {
-        value: "Santander",
-        label: "Santander",
-        img: "https://logodownload.org/wp-content/uploads/2014/05/santander-logo-1.png"
-    },
-    {
-        value: "Outro Banco", 
-        label: "Outro Banco", 
-        img: ""
-    }
+     {
+        value: "Banco do Brasil", 
+        label: "Banco do Brasil",
+        img: "https://logodownload.org/wp-content/uploads/2014/05/banco-do-brasil-logo-0.png"
+    },
+    {
+        value: "Nubank", 
+        label: "Nubank",
+        img: "https://logodownload.org/wp-content/uploads/2019/08/nubank-logo-0-1.png"
+    },
+    {
+        value: "Bradesco",
+        label: "Bradesco",
+        img: "https://images.seeklogo.com/logo-png/47/1/bradesco-icon-logo-png_seeklogo-473120.png"
+    },
+    {
+        value: "Itaú",
+        label: "Itaú",
+        img: "https://images.seeklogo.com/logo-png/51/1/itau-logo-png_seeklogo-512719.png"
+    },
+    {
+        value: "Santander",
+        label: "Santander",
+        img: "https://logodownload.org/wp-content/uploads/2017/05/banco-santander-logo-40.png"
+    },
+    {
+        value: "Outro Banco", 
+        label: "Outro Banco", 
+        img: ""
+    }
 ];
 
 const PopupEdit: React.FC<PopupEditProps> = ({ banco, onClose, onUpdate }) => {
