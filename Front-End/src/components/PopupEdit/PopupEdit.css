@@ -252,6 +252,7 @@
   user-select: none;
 }
 
+
 /* Scrollbar */
 .popup-content::-webkit-scrollbar {
   width: 8px;
