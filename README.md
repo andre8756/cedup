@@ -19,7 +19,6 @@
 - [📡 Endpoints da API](#-endpoints-da-api)
 - [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
 - [📊 Funcionalidades Principais](#-funcionalidades-principais)
-- [📌 Status do Projeto](#-status-do-projeto)
 
 ---
 
@@ -91,9 +90,4 @@ Desenvolver um sistema web que permita ao usuário:
 - Registro de receitas e despesas  
 - Geração de relatórios financeiros  
 - Emissão de extratos personalizados  
-
----
-
-## 📌 Status do Projeto  
-🚧 Em desenvolvimento 🚧  
  
