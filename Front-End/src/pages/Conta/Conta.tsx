@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, Settings } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import PopupForm from "../../components/PopupAdd/PopupAdd";
 import PopupEdit from "../../components/PopupEdit/PopupEdit";
 import "./Conta.css";
@@ -317,7 +317,7 @@ useEffect(() => {
     <>
       {/* Header azul com navegação */}
       <header className="header-main">
-        <div className="logo">
+        <div className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/conta')}>
           <img src="/Logo-Completa.png" alt="Solvian" className="logo-image" />
         </div>
         <nav className="header-nav">
@@ -346,10 +346,8 @@ useEffect(() => {
           >
             {showBalances ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>
-          <button className="icon-button" aria-label="Configurações">
-            <Settings size={20} />
-          </button>
-          <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8 }}>
+          {/* Configurações removido - botão eliminado */}
+            <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>
             <img
               src={contaAtual?.avatarUrl || '/Logo-Completa.png'}
               alt="avatar"

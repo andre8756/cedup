@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Select from "react-select";
 import type { SingleValue } from "react-select";
 import axios from "axios";

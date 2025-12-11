@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import api from '../../config/apiClient';
 import { API_ENDPOINTS } from '../../config/api';
 import { apiFetch } from '../../config/apiClient';
 import './Relatorios.css';
+import { parseDateString } from '../../lib/date';
+import { useEffect, useState } from 'react';
 
 interface TransacaoResponseDto {
   id: number;
@@ -37,6 +39,7 @@ interface TransacaoFiltro {
 
 function Relatorios() {
   const navigate = useNavigate();
+  const [contaAtual, setContaAtual] = useState<any | null>(null);
   const [transacoes, setTransacoes] = useState<TransacaoResponseDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +74,25 @@ function Relatorios() {
     };
 
     fetchBancos();
+  }, []);
+
+  // Buscar dados da conta atual para exibir avatar no header
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) return;
+
+    const fetchConta = async () => {
+      try {
+        const resp = await apiFetch(API_ENDPOINTS.CONTA.ATUAL);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        setContaAtual(data);
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    fetchConta();
   }, []);
 
   // Função para buscar transações com filtros
@@ -208,25 +230,22 @@ function Relatorios() {
 
   // Formatar data
   const formatarData = (dataString: string) => {
-    try {
-      const date = new Date(dataString);
-      return date.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return dataString;
-    }
+    const d = parseDateString(dataString);
+    if (!d) return dataString ?? '';
+    return d.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   return (
     <div className="relatorios-container">
       {/* Header */}
       <header className="header-main">
-        <div className="logo">
+        <div className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/conta')}>
           <img src="/Logo-Completa.png" alt="Solvian" className="logo-image" />
         </div>
         <nav className="header-nav">
@@ -251,12 +270,14 @@ function Relatorios() {
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
-          <button className="icon-button" aria-label="Configurações">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
-            </svg>
-          </button>
+          {/* Configurações removido - botão descartado por não utilizado */}
+          <div className="avatar-circle" title={contaAtual?.titular || 'Usuário'} style={{ marginLeft: 8, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>
+            <img
+              src={contaAtual?.avatarUrl || '/Logo-Completa.png'}
+              alt="avatar"
+              style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }}
+            />
+          </div>
           <button className="logout-button" onClick={handleLogout} aria-label="Sair">
             Sair
           </button>
